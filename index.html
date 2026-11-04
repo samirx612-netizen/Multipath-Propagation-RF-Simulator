@@ -1,155 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RF Pro v5 - محاكي انتشار الموجات</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d18">
+<title>RF STUDIO PRO | Wireless Transmission Laboratory</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#08111f;color:#eaf2ff;font-family:Tahoma,Arial,sans-serif}
-header,.panel,.metric{background:#111e31;border:1px solid #293c56;border-radius:13px}
-header{padding:15px;margin:10px}h1{font-size:20px;color:#38bdf8;margin:0 0 6px}p{margin:5px 0;color:#a9b9cc;font-size:12px}
-main{max-width:1200px;margin:auto;padding:5px 10px 20px;display:grid;grid-template-columns:300px 1fr;gap:12px}
-aside,.area{display:flex;flex-direction:column;gap:12px}.panel{padding:13px}.panel h2{font-size:15px;margin:0 0 12px;color:#38bdf8}
-label{display:block;font-size:12px;margin:10px 0 5px;color:#cbd5e1}input[type=range]{width:100%;accent-color:#38bdf8}
-select,button{background:#20334d;color:white;border:1px solid #38516e;border-radius:8px;padding:9px;font-size:12px}
-button{cursor:pointer}button:active{transform:scale(.98)}.buttons{display:flex;gap:7px;flex-wrap:wrap}
-.check{display:flex;align-items:center;gap:8px;font-size:12px;margin:9px 0}.check input{accent-color:#38bdf8}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{padding:10px}.metric small{display:block;color:#9fb0c5;font-size:11px}.value{font-size:19px;font-weight:bold;margin-top:5px;color:#34d399}
-canvas{display:block;width:100%;height:auto;touch-action:none;background:#050b14;border-radius:9px}
-#scope{background:#070d19;border:1px solid #293c56}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#b6c4d6;margin-top:9px}
-#analysis{font-size:12px;line-height:2;color:#cbd5e1}.hint{font-size:11px;color:#93a4b8;line-height:1.8}
-@media(max-width:760px){main{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}header{margin:7px}h1{font-size:17px}}
-</style>
-</head>
+:root{--bg:#080d18;--p:#111b2d;--p2:#15223a;--line:#273854;--txt:#edf4ff;--muted:#91a4c2;--cyan:#58e4ff;--blue:#7895ff;--green:#4be0ad;--gold:#ffc46b;--red:#ff6f91;--violet:#bd9bff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#203963 0,transparent 38%),radial-gradient(ellipse at 100% 20%,#30234d 0,transparent 28%),var(--bg);color:var(--txt);font-family:Tahoma,Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;color:var(--txt);background:#1b2a44;border:1px solid #354b6d;border-radius:10px;padding:9px 12px;font-size:11px}button:hover{border-color:var(--cyan);filter:brightness(1.12)}button.active,.primary{background:linear-gradient(110deg,#126c91,#465fca);border:0}.danger{background:#47243a;border-color:#75405a}
+header{max-width:1500px;margin:auto;padding:22px 22px 14px;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#4ce5f5,#6278f5 65%,#a47bff);display:grid;place-items:center;color:#071323;font-size:27px;font-weight:bold;box-shadow:0 8px 30px #4c9eff44}h1{font-size:clamp(18px,3vw,27px);margin:0;letter-spacing:.4px}.sub{color:var(--muted);font-size:10px;margin-top:6px}.headright{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.live{font-size:10px;color:#7af2c5;background:#10352e;border:1px solid #236d59;padding:8px 11px;border-radius:99px}
+main{max-width:1500px;margin:auto;padding:8px 22px 30px}.tabs{display:flex;gap:7px;overflow:auto;padding:5px 0 14px}.tabs button{white-space:nowrap}.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(290px,.8fr);gap:14px}.col{display:flex;flex-direction:column;gap:14px;min-width:0}.card{background:linear-gradient(145deg,rgba(19,31,52,.96),rgba(12,20,35,.97));border:1px solid var(--line);border-radius:17px;box-shadow:0 15px 45px #0003;overflow:hidden}.head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.head h2{font-size:13px;margin:0}.hint{font-size:9px;color:var(--muted);margin-top:5px}.tag{font-size:9px;color:#9aefff;background:#123349;border:1px solid #25566e;border-radius:99px;padding:6px 9px;white-space:nowrap}.stagepad{padding:10px}.stage{position:relative;background:#070e1b;border:1px solid #263a58;border-radius:12px;overflow:hidden}canvas{display:block;width:100%;height:auto}#world{aspect-ratio:1000/560;touch-action:none;cursor:crosshair}.tip{position:absolute;top:10px;right:10px;background:#0d1a2cdd;border:1px solid #3c5273;border-radius:8px;padding:7px 9px;font-size:9px;color:#b7c8df;pointer-events:none}.tools,.legend{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:9px 3px 1px}.tools button{font-size:9px;padding:7px 9px}.legend{font-size:9px;color:#a7b9d1;gap:13px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:4px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{padding:12px;background:linear-gradient(145deg,#172944,#101a2e);border:1px solid var(--line);border-radius:12px;min-width:0}.metric small{color:var(--muted);font-size:9px}.value{direction:ltr;text-align:right;font-size:clamp(17px,2vw,23px);font-weight:bold;margin-top:8px}.unit{font-size:9px;color:#9aacc7;margin-right:3px}.foot{font-size:8px;color:#7084a3;margin-top:5px}
+.controls{padding:14px 15px}.control{margin-bottom:16px}.control:last-child{margin:0}.ctop{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#cbd8e9;margin-bottom:8px}.ctop b{color:var(--cyan);direction:ltr}input[type=range]{width:100%;accent-color:#58e4ff}select{width:100%;background:#0d192c;border:1px solid #304461;color:var(--txt);border-radius:9px;padding:10px;font-size:10px}.scale{display:flex;justify-content:space-between;color:#6e83a3;font-size:8px;direction:ltr;margin-top:3px}
+.switches{display:grid;grid-template-columns:1fr 1fr;gap:7px}.switch{display:flex;gap:7px;align-items:center;background:#101d31;border:1px solid #263a56;padding:9px;border-radius:9px;font-size:9px;color:#c5d3e7}.switch input{accent-color:#58e4ff}
+#wave{height:125px;background:#080f1c}.wavepad{padding:11px 13px}.wavecaption{display:flex;justify-content:space-between;font-size:10px;margin-bottom:7px}.wavecaption span:last-child{color:var(--muted);font-size:9px}
+.explain{padding:13px 15px;font-size:10px;line-height:1.9;color:#c3d2e6}.explain b{color:var(--cyan)}.formula{direction:ltr;text-align:center;font:13px Georgia,serif;color:#9ceeff;background:#0a1729;border:1px solid #243c5b;border-radius:9px;padding:10px;margin:8px 0;overflow:auto}.result{color:var(--green);font-weight:bold}.warning{color:var(--gold)}
+.data-table{width:100%;border-collapse:collapse;font-size:9px}.data-table td,.data-table th{padding:9px 7px;border-bottom:1px solid #263750;text-align:right}.data-table th{color:#9fb4d1;font-weight:normal}.data-table td:last-child{direction:ltr;text-align:left;color:#a9edff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mini{background:#101d31;border:1px solid var(--line);padding:11px;border-radius:10px}.mini small{font-size:9px;color:var(--muted)}.mini strong{display:block;margin-top:7px;direction:ltr;text-align:right;font-size:17px}
+.hidden{display:none!important}.section-title{font-size:15px;margin:8px 0 12px}.footer{text-align:center;color:#667c9c;font-size:9px;padding:18px}
+@media(max-width:950px){.grid{grid-template-columns:1fr}.right{display:grid;grid-template-columns:1fr 1fr}.right .settings{grid-row:span 2}}
+@media(max-width:620px){header{padding:14px 12px 9px;align-items:flex-start}.logo{width:40px;height:40px}main{padding:6px 9px 22px}.grid{gap:9px}.col{gap:9px}.right{display:flex}.card{border-radius:14px}.head{padding:12px}.metrics{grid-template-columns:1fr 1fr;gap:6px}.metric{padding:10px}.value{font-size:19px}.switches{grid-template-columns:1fr}.headright .live{display:none}.tools button{font-size:8px;padding:7px}.tip{font-size:8px}.two{gap:6px}}
+</style></head>
 <body>
-<header><h1>RF Pro v5 | محاكي انتشار موجات الاتصالات</h1><p>جامعة المعقل - كلية الهندسة | إعداد الطالب: سامر</p></header>
+<header><div class="brand"><div class="logo">RF</div><div><h1>RF STUDIO <span style="color:var(--cyan)">PRO</span></h1><div class="sub">مختبر هندسي وتعليمي تفاعلي للانتقال اللاسلكي · WIRELESS TRANSMISSION</div></div></div><div class="headright"><span class="live">● LIVE LAB</span><button id="pause">Ⅱ إيقاف</button><button class="primary" id="reset">↻ إعادة ضبط</button></div></header>
 <main>
-<aside>
-<section class="panel">
-<h2>إعدادات الإرسال RF</h2>
-<label>قدرة الإرسال: <b id="powerVal">45 dBm</b></label><input id="power" type="range" min="10" max="60" value="45">
-<label>التردد: <b id="freqVal">3500 MHz</b></label><input id="freq" type="range" min="700" max="28000" step="100" value="3500">
-<label>سرعة الموجات: <b id="speedVal">1.0x</b></label><input id="speed" type="range" min="1" max="30" value="10">
-<label>مادة الحاجز</label><select id="material" style="width:100%"><option value="30">خرسانة مسلحة - 30 dB</option><option value="16">طابوق - 16 dB</option><option value="8">زجاج - 8 dB</option></select>
-</section>
-<section class="panel">
-<h2>خيارات المحاكاة</h2>
-<label class="check"><input id="heat" type="checkbox" checked> إظهار الخريطة الحرارية</label>
-<label class="check"><input id="wavesOn" type="checkbox" checked> إظهار الموجات المتحركة</label>
-<label class="check"><input id="raysOn" type="checkbox" checked> إظهار مسارات الانعكاس</label>
-<label class="check"><input id="beam" type="checkbox"> نموذج مكسب Beamforming</label>
-<label class="check"><input id="ris" type="checkbox"> نموذج مكسب RIS</label>
-<div class="buttons"><button onclick="addBuilding()">+ إضافة بناية</button><button onclick="removeBuilding()">حذف بناية</button></div>
-<div class="buttons" style="margin-top:8px"><button onclick="scenario('los')">مسار مباشر</button><button onclick="scenario('blocked')">حاجز</button><button onclick="scenario('multi')">متعدد المسارات</button></div>
-<div class="buttons" style="margin-top:8px"><button id="pause" onclick="togglePause()">إيقاف الحركة</button><button onclick="resetAll()">إعادة ضبط</button></div>
-<p class="hint">اسحب البرج أو المستقبل أو البنايات باللمس أو الماوس. أوقف الحركة إذا أردت فحص الخريطة بهدوء.</p>
-</section>
-<section class="panel"><h2>راصد الموجة</h2><canvas id="scope" width="500" height="115"></canvas></section>
-</aside>
-<section class="area">
+<nav class="tabs"><button class="active" data-tab="lab">🌐 المحاكي الحي</button><button data-tab="theory">📘 المفاهيم والمعادلات</button><button data-tab="budget">🧮 Link Budget</button><button data-tab="doppler">🚀 Doppler & Delay</button><button data-tab="guide">🎓 دليل التجارب</button></nav>
+<section id="lab" class="tab">
+<div class="grid">
+<div class="col">
+<article class="card"><div class="head"><div><h2>بيئة الانتشار اللاسلكي ثلاثية المسارات</h2><div class="hint">حرّك محطة الإرسال والمستقبل والمباني — راقب تغير القناة فورياً</div></div><span class="tag">INTERACTIVE CHANNEL</span></div>
+<div class="stagepad"><div class="stage"><canvas id="world" width="1000" height="560"></canvas><div class="tip">اسحب العناصر لتغيير هندسة الانتشار</div></div><div class="tools"><button id="add">＋ إضافة مبنى</button><button id="clear">⌫ حذف المباني</button><button data-preset="los">LOS مباشر</button><button data-preset="blocked">NLOS محجوب</button><button data-preset="multi">Multipath</button><button data-preset="dense">بيئة كثيفة</button></div><div class="legend"><span><i class="dot" style="background:#4be0ad"></i>مباشر</span><span><i class="dot" style="background:#ffc46b"></i>منعكس</span><span><i class="dot" style="background:#ff6f91"></i>محصلة المجال</span><span><i class="dot" style="background:#7895ff"></i>مناطق الانتشار</span></div></div></article>
 <div class="metrics">
-<div class="metric"><small>قوة الاستقبال RSSI</small><div id="rssi" class="value">--</div><small id="quality">--</small></div>
-<div class="metric"><small>فقد المسار Path Loss</small><div id="loss" class="value" style="color:#fbbf24">--</div><small>dB</small></div>
-<div class="metric"><small>المسافة</small><div id="distance" class="value" style="color:#38bdf8">--</div><small>متر تقديري</small></div>
-<div class="metric"><small>حالة الرابط</small><div id="status" class="value">--</div><small>Link status</small></div>
+<div class="metric"><small>Received Power · RSSI</small><div class="value" id="rssi">−68.0 <span class="unit">dBm</span></div><div class="foot">قدرة الاستقبال المقدّرة</div></div>
+<div class="metric"><small>Signal to Noise · SNR</small><div class="value" id="snr">13.0 <span class="unit">dB</span></div><div class="foot">دون احتساب التداخل</div></div>
+<div class="metric"><small>Signal to Interference + Noise</small><div class="value" id="sinr">6.0 <span class="unit">dB</span></div><div class="foot">جودة القناة المقدّرة</div></div>
+<div class="metric"><small>Free Space Path Loss</small><div class="value" id="fspl">80.0 <span class="unit">dB</span></div><div class="foot">خط أساس الفضاء الحر</div></div>
 </div>
-<section class="panel"><h2>بيئة انتشار الموجات - اسحب العناصر لتغيير المشهد</h2><canvas id="world" width="900" height="520"></canvas>
-<div class="legend"><span style="color:#38bdf8">● موجات الإرسال</span><span style="color:#34d399">● المستقبل</span><span style="color:#fbbf24">● انعكاس تقريبي</span><span style="color:#fb7185">● مسار محجوب</span></div></section>
-<section class="panel"><h2>تحليل الإشارة</h2><div id="analysis">جاري التحليل...</div></section>
-</section>
+<article class="card"><div class="head"><div><h2>الإشارة المركبة عند المستقبل</h2><div class="hint">جمع المركبات حسب السعة والطور · Complex baseband illustration</div></div><span class="tag">TIME DOMAIN</span></div><div class="wavepad"><div class="wavecaption"><span>الموجة المستقبلة</span><span id="waveinfo">Direct + reflected components</span></div><canvas id="wave" width="900" height="230"></canvas></div></article>
+</div>
+<aside class="col right">
+<article class="card settings"><div class="head"><div><h2>إعدادات الإرسال والقناة</h2><div class="hint">عدّل المتغيرات وشاهد تأثيرها</div></div><span class="tag">RF PARAMETERS</span></div><div class="controls">
+<div class="control"><div class="ctop"><label>التردد Frequency</label><b id="freqout">2.4 GHz</b></div><input id="freq" type="range" min=".7" max="28" step=".1" value="2.4"><div class="scale"><span>0.7 GHz</span><span>28 GHz</span></div></div>
+<div class="control"><div class="ctop"><label>قدرة الإرسال Tx Power</label><b id="powerout">30 dBm</b></div><input id="power" type="range" min="0" max="46" value="30"><div class="scale"><span>0 dBm</span><span>46 dBm</span></div></div>
+<div class="control"><div class="ctop"><label>سرعة الحركة النسبية</label><b id="speedout">1.5 m/s</b></div><input id="speed" type="range" min="0" max="30" step=".5" value="1.5"><div class="scale"><span>0 m/s</span><span>30 m/s</span></div></div>
+<div class="control"><div class="ctop"><label>مادة العائق (خسارة تعليمية)</label></div><select id="wall"><option value="3">خشب خفيف · 3 dB</option><option value="8">زجاج / حاجز خفيف · 8 dB</option><option value="18" selected>خرسانة مسلحة · 18 dB</option><option value="25">جدار كثيف · 25 dB</option></select></div>
+<div class="control"><div class="ctop"><label>Noise Power</label><b id="noiseout">−104 dBm</b></div><input id="noise" type="range" min="-120" max="-80" value="-104"><div class="scale"><span>−120 dBm</span><span>−80 dBm</span></div></div>
+<div class="control"><div class="ctop"><label>خيارات العرض والتقنيات</label></div><div class="switches">
+<label class="switch"><input type="checkbox" id="heat" checked> خريطة حرارية نسبية</label><label class="switch"><input type="checkbox" id="rays" checked> مسارات الانعكاس</label><label class="switch"><input type="checkbox" id="beam"> مكسب Beamforming</label><label class="switch"><input type="checkbox" id="ris"> مكسب RIS افتراضي</label></div></div></div></article>
+<article class="card"><div class="head"><h2>تحليل القناة الذكي</h2><span class="tag">DIAGNOSTICS</span></div><div class="explain" id="diagnosis">تحليل الحالة...</div></article>
+<article class="card"><div class="head"><h2>ملخص المسارات</h2><span class="tag">CHANNEL MODEL</span></div><div style="padding:4px 12px 10px"><table class="data-table"><thead><tr><th>المسار</th><th>طول المسار</th><th>تأخير نسبي</th></tr></thead><tbody id="pathrows"></tbody></table></div></article>
+</aside></div></section>
+
+<section id="theory" class="tab hidden"><h2 class="section-title">المفاهيم الأساسية ومعادلات المحاضرة</h2><div class="grid"><div class="col">
+<article class="card"><div class="head"><h2>01 · التردد والطول الموجي</h2><span class="tag">WAVELENGTH</span></div><div class="explain">الطول الموجي هو المسافة التي تقطعها الموجة خلال دورة واحدة. سرعة الضوء التقريبية في الفراغ <b>c = 3×10⁸ m/s</b>.</div><div class="formula">λ = c / f</div><div class="explain" id="wavelengthText"></div></article>
+<article class="card"><div class="head"><h2>02 · آليات الانتشار</h2><span class="tag">PROPAGATION</span></div><div class="explain"><b>Reflection:</b> انعكاس الموجة عن سطح مثل الجدار أو الأرض.<br><b>Diffraction:</b> امتداد الطاقة حول حافة عائق.<br><b>Scattering:</b> تشتت الطاقة باتجاهات متعددة بسبب الأسطح الخشنة أو الأجسام.<br><b>Absorption:</b> امتصاص المادة جزءاً من الطاقة.<br><br>هذه آليات وصفية، ولا تعطي وحدها قيمة خسارة رقمية ثابتة.</div></article>
+<article class="card"><div class="head"><h2>03 · التمييز بين أنواع التغير</h2><span class="tag">CHANNEL EFFECTS</span></div><div class="explain"><b>Path Loss:</b> اتجاه متوسط فقد القدرة مع المسافة والسيناريو.<br><b>Shadowing:</b> تغير المتوسط المحلي بسبب العوائق.<br><b>Small-Scale Fading:</b> تغير سريع محلي ناتج عن جمع مركبات متعددة الأطوار والسعات.<br><br><span class="warning">لا يمكن تشخيص هذه التأثيرات الثلاثة من عينة إشارة واحدة فقط.</span></div></article>
+<article class="card"><div class="head"><h2>04 · Multipath والتداخل</h2><span class="tag">PHASE & SUPERPOSITION</span></div><div class="explain">تصل نسخ من الإشارة عبر مسارات مختلفة؛ يختلف طول كل مسار وتأخيره وطورُه. إذا تعززت المركبات يحدث <b>Constructive Interference</b>، وإذا ألغى بعضها بعضاً جزئياً يحدث <b>Destructive Interference</b>. قد يؤدي تحريك المستقبل لمسافة صغيرة إلى تغيير الطور النسبي.</div><div class="formula">E<sub>total</sub> = Σ Aᵢ · e<sup>jφᵢ</sup></div></article>
+</div><div class="col">
+<article class="card"><div class="head"><h2>05 · Free Space Path Loss</h2><span class="tag">ITU-R P.525</span></div><div class="formula">L<sub>FS</sub>(dB) = 32.4 + 20log₁₀(f<sub>MHz</sub>) + 20log₁₀(d<sub>km</sub>)</div><div class="explain">مثال المحاضرة: عند f = 2400 MHz و d = 0.1 km:<div class="formula">32.4 + 67.60 − 20 ≈ 80.0 dB</div><b>مهم:</b> هذه معادلة خط أساس للفضاء الحر، ولا تشمل الجدران أو التظليل أو التلاشي أو التداخل.</div></article>
+<article class="card"><div class="head"><h2>06 · dB و dBm</h2><span class="tag">POWER SCALE</span></div><div class="formula">P(dBm) = 10log₁₀(P(mW))</div><div class="explain">dB تمثل نسبة بين قيمتين، أما dBm فتعبّر عن قدرة مطلقة مرجعها 1 mW. مثال: 1 mW = 0 dBm، و10 mW = 10 dBm. مضاعفة القدرة تعطي زيادة تقارب 3.01 dB.</div></article>
+<article class="card"><div class="head"><h2>07 · SINR</h2><span class="tag">SIGNAL QUALITY</span></div><div class="formula">SINR = S / (I + N)</div><div class="explain">مثال المحاضرة: S=10 mW، I=2 mW، N=0.5 mW. إذن SINR=10/2.5=4، أي <b>6.02 dB</b>. يجب جمع التداخل والضوضاء بوحدات القدرة الخطية أولاً، لا بجمع قيم dBm مباشرة.</div></article>
+</div></div></section>
+
+<section id="budget" class="tab hidden"><h2 class="section-title">حاسبة ميزانية الوصلة Link Budget</h2><div class="grid"><div class="col"><article class="card"><div class="head"><h2>أدخل قيم النظام</h2><span class="tag">LINK CALCULATOR</span></div><div class="controls">
+<div class="control"><div class="ctop"><label>قدرة الإرسال dBm</label><b id="bpout">30 dBm</b></div><input id="bp" type="range" min="0" max="46" value="30"></div>
+<div class="control"><div class="ctop"><label>كسب هوائي الإرسال dBi</label><b id="gtout">2 dBi</b></div><input id="gt" type="range" min="0" max="20" value="2"></div>
+<div class="control"><div class="ctop"><label>كسب هوائي الاستقبال dBi</label><b id="grout">2 dBi</b></div><input id="gr" type="range" min="0" max="20" value="2"></div>
+<div class="control"><div class="ctop"><label>فقد المسار dB</label><b id="blout">100 dB</b></div><input id="bl" type="range" min="40" max="150" value="100"></div>
+<div class="control"><div class="ctop"><label>خسائر أخرى dB</label><b id="olout">2 dB</b></div><input id="ol" type="range" min="0" max="30" value="2"></div>
+<div class="control"><div class="ctop"><label>مستوى الاستقبال المطلوب dBm</label><b id="reqout">−85 dBm</b></div><input id="req" type="range" min="-120" max="-50" value="-85"></div></div></article></div>
+<div class="col"><article class="card"><div class="head"><h2>نتيجة الميزانية</h2><span class="tag">CALCULATED</span></div><div class="explain"><div class="formula">Pᵣₓ = Pₜₓ + Gₜ + Gᵣ − L − Lₒ</div><div class="two"><div class="mini"><small>Received Power</small><strong id="bpr">−68 dBm</strong></div><div class="mini"><small>Fade Margin</small><strong id="margin">17 dB</strong></div></div><p id="budgetExplain"></p><table class="data-table"><tbody id="budgetRows"></tbody></table></div></article></div></div></section>
+
+<section id="doppler" class="tab hidden"><h2 class="section-title">تأثير الحركة والتأخير الزمني</h2><div class="grid"><div class="col"><article class="card"><div class="head"><h2>Doppler Shift Calculator</h2><span class="tag">MOTION</span></div><div class="controls"><div class="control"><div class="ctop"><label>سرعة الحركة m/s</label><b id="dvout">1.5 m/s</b></div><input id="dv" type="range" min="0" max="60" step=".5" value="1.5"></div><div class="control"><div class="ctop"><label>التردد GHz</label><b id="dfout">2.0 GHz</b></div><input id="df" type="range" min=".7" max="28" step=".1" value="2"></div><div class="control"><div class="ctop"><label>زاوية اتجاه الحركة بالنسبة للمسار</label><b id="angleout">0°</b></div><input id="angle" type="range" min="0" max="180" value="0"></div></div></article></div><div class="col"><article class="card"><div class="head"><h2>النتيجة الفيزيائية</h2><span class="tag">DOPPLER</span></div><div class="explain"><div class="formula">f<sub>D</sub> = (v · f / c) cos(θ)</div><div class="mini"><small>Doppler Shift</small><strong id="dopplerResult">10 Hz</strong></div><p id="dopplerText"></p><hr style="border-color:#273854"><h3 style="font-size:12px">Excess Path Delay</h3><div class="control"><div class="ctop"><label>فرق طول المسار بالمتر</label><b id="extraout">300 m</b></div><input id="extra" type="range" min="0" max="1500" step="10" value="300"></div><div class="formula">τ = Δd / c</div><div class="mini"><small>Excess Delay</small><strong id="delayResult">1 μs</strong></div><p id="delayText"></p></div></article></div></div></section>
+
+<section id="guide" class="tab hidden"><h2 class="section-title">دليل التجارب التعليمية</h2><div class="grid"><div class="col">
+<article class="card"><div class="head"><h2>تجربة 01 · أثر المسافة والتردد</h2><span class="tag">5 MIN</span></div><div class="explain">1. اختر LOS مباشر.<br>2. سجّل FSPL عند 100 متر.<br>3. ضاعف المسافة مع تثبيت التردد.<br>4. غيّر التردد إلى الضعف مع تثبيت المسافة.<br><b>المتوقع:</b> يزداد فقد الفضاء الحر بنحو 6.02 dB عند مضاعفة المسافة أو التردد، وفق فرضيات النموذج.</div></article>
+<article class="card"><div class="head"><h2>تجربة 02 · التداخل متعدد المسارات</h2><span class="tag">8 MIN</span></div><div class="explain">1. اختر سيناريو Multipath.<br>2. فعّل مسارات الانعكاس.<br>3. حرّك المستقبل تدريجياً.<br>4. راقب تغيّر المجال المركب وقوة الاستقبال.<br><b>المتوقع:</b> قد يحدث تعزيز أو إلغاء جزئي بسبب اختلاف الأطوار.</div></article>
+<article class="card"><div class="head"><h2>تجربة 03 · ميزانية الوصلة والهامش</h2><span class="tag">6 MIN</span></div><div class="explain">افتح Link Budget واستخدم القيم: 30 dBm قدرة إرسال، 2 dBi لكل هوائي، 100 dB فقد مسار، و2 dB خسائر أخرى. قارن القدرة المستقبلة بعتبة −85 dBm.<br><b>النتيجة:</b> −68 dBm وهامش 17 dB. أضف 20 dB خسارة لترى كيف يصبح الهامش −3 dB.</div></article>
+</div><div class="col">
+<article class="card"><div class="head"><h2>تجربة 04 · SNR مقابل SINR</h2><span class="tag">6 MIN</span></div><div class="explain">استخدم القيم التعليمية S=10 mW، I=2 mW، N=0.5 mW.<br>SNR = 10/0.5 = 20 ≈ 13.01 dB.<br>SINR = 10/(2+0.5) = 4 ≈ 6.02 dB.<br><b>الاستنتاج:</b> تجاهل التداخل يعطي انطباعاً أفضل من جودة القناة الفعلية.</div></article>
+<article class="card"><div class="head"><h2>تجربة 05 · Doppler وDelay</h2><span class="tag">5 MIN</span></div><div class="explain">استخدم 1.5 m/s و2 GHz وزاوية صفر. القيمة القصوى لمقدار Doppler تساوي 10 Hz. ثم استخدم فرق مسار 300 متر لتحصل على تأخير زائد يساوي 1 μs.<br><b>تنبيه:</b> التأخير الزائد لمسار واحد ليس زمن استجابة الإنترنت ولا RMS Delay Spread.</div></article>
+<article class="card"><div class="head"><h2>حدود النموذج العلمي</h2><span class="tag">IMPORTANT</span></div><div class="explain">هذا المختبر نموذج تعليمي مبسّط. أرقام الجدران والمكاسب الافتراضية ليست قياسات ميدانية. نموذج القناة في الرسم توضيحي؛ أما التنبؤ الدقيق فيحتاج هندسة ثلاثية الأبعاد وخصائص المواد والهوائيات وقياسات أو نماذج معيارية معتمدة. لا تستخدمه لتصميم تغطية شبكة فعلية.</div></article>
+</div></div></section>
+<div class="footer">RF STUDIO PRO · Educational engineering simulator · يعتمد المفاهيم والأمثلة التعليمية الواردة في Lecture 05 — Wireless Transmission</div>
 </main>
 <script>
-"use strict";
-const canvas=document.getElementById('world'),ctx=canvas.getContext('2d'),scope=document.getElementById('scope'),sctx=scope.getContext('2d');
-const W=canvas.width,H=canvas.height,SCALE=.35;
-const initial={tower:{x:105,y:255},rx:{x:790,y:255},buildings:[{x:350,y:145,w:85,h:145,name:'بناية 1'},{x:555,y:295,w:95,h:105,name:'بناية 2'}]};
-let tower={...initial.tower},rx={...initial.rx},buildings=initial.buildings.map(b=>({...b}));
-let phase=0,paused=false,drag=null,off={x:0,y:0},last=0,heatCanvas=document.createElement('canvas'),heatCtx=heatCanvas.getContext('2d'),heatDirty=true,lastHeat=0,metrics={};
-heatCanvas.width=450;heatCanvas.height=260;
-const $=id=>document.getElementById(id);
-function intersects(x1,y1,x2,y2,b){
- let t0=0,t1=1,dx=x2-x1,dy=y2-y1,p=[-dx,dx,-dy,dy],q=[x1-b.x,b.x+b.w-x1,y1-b.y,b.y+b.h-y1];
- for(let i=0;i<4;i++){if(p[i]===0){if(q[i]<0)return false}else{let r=q[i]/p[i];if(p[i]<0)t0=Math.max(t0,r);else t1=Math.min(t1,r);if(t0>t1)return false}}
- return t1>0&&t0<1;
+(()=>{'use strict';
+const $=id=>document.getElementById(id), world=$('world'),c=world.getContext('2d'),wave=$('wave'),w=wave.getContext('2d');
+const S={tx:{x:145,y:280},rx:{x:855,y:280},build:[{x:475,y:205,w:76,h:155}],t:0,paused:false,drag:null,metrics:{},paths:[]};
+const C={cyan:'#58e4ff',green:'#4be0ad',gold:'#ffc46b',red:'#ff6f91',blue:'#7895ff',violet:'#bd9bff'};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),log=x=>Math.log10(Math.max(x,1e-20));
+function intersects(a,b,r){let dx=b.x-a.x,dy=b.y-a.y,t0=0,t1=1;let p=[-dx,dx,-dy,dy],q=[a.x-r.x,r.x+r.w-a.x,a.y-r.y,r.y+r.h-a.y];for(let i=0;i<4;i++){if(Math.abs(p[i])<1e-9){if(q[i]<0)return false}else{let t=q[i]/p[i];if(p[i]<0)t0=Math.max(t0,t);else t1=Math.min(t1,t);if(t0>t1)return false}}return true}
+function hits(a,b){return S.build.filter(r=>intersects(a,b,r)).length}
+function fspl(km,mhz){return 32.44+20*log(mhz)+20*log(km)}
+function dbmToMw(v){return Math.pow(10,v/10)}
+function mwToDbm(v){return 10*log(v)}
+function complexPaths(){
+ const f=+$('freq').value*1e9,lambda=3e8/f,metersPerPixel=.12, direct=d(S.tx,S.rx)*metersPerPixel, paths=[{name:'مباشر',len:direct,loss:hits(S.tx,S.rx)*(+$('wall').value),phase:0}];
+ if($('rays').checked)S.build.forEach((b,i)=>[{x:b.x+b.w/2,y:b.y-12},{x:b.x+b.w/2,y:b.y+b.h+12}].forEach((p,j)=>{let len=(d(S.tx,p)+d(p,S.rx))*metersPerPixel;paths.push({name:`انعكاس ${i+1}.${j+1}`,len,loss:3+hhitsDummy(),phase:Math.PI})}));
+ function hhitsDummy(){return 0}
+ const ref=paths[0].len||1;paths.forEach(p=>{p.delay=(p.len-ref)/3e8;p.phase=(2*Math.PI*(p.len-ref)/lambda)+(p.phase||0);p.amp=Math.pow(10,-(fspl(Math.max(.001,p.len/1000),f/1e6)+p.loss)/20)});
+ return paths;
 }
-function atten(x1,y1,x2,y2,ignore){let db=0;for(const b of buildings)if(b!==ignore&&intersects(x1,y1,x2,y2,b))db+=+$('material').value;return Math.pow(10,-db/20)}
-function fieldAt(x,y){
- const f=+$('freq').value*1e6,c=299792458,k=2*Math.PI*f/c;
- const d=Math.max(1,Math.hypot(x-tower.x,y-tower.y)*SCALE);
- let re=atten(tower.x,tower.y,x,y)*Math.cos(k*d),im=atten(tower.x,tower.y,x,y)*Math.sin(k*d);
- for(const b of buildings){
-  const pts=[{x:b.x+b.w/2,y:b.y},{x:b.x+b.w/2,y:b.y+b.h}];
-  for(const p of pts){
-   const d1=Math.hypot(p.x-tower.x,p.y-tower.y)*SCALE,d2=Math.hypot(x-p.x,y-p.y)*SCALE,total=Math.max(1,d1+d2);
-   const a=-.55*(d/total)*atten(tower.x,tower.y,p.x,p.y,b)*atten(p.x,p.y,x,y,b);
-   const ph=k*total;re+=a*Math.cos(ph);im+=a*Math.sin(ph);
-  }
- }
- return Math.max(.00001,Math.hypot(re,im));
+function calculate(){
+ const f=+$('freq').value,mhz=f*1000,km=Math.max(.001,d(S.tx,S.rx)*.12/1000),free=fspl(km,mhz),walls=hits(S.tx,S.rx),wallLoss=walls*(+$('wall').value),paths=complexPaths();
+ const tx=+$('power').value,beam=$('beam').checked?6:0,ris=$('ris').checked?8:0;
+ // Link-budget baseline; multipath is represented as a relative educational fade term, not calibrated ray tracing.
+ const phase=Math.cos((d(S.tx,S.rx)*.12*2*Math.PI/(3e8/(f*1e9)))+S.t*.035);
+ const multipath=$('rays').checked?Math.max(0,7*(1-phase)/2):0;
+ const rx=tx-free-wallLoss-multipath+beam+ris,noise=+$('noise').value;
+ const interference=rx-6+3*Math.sin(S.t*.04); // illustrative interfering power relative to desired signal
+ const snr=rx-noise, sinr=mwToDbm(dbmToMw(rx)/(dbmToMw(interference)+dbmToMw(noise)));
+ S.metrics={km,free,walls,wallLoss,multipath,rx,noise,snr,sinr,phase,interference,lambda:3e8/(f*1e9)};S.paths=paths;
+ $('rssi').innerHTML=`${rx.toFixed(1)} <span class="unit">dBm</span>`;$('snr').innerHTML=`${snr.toFixed(1)} <span class="unit">dB</span>`;$('sinr').innerHTML=`${sinr.toFixed(1)} <span class="unit">dB</span>`;$('fspl').innerHTML=`${free.toFixed(1)} <span class="unit">dB</span>`;
+ $('freqout').textContent=f.toFixed(1)+' GHz';$('powerout').textContent=tx+' dBm';$('speedout').textContent=(+$('speed').value).toFixed(1)+' m/s';$('noiseout').textContent=noise+' dBm';
+ let txt=walls?`<span class="warning">يوجد ${walls} عائق/عوائق على خط النظر المباشر.</span> خسارة الحواجز المفترضة ${wallLoss} dB. `:'<b>خط النظر المباشر LOS متاح</b> في هندسة الرسم. ';
+ txt+=sinr>15?'قيمة SINR التعليمية جيدة نسبياً.':sinr>5?'جودة القناة متوسطة في هذه الفرضيات.':'جودة القناة ضعيفة وفق القيم المفترضة.';
+ txt+=`<br>المسافة التقريبية ${km.toFixed(3)} km، والطول الموجي ${(S.metrics.lambda*100).toFixed(2)} cm.`;
+ if($('beam').checked)txt+='<br>تم تطبيق مكسب افتراضي 6 dB لـ Beamforming.';if($('ris').checked)txt+='<br>تم تطبيق مكسب افتراضي 8 dB لـ RIS.';
+ txt+='<br><span class="warning">النتائج نموذجية وليست قياسات شبكة فعلية.</span>';$('diagnosis').innerHTML=txt;
+ $('pathrows').innerHTML=paths.map(p=>`<tr><td>${p.name}</td><td>${p.len.toFixed(1)} m</td><td>${(p.delay*1e6).toFixed(3)} μs</td></tr>`).join('');
+ $('wavelengthText').innerHTML=`عند التردد الحالي ${f.toFixed(1)} GHz يكون الطول الموجي التقريبي <span class="result">${(S.metrics.lambda*100).toFixed(2)} cm</span>.`;
 }
-function fieldDb(x,y){return 20*Math.log10(fieldAt(x,y))}
-function heatColor(db){
- const stops=[[-24,[24,45,105]],[-17,[37,99,235]],[-11,[6,182,212]],[-5,[16,185,129]],[1,[234,179,8]],[7,[239,68,68]]];
- db=Math.max(-24,Math.min(7,db));let i=0;while(i<stops.length-2&&db>stops[i+1][0])i++;
- const a=stops[i],b=stops[i+1],t=(db-a[0])/(b[0]-a[0]),v=a[1].map((n,j)=>Math.round(n+(b[1][j]-n)*t));
- return `rgb(${v.join(',')})`;
+function grid(){c.fillStyle='#070e1b';c.fillRect(0,0,1000,560);c.strokeStyle='rgba(120,157,205,.085)';c.lineWidth=1;for(let x=0;x<=1000;x+=40){c.beginPath();c.moveTo(x,0);c.lineTo(x,560);c.stroke()}for(let y=0;y<=560;y+=40){c.beginPath();c.moveTo(0,y);c.lineTo(1000,y);c.stroke()}}
+function heat(){if(!$('heat').checked)return;for(let y=8;y<560;y+=16)for(let x=8;x<1000;x+=16){let p={x,y},a=d(p,S.tx),b=d(p,S.rx),phase=Math.cos((a+b)*.09),atten=Math.exp(-a/520)*(1-.16*hits(S.tx,p)),strength=(.5+.5*phase)*atten;c.fillStyle=`hsla(${210-strength*185},90%,58%,${.025+strength*.17})`;c.fillRect(x,y,16,16)}}
+function draw(){
+ grid();heat();
+ for(let i=0;i<6;i++){let r=(S.t*2.1+i*95)%650;c.beginPath();c.arc(S.tx.x,S.tx.y,r,0,Math.PI*2);c.strokeStyle=`rgba(88,228,255,${Math.max(.015,.27-r/900)})`;c.lineWidth=2;c.stroke()}
+ c.save();c.setLineDash([10,8]);c.strokeStyle=C.green;c.lineWidth=3;c.beginPath();c.moveTo(S.tx.x,S.tx.y);c.lineTo(S.rx.x,S.rx.y);c.stroke();c.restore();
+ if($('rays').checked)S.build.forEach(b=>[{x:b.x+b.w/2,y:b.y-12},{x:b.x+b.w/2,y:b.y+b.h+12}].forEach(p=>{c.beginPath();c.moveTo(S.tx.x,S.tx.y);c.lineTo(p.x,p.y);c.lineTo(S.rx.x,S.rx.y);c.strokeStyle='#ffc46b99';c.lineWidth=2;c.stroke()}));
+ c.beginPath();c.moveTo(S.tx.x,S.tx.y);c.lineTo(S.rx.x,S.rx.y);c.strokeStyle='#ff6f9180';c.lineWidth=5;c.stroke();
+ S.build.forEach((b,i)=>{c.save();c.shadowColor='#ff6f9166';c.shadowBlur=20;c.fillStyle='#2b1a36';c.strokeStyle=C.red;c.lineWidth=3;c.beginPath();c.roundRect(b.x,b.y,b.w,b.h,9);c.fill();c.stroke();c.restore();for(let y=b.y+14;y<b.y+b.h-8;y+=30)for(let x=b.x+11;x<b.x+b.w-8;x+=23){c.fillStyle='#ffc46b77';c.fillRect(x,y,12,16)}c.fillStyle='#f5d6e4';c.font='13px Tahoma';c.textAlign='center';c.fillText('مبنى '+(i+1),b.x+b.w/2,b.y-10)});
+ node(S.tx,'محطة الإرسال','gNB · Tx',C.cyan,'⌁');node(S.rx,'المستقبل','UE · Rx',C.gold,'◉');
+ c.fillStyle='#91a4c2';c.font='12px Tahoma';c.textAlign='center';c.fillText(`المسافة: ${(d(S.tx,S.rx)*.12/1000).toFixed(3)} km`,500,535);
 }
-function rebuildHeat(now){
- if(!$('heat').checked)return;
- if(!heatDirty&&now-lastHeat<450)return;
- heatDirty=false;lastHeat=now;
- const w=heatCanvas.width,h=heatCanvas.height,step=6;
- for(let y=0;y<h;y+=step)for(let x=0;x<w;x+=step){
-  const db=fieldDb(x*2,y*2);heatCtx.fillStyle=heatColor(db);heatCtx.fillRect(x,y,step,step);
- }
-}
-function signal(){
- const power=+$('power').value,freq=+$('freq').value,dist=Math.max(1,Math.hypot(rx.x-tower.x,rx.y-tower.y)*SCALE);
- const blocked=buildings.filter(b=>intersects(tower.x,tower.y,rx.x,rx.y,b));
- const wall=blocked.length*(+$('material').value);
- const fspl=32.44+20*Math.log10(freq)+20*Math.log10(dist/1000);
- const intDb=fieldDb(rx.x,rx.y);
- const beam=$('beam').checked?6:0,ris=$('ris').checked?12:0;
- const loss=fspl+wall-intDb-beam-ris,rssi=power-loss;
- metrics={power,freq,dist,blocked,wall,intDb,loss,rssi,beam,ris};
- $('powerVal').textContent=power+' dBm';$('freqVal').textContent=freq+' MHz';$('speedVal').textContent=(+$('speed').value/10).toFixed(1)+'x';
- $('rssi').textContent=rssi.toFixed(1)+' dBm';$('loss').textContent=loss.toFixed(1);$('distance').textContent=dist.toFixed(0)+' m';
- $('quality').textContent='الجودة: '+(rssi>=-70?'ممتازة':rssi>=-85?'متوسطة':rssi>=-100?'ضعيفة':'ضعيفة جداً');
- $('status').textContent=rssi>=-100?'متصل':'ضعيف';$('status').style.color=rssi>=-100?'#34d399':'#fb7185';
- const interference=intDb>1?'تداخل بنّاء غالب':intDb < -3?'تداخل هدّام غالب':'تداخل متوسط';
- $('analysis').innerHTML=`المسافة: <b>${dist.toFixed(1)} m</b><br>العوائق على خط الرؤية: <b>${blocked.length}</b><br>خسارة الحواجز المقدرة: <b>${wall} dB</b><br>مؤشر التداخل النسبي: <b>${intDb.toFixed(2)} dB</b> (${interference})<br>مكسب Beamforming الافتراضي: <b>${beam} dB</b><br>مكسب RIS الافتراضي: <b>${ris} dB</b><br>RSSI المحسوبة: <b>${rssi.toFixed(2)} dBm</b>`;
-}
-function line(x1,y1,x2,y2,color,width=2,dash=[]){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore()}
-function grid(){ctx.strokeStyle='rgba(130,160,190,.12)';ctx.lineWidth=1;for(let x=0;x<W;x+=40)line(x,0,x,H,ctx.strokeStyle);for(let y=0;y<H;y+=40)line(0,y,W,y,ctx.strokeStyle)}
-function drawHeat(now){rebuildHeat(now);if($('heat').checked)ctx.drawImage(heatCanvas,0,0,W,H)}
-function waves(){
- if(!$('wavesOn').checked)return;
- const blocked=metrics.blocked.length>0;
- for(let r=phase%55;r<1050;r+=55){ctx.beginPath();ctx.arc(tower.x,tower.y,r,0,Math.PI*2);ctx.strokeStyle=blocked?'rgba(248,113,113,.35)':'rgba(56,189,248,.48)';ctx.lineWidth=2;ctx.stroke()}
-}
-function rays(){
- const blocked=metrics.blocked.length>0;
- line(tower.x,tower.y,rx.x,rx.y,blocked?'#fb7185':'#38bdf8',2,blocked?[7,6]:[]);
- if(!$('raysOn').checked)return;
- buildings.forEach((b,i)=>{const x=b.x+b.w/2,y=i%2?b.y+b.h:b.y;line(tower.x,tower.y,x,y,'rgba(251,191,36,.6)',1.5,[5,5]);line(x,y,rx.x,rx.y,'rgba(251,191,36,.6)',1.5,[5,5]);ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(x,y,4,0,7);ctx.fill()});
-}
-function drawBuildings(){buildings.forEach(b=>{ctx.fillStyle='#26364d';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.strokeStyle=metrics.blocked.includes(b)?'#fb7185':'#38bdf8';ctx.lineWidth=2;ctx.strokeRect(b.x,b.y,b.w,b.h);for(let x=b.x+10;x<b.x+b.w-8;x+=23)for(let y=b.y+38;y<b.y+b.h-8;y+=28){ctx.fillStyle='#64748b';ctx.fillRect(x,y,11,15)}ctx.fillStyle='white';ctx.font='bold 12px Tahoma';ctx.textAlign='center';ctx.fillText(b.name,b.x+b.w/2,b.y+21)})}
-function drawNodes(){
- ctx.strokeStyle='#38bdf8';ctx.lineWidth=4;line(tower.x,tower.y-22,tower.x,tower.y+15,'#38bdf8',4);line(tower.x,tower.y+12,tower.x-15,tower.y+48,'#38bdf8',3);line(tower.x,tower.y+12,tower.x+15,tower.y+48,'#38bdf8',3);ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(tower.x,tower.y-23,5,0,7);ctx.fill();
- ctx.fillStyle='white';ctx.font='bold 12px Tahoma';ctx.textAlign='center';ctx.fillText('برج الإرسال',tower.x,tower.y-52);
- ctx.fillStyle='#10b981';ctx.beginPath();ctx.arc(rx.x,rx.y,19,0,7);ctx.fill();ctx.fillStyle='#064e3b';ctx.beginPath();ctx.arc(rx.x,rx.y,8,0,7);ctx.fill();ctx.fillStyle='white';ctx.fillText('المستقبل',rx.x,rx.y-30);
-}
-function osc(){sctx.clearRect(0,0,500,115);sctx.strokeStyle='#334155';sctx.beginPath();sctx.moveTo(0,57);sctx.lineTo(500,57);sctx.stroke();sctx.beginPath();for(let x=0;x<500;x++){let y=57+Math.sin(x*.055-phase*.12)*28;if(!x)sctx.moveTo(x,y);else sctx.lineTo(x,y)}sctx.strokeStyle='#a78bfa';sctx.lineWidth=2;sctx.stroke()}
-function draw(now){ctx.clearRect(0,0,W,H);grid();signal();drawHeat(now);waves();rays();drawBuildings();drawNodes();osc()}
-function frame(now){if(!last)last=now;const dt=Math.min((now-last)/16.67,3);last=now;if(!paused)phase+=(+$('speed').value/10)*dt;draw(now);requestAnimationFrame(frame)}requestAnimationFrame(frame);
-function pos(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
-canvas.addEventListener('pointerdown',e=>{const p=pos(e);if(Math.hypot(p.x-rx.x,p.y-rx.y)<28)drag=rx;else if(Math.hypot(p.x-tower.x,p.y-tower.y)<35)drag=tower;else for(let i=buildings.length-1;i>=0;i--){let b=buildings[i];if(p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h){drag=b;break}}if(drag){off={x:p.x-drag.x,y:p.y-drag.y};canvas.setPointerCapture(e.pointerId)}});
-canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pos(e),w=drag.w||0,h=drag.h||0;drag.x=Math.max(20,Math.min(W-w-20,p.x-off.x));drag.y=Math.max(55,Math.min(H-h-20,p.y-off.y));heatDirty=true});
-function endDrag(){drag=null}canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
-function addBuilding(){let n=buildings.length+1;buildings.push({x:260+(n%4)*75,y:100+(n%3)*75,w:80,h:110,name:'بناية '+n});heatDirty=true}
-function removeBuilding(){buildings.pop();heatDirty=true}
-function scenario(type){tower={x:105,y:255};rx={x:790,y:255};buildings=[];if(type==='blocked')buildings=[{x:390,y:160,w:100,h:180,name:'حاجز'}];if(type==='multi')buildings=[{x:310,y:100,w:80,h:160,name:'بناية 1'},{x:500,y:275,w:100,h:130,name:'بناية 2'},{x:650,y:100,w:65,h:120,name:'بناية 3'}];heatDirty=true}
-function togglePause(){paused=!paused;$('pause').textContent=paused?'تشغيل الحركة':'إيقاف الحركة'}
-function resetAll(){tower={...initial.tower};rx={...initial.rx};buildings=initial.buildings.map(b=>({...b}));paused=false;$('pause').textContent='إيقاف الحركة';phase=0;heatDirty=true}
-['power','freq','speed','material','heat','wavesOn','raysOn','beam','ris'].forEach(id=>$(id).addEventListener('input',()=>{heatDirty=true;signal()}));
-</script>
-</body></html>
+function node(p,title,sub,color,icon){c.save();c.shadowColor=color;c.shadowBlur=22;c.beginPath();c.arc(p.x,p.y,27,0,7);c.fillStyle='#11213a';c.fill();c.strokeStyle=color;c.lineWidth=3;c.stroke();c.restore();c.font='25px Arial';c.textAlign='center';c.fillStyle=color;c.fillText(icon,p.x,p.y+8);c.font='bold 13px Tahoma';c.fillStyle='#f0f6ff';c.fillText(title,p.x,p.y+46);c.font='10px Tahoma';c.fillStyle='#91a4c2';c.fillText(sub,p.x,p.y+62)}
+function drawWave(){let W=900,H=230;w.fillStyle='#080f1c';w.fillRect(0,0,W,H);w.strokeStyle='#263750';for(let y=25;y<H;y+=45){w.beginPath();w.moveTo(0,y);w.lineTo(W,y);w.stroke()}w.beginPath();w.moveTo(0,H/2);w.lineTo(W,H/2);w.strokeStyle='#526987';w.stroke();let ph=S.metrics.phase||0,amp=.42+.27*ph-(S.metrics.walls||0)*.07;amp=clamp(amp,.12,.85);w.beginPath();for(let x=0;x<W;x++){let y=H/2-Math.sin(x*.035-S.t*.085)*amp*78-Math.sin(x*.071-S.t*.11+1.3)*amp*20;x?w.lineTo(x,y):w.moveTo(x,y)}w.strokeStyle=C.gold;w.lineWidth=4;w.shadowColor=C.gold;w.shadowBlur=12;w.stroke();w.shadowBlur=0;w.beginPath();for(let x=0;x<W;x++){let y=H/2-Math.sin(x*.035-S.t*.085)*65;x?w.lineTo(x,y):w.moveTo(x,y)}w.strokeStyle='#58e4ff77';w.lineWidth=1.5;w.setLineDash([6,6]);w.stroke();w.setLineDash([])}
+function animate(){if(!S.paused){S.t++;if(S.t%7===0)calculate()}draw();drawWave();requestAnimationFrame(animate)}
+function pointer(e){let r=world.getBoundingClientRect();return{x:(e.clientX-r.left)*1000/r.width,y:(e.clientY-r.top)*560/r.height}}
+world.addEventListener('pointerdown',e=>{let p=pointer(e),items=[{kind:'tx',o:S.tx},{kind:'rx',o:S.rx},...S.build.map(o=>({kind:'b',o}))].reverse(),hit=items.find(q=>q.kind==='b'?p.x>=q.o.x-8&&p.x<=q.o.x+q.o.w+8&&p.y>=q.o.y-8&&p.y<=q.o.y+q.o.h+8:d(p,q.o)<38);if(hit){S.drag={...hit,dx:p.x-hit.o.x,dy:p.y-hit.o.y};world.setPointerCapture(e.pointerId)}});
+world.addEventListener('pointermove',e=>{if(!S.drag)return;let p=pointer(e),q=S.drag;if(q.kind==='b'){q.o.x=clamp(p.x-q.dx,5,995-q.o.w);q.o.y=clamp(p.y-q.dy,45,510-q.o.h)}else{q.o.x=clamp(p.x-q.dx,35,965);q.o.y=clamp(p.y-q.dy,75,485)}calculate()});world.addEventListener('pointerup',()=>S.drag=null);world.addEventListener('pointercancel',()=>S.drag=null);
+$('add').onclick=()=>{S.build.push({x:330+Math.random()*330,y:110+Math.random()*280,w:65,h:125});calculate()};$('clear').onclick=()=>{S.build=[];calculate()};
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{S.tx={x:145,y:280};S.rx={x:855,y:280};let p=b.dataset.preset;S.build=p==='los'?[]:p==='blocked'?[{x:470,y:190,w:90,h:180}]:p==='multi'?[{x:350,y:110,w:65,h:130},{x:590,y:320,w:65,h:130}]:[{x:290,y:90,w:70,h:150},{x:450,y:215,w:80,h:160},{x:640,y:90,w:75,h:150},{x:700,y:370,w:65,h:100}];calculate()});
+$('pause').onclick=()=>{S.paused=!S.paused;$('pause').textContent=S.paused?'▶ تشغيل':'Ⅱ إيقاف'};
+$('reset').onclick=()=>{S.tx={x:145,y:280};S.rx={x:855,y:280};S.build=[{x:475,y:205,w:76,h:155}];S.t=0;S.paused=false;$('pause').textContent='Ⅱ إيقاف';['freq','power','speed','noise'].forEach((id,i)=>$(id).value=[2.4,30,1.5,-104][i]);$('wall').value=18;['heat','rays'].forEach(id=>$(id).checked=true);['beam','ris'].forEach(id=>$(id).checked=false);calculate()};
+document.querySelectorAll('#lab input,#lab select').forEach(el=>el.addEventListener('input',calculate));
+// Link budget
+const ids=['bp','gt','gr','bl','ol','req'],outs=['bpout','gtout','grout','blout','olout','reqout'];
+function budget(){let v=ids.map(id=>+$(id).value);v.forEach((n,i)=>$(outs[i]).textContent=(n<0?'−'+Math.abs(n):n)+' '+(i===0||i===5?'dBm':i===1||i===2?'dBi':'dB'));let [p,gt,gr,l,ol,req]=v,pr=p+gt+gr-l-ol,m=pr-req;$('bpr').textContent=pr.toFixed(1)+' dBm';$('margin').textContent=m.toFixed(1)+' dB';$('margin').style.color=m>=0?'#4be0ad':'#ff6f91';$('budgetExplain').innerHTML=m>=0?`الهامش موجب بمقدار <b>${m.toFixed(1)} dB</b> بالنسبة إلى عتبة الاستقبال المفترضة. لا يثبت وحده جودة SINR أو نجاح التطبيق.`:`الهامش سالب بمقدار <b>${m.toFixed(1)} dB</b>؛ القدرة المقدّرة أقل من العتبة المفترضة.`;$('budgetRows').innerHTML=[['Transmit power',p+' dBm'],['Tx antenna gain','+'+gt+' dB'],['Rx antenna gain','+'+gr+' dB'],['Path loss','−'+l+' dB'],['Other losses','−'+ol+' dB'],['Required level',req+' dBm']].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}
+ids.forEach(id=>$(id).addEventListener('input',budget));
+// Doppler and delay
+function doppler(){let v=+$('dv').value,f=+$('df').value*1e9,a=+$('angle').value,fd=v*f/3e8*Math.cos(a*Math.PI/180),extra=+$('extra').value,delay=extra/3e8*1e6;$('dvout').textContent=v+' m/s';$('dfout').textContent=(f/1e9).toFixed(1)+' GHz';$('angleout').textContent=a+'°';$('dopplerResult').textContent=fd.toFixed(2)+' Hz';$('dopplerText').textContent=`القيمة القصوى للمقدار عند اتجاه الحركة على خط المسار هي ${(v*f/3e8).toFixed(2)} Hz. الزاوية تغيّر الإسقاط على اتجاه المسار.`;$('extraout').textContent=extra+' m';$('delayResult').textContent=delay.toFixed(3)+' μs';$('delayText').textContent='هذا فرق زمن وصول لمسار إضافي مفترض، وليس زمن استجابة الإنترنت ولا RMS Delay Spread.'}
+['dv','df','angle','extra'].forEach(id=>$(id).addEventListener('input',doppler));
+// Tabs
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab))});
+calculate();budget();doppler();requestAnimationFrame(animate);
+})();
+</script></body></html>
