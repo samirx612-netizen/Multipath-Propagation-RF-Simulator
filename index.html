@@ -1,262 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RF Propagation Simulator - Al-Maqal University</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #0b1120;
-            color: #f8fafc;
-            overflow-x: hidden;
-        }
-        canvas {
-            touch-action: none;
-            user-select: none;
-        }
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(56, 189, 248, 0.25);
-        }
-        .metric-card {
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
-            border: 1px solid rgba(148, 163, 184, 0.15);
-        }
-        input[type=range] {
-            accent-color: #38bdf8;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RF Propagation Simulator - Al-Maqal University</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+body{font-family:'Cairo',sans-serif;background-color:#0b1120;color:#f8fafc;overflow-x:hidden;}
+canvas{touch-action:none;user-select:none;}
+.glass-panel{background:rgba(15,23,42,0.9);backdrop-filter:blur(14px);border:1px solid rgba(56,189,248,0.25);}
+.metric-card{background:linear-gradient(145deg,rgba(30,41,59,0.95),rgba(15,23,42,0.95));border:1px solid rgba(148,163,184,0.15);}
+input[type=range]{accent-color:#38bdf8;}
+</style>
 </head>
 <body class="min-h-screen flex flex-col">
-
-    <!-- Header -->
-    <header class="glass-panel border-b border-slate-800 px-4 py-3 sticky top-0 z-30 shadow-lg">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-white/10 border border-sky-400/30 flex items-center justify-center p-1 overflow-hidden shadow-inner">
-                    <img src="57934.jpg" alt="Logo" class="w-full h-full object-contain filter brightness-110" onerror="this.style.display='none'">
-                </div>
-                <div>
-                    <h1 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
-                        <span>Al-Maqal University</span>
-                        <span class="text-xs px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">Cyber Security - Eng</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">Student: <strong class="text-sky-300">Samer</strong> | Advanced RF Propagation Simulator</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <button onclick="loadScenario('los')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition shadow">
-                    LoS Path
-                </button>
-                <button onclick="loadScenario('nlos')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition shadow">
-                    Obstacle + Reflection
-                </button>
-                <button onclick="loadScenario('solved')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/40 hover:bg-sky-500/30 transition shadow">
-                    Smart Solutions
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
-
-        <!-- Controls Sidebar -->
-        <aside class="lg:col-span-4 space-y-4 order-2 lg:order-1">
-            <div class="glass-panel rounded-2xl p-4 space-y-3 shadow-xl">
-                <h2 class="text-sm font-bold text-sky-400 flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i class="fa-solid fa-sliders"></i> RF Power & Frequency Config
-                </h2>
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-300">Tx Power:</span>
-                        <span id="txPowerVal" class="font-bold text-sky-400">45 dBm</span>
-                    </div>
-                    <input id="txPower" type="range" min="20" max="60" value="45" class="w-full">
-                </div>
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-300">Frequency:</span>
-                        <span id="freqVal" class="font-bold text-sky-400">3.5 GHz (5G)</span>
-                    </div>
-                    <input id="freq" type="range" min="800" max="28000" step="500" value="3500" class="w-full">
-                </div>
-            </div>
-
-            <!-- Mitigation Panel -->
-            <div class="glass-panel rounded-2xl p-4 space-y-3 shadow-xl">
-                <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i class="fa-solid fa-shield-halved"></i> Signal Mitigation & Solutions
-                </h2>
-                <label class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer hover:border-sky-500/40">
-                    <input id="solRepeater" type="checkbox" class="mt-1 accent-emerald-500">
-                    <div class="text-xs">
-                        <div class="font-bold text-white">Smart Repeater / RIS</div>
-                        <div class="text-slate-400 text-[11px]">Bypasses obstacles and redirects signal (+20 dB).</div>
-                    </div>
-                </label>
-                <label class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer hover:border-sky-500/40">
-                    <input id="solBeamforming" type="checkbox" class="mt-1 accent-emerald-500">
-                    <div class="text-xs">
-                        <div class="font-bold text-white">MIMO Beamforming</div>
-                        <div class="text-slate-400 text-[11px]">Focuses energy directly toward the receiver.</div>
-                    </div>
-                </label>
-                <div class="flex gap-2 pt-1">
-                    <button onclick="addBuilding()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white border border-slate-700 transition">
-                        <i class="fa-solid fa-building ml-1 text-amber-400"></i> + Add Building
-                    </button>
-                    <button onclick="removeBuilding()" class="px-3 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 text-xs font-bold text-rose-300 border border-rose-800/50 transition">
-                        Remove
-                    </button>
-                </div>
-            </div>
-
-            <!-- Spectrum Analyzer -->
-            <div class="glass-panel rounded-2xl p-4 space-y-2 shadow-xl">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xs font-bold text-purple-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-wave-square"></i> Spectrum Analyzer
-                    </h2>
-                    <span id="phaseStatus" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Synced</span>
-                </div>
-                <canvas id="scopeCanvas" width="360" height="95" class="w-full rounded-xl bg-slate-950 border border-slate-800"></canvas>
-            </div>
-        </aside>
-
-        <!-- Simulation Area -->
-        <section class="lg:col-span-8 flex flex-col gap-4 order-1 lg:order-2">
-            <!-- Telemetry Metrics -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                <div class="metric-card rounded-xl p-3 shadow-lg">
-                    <div class="text-[11px] text-slate-400">RSSI</div>
-                    <div id="rssiMetric" class="text-xl font-extrabold text-emerald-400 mt-0.5">-65.2 dBm</div>
-                    <div id="signalQualityText" class="text-[11px] font-semibold text-emerald-300">Excellent</div>
-                </div>
-                <div class="metric-card rounded-xl p-3 shadow-lg">
-                    <div class="text-[11px] text-slate-400">Path Loss</div>
-                    <div id="pathLossMetric" class="text-xl font-extrabold text-amber-400 mt-0.5">102.4 dB</div>
-                    <div id="distanceText" class="text-[11px] text-slate-400">Dist: 160m</div>
-                </div>
-                <div class="metric-card rounded-xl p-3 shadow-lg">
-                    <div class="text-[11px] text-slate-400">Path Status</div>
-                    <div id="reflectionMetric" class="text-lg font-extrabold text-sky-400 mt-0.5">Direct LoS</div>
-                    <div id="multipathLossText" class="text-[11px] text-slate-400">Multipath Active</div>
-                </div>
-                <div class="metric-card rounded-xl p-3 shadow-lg">
-                    <div class="text-[11px] text-slate-400">Throughput</div>
-                    <div id="snrMetric" class="text-xl font-extrabold text-purple-400 mt-0.5">180 Mbps</div>
-                    <div id="speedText" class="text-[11px] text-slate-300">Secure link</div>
-                </div>
-            </div>
-
-            <!-- Canvas View -->
-            <div class="glass-panel rounded-2xl p-3 flex-1 flex flex-col relative shadow-2xl">
-                <div class="flex justify-between items-center mb-2 px-1 text-xs text-slate-300 font-semibold">
-                    <span><i class="fa-solid fa-hand-pointer text-sky-400 ml-1"></i> Drag <strong>Buildings</strong> or <strong>Receiver</strong> freely!</span>
-                    <span class="text-[11px] text-sky-400 font-bold">Samer | Al-Maqal Univ</span>
-                </div>
-                <div class="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-[#070b14]">
-                    <canvas id="simCanvas" width="820" height="440" class="w-full h-auto block cursor-grab active:cursor-grabbing"></canvas>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        const canvas = document.getElementById('simCanvas');
-        const ctx = canvas.getContext('2d');
-        const scopeCanvas = document.getElementById('scopeCanvas');
-        const scopeCtx = scopeCanvas.getContext('2d');
-
-        let phase = 0;
-        const tower = { x: 130, y: 220 };
-        const receiver = { x: 700, y: 220, r: 22 };
-        let buildings = [
-            { x: 360, y: 150, w: 75, h: 140, name: 'Building 1' },
-            { x: 500, y: 280, w: 90, h: 90, name: 'Building 2' }
-        ];
-
-        let activeTarget = null;
-        let dragOffsetX = 0;
-        let dragOffsetY = 0;
-
-        function getSignalColor(dbm) {
-            if (dbm >= -70) return '#10b981';
-            if (dbm >= -85) return '#f59e0b';
-            if (dbm >= -98) return '#f97316';
-            return '#ef4444';
-        }
-
-        function drawAdvancedWaves(tx, rx, currentDbm, isBlocked) {
-            const dx = rx.x - tx.x;
-            const dy = rx.y - tx.y;
-            const dist = Math.hypot(dx, dy);
-            const angle = Math.atan2(dy, dx);
-
-            ctx.save();
-            ctx.lineWidth = 1.8;
-            for (let r = (phase * 15) % 40; r < dist; r += 40) {
-                const alpha = Math.max(0, 1 - r / dist);
-                ctx.strokeStyle = isBlocked ? `rgba(239, 68, 68, ${alpha * 0.4})` : `rgba(56, 189, 248, ${alpha * 0.5})`;
-                ctx.beginPath();
-                ctx.arc(tx.x, tx.y, r, -Math.PI/3, Math.PI/3);
-                ctx.stroke();
-            }
-            ctx.restore();
-
-            ctx.save();
-            ctx.translate(tx.x, tx.y);
-            ctx.rotate(angle);
-            const steps = Math.max(30, Math.floor(dist / 4));
-            for (let i = 0; i < steps; i++) {
-                const t1 = i / steps, t2 = (i + 1) / steps;
-                const px1 = t1 * dist, px2 = t2 * dist;
-                const py1 = Math.sin(px1 * 0.08 - phase * 2) * 6;
-                const py2 = Math.sin(px2 * 0.08 - phase * 2) * 6;
-                ctx.strokeStyle = getSignalColor(currentDbm);
-                ctx.lineWidth = isBlocked ? 2 : 3.5;
-                ctx.beginPath(); ctx.moveTo(px1, py1); ctx.lineTo(px2, py2); ctx.stroke();
-            }
-            ctx.restore();
-
-            buildings.forEach((b, idx) => {
-                const reflX = b.x + b.w / 2;
-                const reflY = idx % 2 === 0 ? b.y - 10 : b.y + b.h + 10;
-                
-                ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
-                ctx.lineWidth = 1.5;
-                ctx.setLineDash([4, 4]);
-                ctx.beginPath(); ctx.moveTo(tx.x, tx.y); ctx.lineTo(reflX, reflY); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(reflX, reflY); ctx.lineTo(rx.x, rx.y); ctx.stroke();
-                ctx.setLineDash([]);
-
-                ctx.fillStyle = '#f59e0b';
-                ctx.beginPath(); ctx.arc(reflX, reflY, 4, 0, Math.PI*2); ctx.fill();
-            });
-        }
-
-        function checkCollision(tx, rx, b) {
-            return (rx.x > b.x && rx.x < b.x + b.w && rx.y > b.y && rx.y < b.y + b.h) ||
-                   (tx.x < b.x + b.w && rx.x > b.x && Math.min(tx.y, rx.y) < b.y + b.h && Math.max(tx.y, rx.y) > b.y);
-        }
-
-        function loop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            phase += 0.08;
-
-            const txPower = parseFloat(document.getElementById('txPower').value);
-            const freqMHz = parseFloat(document.getElementById('freq').value);
-            const isRepeaterOn = document.getElementById('solRepeater').checked;
-            const isBeamformingOn = document.getElementById('solBeamforming').checked;
-
-            document.getElementById('txPowerVal').textContent = `${txPower} dBm`;
-            document.getElementById('freqVal').textContent = `${(freqMHz / 1000).toFixed(1)} GHz`;
-
-            let isBlocked =
-                
+<header class="glass-panel border-b border-slate-800 px-4 py-3 sticky top-0 z-30 shadow-lg">
+<div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-white/10 border border-sky-400/30 flex items-center justify-center p-1 overflow-hidden shadow-inner">
+<img src="57934.jpg" alt="Logo" class="w-full h-full object-contain filter brightness-110" onerror="this.style.display='none'">
+</div>
+<div>
+<h1 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+<span>Al-Maqal University</span>
+<span class="text-xs px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">Cyber Security - Eng</span>
+</h1>
+<p class="text-xs text-slate-400">Student: <strong class="text-sky-300">Samer</strong> | Advanced RF Simulator</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button onclick="loadScenario('los')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition shadow">LoS Path</button>
+<button onclick="loadScenario('nlos')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition shadow">Obstacle</button>
+<button onclick="loadScenario('solved')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/40 hover:bg-sky-500/30 transition shadow">Solutions</button>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
+<aside class="lg:col-span-4 space-y-4 order-2 lg:order-1">
+<div class="glass-panel rounded-2xl p-4 space-y-3 shadow-xl">
+<h2 class="text-sm font-bold text-sky-400 flex items-center gap-2 border-b border-slate-800 pb-2"><i class="fa-solid fa-sliders"></i> RF Config</h2>
+<div>
+<div class="flex justify-between text-xs mb-1"><span class="text-slate-300">Tx Power:</span><span id="txPowerVal" class="font-bold text-sky-400">45 dBm</span></div>
+<input id="txPower" type="range" min="20" max="60" value="45" class="w-full">
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1"><span class="text-slate-300">Frequency:</span><span id="freqVal" class="font-bold text-sky-400">3.5 GHz (5G)</span></div>
+<input id="freq" type="range" min="800" max="28000" step="500" value="3500" class="w-full">
+</div>
+</div>
+<div class="glass-panel rounded-2xl p-4 space-y-3 shadow-xl">
+<h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2 border-b border-slate-800 pb-2"><i class="fa-solid fa-shield-halved"></i> Mitigation</h2>
+<label class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer">
+<input id="solRepeater" type="checkbox" class="mt-1 accent-emerald-500">
+<div class="text-xs"><div class="font-bold text-white">Smart Repeater (RIS)</div><div class="text-slate-400 text-[11px]">Bypasses obstacles (+20 dB).</div></div>
+</label>
+<label class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer">
+<input id="solBeamforming" type="checkbox" class="mt-1 accent-emerald-500">
+<div class="text-xs"><div class="font-bold text-white">MIMO Beamforming</div><div class="text-slate-400 text-[11px]">Focuses energy toward receiver.</div></div>
+</label>
+<div class="flex gap-2 pt-1">
+<button onclick="addBuilding()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white border border-slate-700">+ Building</button>
+<button onclick="removeBuilding()" class="px-3 py-2 rounded-xl bg-rose-950/60 text-xs font-bold text-rose-300 border border-rose-800/50">Remove</button>
+</div>
+</div>
+<div class="glass-panel rounded-2xl p-4 space-y-2 shadow-xl">
+<div class="flex justify-between items-center"><h2 class="text-xs font-bold text-purple-400"><i class="fa-solid fa-wave-square"></i> Spectrum Analyzer</h2><span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Synced</span></div>
+<canvas id="scopeCanvas" width="360" height="95" class="w-full rounded-xl bg-slate-950 border border-slate-800"></canvas>
+</div>
+</aside>
+<section class="lg:col-span-8 flex flex-col gap-4 order-1 lg:order-2">
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+<div class="metric-card rounded-xl p-3 shadow-lg"><div class="text-[11px] text-slate-400">RSSI</div><div id="rssiMetric" class="text-xl font-extrabold text-emerald-400 mt-0.5">-65.2 dBm</div><div id="signalQualityText" class="text-[11px] font-semibold text-emerald-300">Excellent</div></div>
+<div class="metric-card rounded-xl p-3 shadow-lg"><div class="text-[11px] text-slate-400">Path Loss</div><div id="pathLossMetric" class="text-xl font-extrabold text-amber-400 mt-0.5">102.4 dB</div><div id="distanceText" class="text-[11px] text-slate-400">Dist: 160m</div></div>
+<div class="metric-card rounded-xl p-3 shadow-lg"><div class="text-[11px] text-slate-400">Path Status</div><div id="reflectionMetric" class="text-lg font-extrabold text-sky-400 mt-0.5">Direct LoS</div><div id="multipathLossText" class="text-[11px] text-slate-400">Multipath Active</div></div>
+<div class="metric-card rounded-xl p-3 shadow-lg"><div class="text-[11px] text-slate-400">Throughput</div><div id="snrMetric" class="text-xl font-extrabold text-purple-400 mt-0.5">180 Mbps</div><div id="speedText" class="text-[11px] text-slate-300">Secure link</div></div>
+</div>
+<div class="glass-panel rounded-2xl p-3 flex-1 flex flex-col relative shadow-2xl">
+<div class="flex justify-between items-center mb-2 px-1 text-xs text-slate-300 font-semibold"><span><i class="fa-solid fa-hand-pointer text-sky-400 ml-1"></i> Drag <strong>Buildings</strong> or <strong>Receiver</strong> freely!</span><span class="text-[11px] text-sky-400 font-bold">Samer | Al-Maqal Univ</span></div>
+<div class="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-[#070b14]">
+<canvas id="simCanvas" width="820" height="440" class="w-full h-auto block cursor-grab active:cursor-grabbing"></canvas>
+</div>
+</div>
+</section>
+</main>
+<script>
+const canvas=document.getElementById('simCanvas'),ctx=canvas.getContext('2d');
+const scopeCanvas=document.getElementById('scopeCanvas'),scopeCtx=scopeCanvas.getContext('2d');
+let phase=0,tower={x:130,y:220},receiver={x:700,y:220,r:22};
+let buildings=[{x:360,y:150,w:75,h:140,name:'Building 1'},{x:500,y:280,w:90,h:90,name:'Building 2'}];
+let activeTarget=null,dragOffsetX=0,dragOffsetY=0;
+function getSignalColor(d){return d>=-70?'#10b981':d>=-85?'#f59e0b':d>=-98?'#f97316':'#ef4444';}
+function drawAdvancedWaves(tx,rx,curDbm,isBlocked){
+let dx=rx.x-tx.x,dy=rx.y-tx.y,dist=Math.hypot(dx,dy),angle=Math.atan2(dy,dx);
+ctx.save();ctx.lineWidth=1.8;
+for(let r=(phase*15)%40;r<dist;r+=40){
+let alpha=Math.max(0,1-r/dist);
+ctx.strokeStyle=isBlocked?`rgba(239,68,68,${alpha*0.4})`:`rgba(56,189,248,${alpha*0.5})`;
+ctx.beginPath();ctx.arc(tx.x,tx.y,r,-Math.PI/3,Math.PI/3);ctx.stroke();
+}
+ctx.restore();
+ctx.save();ctx.translate(tx.x,tx.y);ctx.rotate(angle);
+let steps=Math.max(30,Math.floor(dist/4));
+for(let i=0;i<steps;i++){
+let t1=i/steps,t2=(i+1)/steps,px1=t1*dist,px2=t2*dist;
+let py1=Math.sin(px1*0.08-phase*2)*6,py2=Math.sin(px2*0.08-phase*2)*6;
+ctx.strokeStyle=getSignalColor(curDbm);ctx.lineWidth=isBlocked?2:3.5;
+ctx.beginPath();ctx.moveTo(px1,py1);ctx.lineTo(px2,py2);ctx.stroke();
+}
+ctx.restore();
+buildings.forEach((b,idx)=>{
+let reflX=b.x+b.w/2,reflY=idx%2===0?b.y-10:b.y+b.h+10;
+ctx.strokeStyle='rgba(245,158,11,0.4)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+ctx.beginPath();ctx.moveTo(tx.x,tx.y);ctx.lineTo(reflX,reflY);ctx.stroke();
+ctx.beginPath();ctx.moveTo(reflX,reflY);ctx.lineTo(rx.x,rx.y);ctx.stroke();
+ctx.setLineDash([]);
+ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.arc(reflX,reflY,4,0,Math.PI*2);ctx.fill();
+});
+}
+function checkCollision(tx,rx,b){
+return(rx.x>b.x&&rx.x<b.x+b.w&&rx.y>b.y&&rx.y<b.y+b.h)||(tx.x<b.x+b.w&&rx.x>b.x&&Math.min(tx.y,rx.y)<b.y+b.h&&Math.max(tx.y,rx.y)>b.y);
+}
+function loop(){
+ctx.clearRect(0,0,canvas.width,canvas.height);phase+=0.08;
+let txPower=parseFloat(document.getElementById('txPower').value);
+let freqMHz=parseFloat(document.getElementById('freq').value);
+let isRepeaterOn=document.getElementById('solRepeater').checked;
+let isBeamformingOn=document.getElementById('solBeamforming').checked;
+document.getElementById('txPowerVal').textContent=`${txPower} dBm`;
+document.getElementById('freqVal').textContent=`${(freqMHz/1000).toFixed(1)} GHz`;
+let isBlocked=false;buildings.forEach(b=>{if(checkCollision(tower,receiver,b))isBlocked=true;});
+let distPx=Math.hypot(receiver.x-tower.x,receiver.y-tower.y),distM=Math.round(distPx*0.35);
+let pathLoss=Math.round(28+22*Math.log10(Math.max(10,distM))+20*Math.log10(freqMHz/1000));
+if(isBlocked)pathLoss+=25;if(isBeamformingOn)pathLoss-=8;if(isRepeaterOn)pathLoss-=18;
+let rssi=Math.round(txPower-pathLoss);if(rssi>-45)rssi=-45;
+document.getElementById('rssiMetric').textContent=`${rssi} dBm`;
+document.getElementById('pathLossMetric').textContent=`${pathLoss} dB`;
+document.getElementById('distanceText').textContent=`Dist: ${distM}m`;
+let sigText=document.getElementById('signalQualityText');
+if(rssi>=-70){sigText.textContent='Excellent';sigText.className='text-[11px] font-semibold text-emerald-300';}
+else if(rssi>=-85){sigText.textContent='Moderate';sigText.className='text-[11px] font-semibold text-amber-300';}
+else{sigText.textContent='Weak / Blocked';sigText.className='text-[11px] font-semibold text-rose-400';}
+buildings.forEach(b=>{
+ctx.fillStyle='#1e293b';ctx.fillRect(b.x,b.y,b.w,b.h);
+ctx.strokeStyle=isBlocked?'#ef4444':'#38bdf8';ctx.lineWidth=2;ctx.strokeRect(b.x,b.y,b.w,b.h);
+ctx.fillStyle='#f8fafc';ctx.font='bold 11px Cairo';ctx.fillText(b.name,b.x+10,b.y+22);
+ctx.fillStyle='#94a3b8';ctx.font='9px Cairo';ctx.fillText('Drag me ✋',b.x+10,b.y+38);
+});
+ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(tower.x,tower.y,18,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#fff';ctx.font='bold 11px Cairo';ctx.fillText('gNB Tower',tower.x-30,tower.y-25);
+ctx.fillStyle='#10b981';ctx.beginPath();ctx.arc(receiver.x,receiver.y,receiver.r,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#fff';ctx.fillText('Receiver (Samer)',receiver.x-45,receiver.y-28);
+drawAdvancedWaves(tower,receiver,rssi,isBlocked);
+scopeCtx.clearRect(0,0,scopeCanvas.width,scopeCanvas.height);
+scopeCtx.strokeStyle='#38bdf8';scopeCtx.lineWidth=2;scopeCtx.beginPath();
+for(let i=0;i<scopeCanvas.width;i++){
+let y=scopeCanvas.height/2+Math.sin(i*0.06-phase*3)*(rssi>-80?25:8);
+if(i===0)scopeCtx.moveTo(i,y);else scopeCtx.lineTo(i,y);
+}
+scopeCtx.stroke();
+requestAnimationFrame(loop);
+}
+loop();
+canvas.addEventListener('pointerdown',(e)=>{
+let rect=canvas.getBoundingClientRect();
+let x=(e.clientX-rect.left)*(canvas.width/rect.width),y=(e.clientY-rect.top)*(canvas.height/rect.height);
+if(Math.hypot(x-receiver.x,y-receiver.y)<receiver.r+15){activeTarget=receiver;return;}
+for(let b of buildings){
+if(x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h){activeTarget=b;dragOffsetX=x-b.x;dragOffsetY=y-b.y;break;}
+}
+});
+canvas.addEventListener('pointermove',(e)=>{
+if(!activeTarget)return;
+let rect=canvas.getBoundingClientRect();
+let x=(e.clientX-rect.left)*(canvas.width/rect.width),y=(e.clientY-rect.top)*(canvas.height/rect.height);
+if(activeTarget===receiver){receiver.x=x;receiver.y=y;}
+else{activeTarget.x=x-dragOffsetX;activeTarget.y=y-dragOffsetY;}
+});
+canvas.addEventListener('pointerup',()=>activeTarget=null);
+function loadScenario(type){
+if(type==='los'){receiver.x=700;receiver.y=220;buildings[0].x=1000;}
+else if(type==='nlos'){receiver.x=700;receiver.y=100;buildings[0].x=360;buildings[0].y=150;}
+else if(type==='solved'){receiver.x=720;receiver.y=360;document.getElementById('solRepeater').checked=true;}
+}
+function addBuilding(){buildings.push({x:420,y:80,w:70,h:100,name:`Building ${buildings.length+1}`});}
+function removeBuilding(){if(buildings.length>0)buildings.pop();}
+</script>
+</body>
+</html>
