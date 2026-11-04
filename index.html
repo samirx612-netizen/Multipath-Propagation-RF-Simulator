@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محاكي انتشار إشارات الاتصالات المتقدم (RF Pro) - جامعة المعقل</title>
+    <title>RF Propagation Simulator - Al-Maqal University</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -39,25 +39,25 @@
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-xl bg-white/10 border border-sky-400/30 flex items-center justify-center p-1 overflow-hidden shadow-inner">
-                    <img src="57934.jpg" alt="شعار جامعة المعقل" class="w-full h-full object-contain filter brightness-110" onerror="this.style.display='none'">
+                    <img src="57934.jpg" alt="Logo" class="w-full h-full object-contain filter brightness-110" onerror="this.style.display='none'">
                 </div>
                 <div>
                     <h1 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
-                        <span>جامعة المعقل</span>
-                        <span class="text-xs px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">كلية الهندسة - أمن سيبراني</span>
+                        <span>Al-Maqal University</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">Cyber Security - Eng</span>
                     </h1>
-                    <p class="text-xs text-slate-400">إعداد الطالب: <strong class="text-sky-300">سامر</strong> | محاكي انتشار الموجات والاتصالات المتقدم (RF Pro v3)</p>
+                    <p class="text-xs text-slate-400">Student: <strong class="text-sky-300">Samer</strong> | Advanced RF Propagation Simulator</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="loadScenario('los')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition shadow">
-                    مسار مباشر (LoS)
+                    LoS Path
                 </button>
                 <button onclick="loadScenario('nlos')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition shadow">
-                    حاجز + انعكاس
+                    Obstacle + Reflection
                 </button>
                 <button onclick="loadScenario('solved')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/40 hover:bg-sky-500/30 transition shadow">
-                    الحلول الذكية
+                    Smart Solutions
                 </button>
             </div>
         </div>
@@ -70,68 +70,60 @@
         <aside class="lg:col-span-4 space-y-4 order-2 lg:order-1">
             <div class="glass-panel rounded-2xl p-4 space-y-3 shadow-xl">
                 <h2 class="text-sm font-bold text-sky-400 flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i class="fa-solid fa-sliders"></i> إعدادات التردد والقدرة (RF Config)
+                    <i class="fa-solid fa-sliders"></i> RF Power & Frequency Config
                 </h2>
                 <div>
                     <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-300">قدرة البرج (Tx Power):</span>
+                        <span class="text-slate-300">Tx Power:</span>
                         <span id="txPowerVal" class="font-bold text-sky-400">45 dBm</span>
                     </div>
                     <input id="txPower" type="range" min="20" max="60" value="45" class="w-full">
                 </div>
                 <div>
                     <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-300">التردد (Frequency):</span>
+                        <span class="text-slate-300">Frequency:</span>
                         <span id="freqVal" class="font-bold text-sky-400">3.5 GHz (5G)</span>
                     </div>
                     <input id="freq" type="range" min="800" max="28000" step="500" value="3500" class="w-full">
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-300 mb-1">مادة البنايات العائقة:</label>
-                    <select id="materialSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-sky-400">
-                        <option value="concrete">خرسانة مسلحة (فقد عالي: 30 dB)</option>
-                        <option value="brick">طابوق اعتيادي (فقد: 16 dB)</option>
-                        <option value="glass">واجهات زجاجية (فقد: 8 dB)</option>
-                    </select>
                 </div>
             </div>
 
             <!-- Mitigation Panel -->
             <div class="glass-panel rounded-2xl p-4 space-y-3 shadow-xl">
                 <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i class="fa-solid fa-shield-halved"></i> معالجة تداخل الانعكاسات (Mitigation)
+                    <i class="fa-solid fa-shield-halved"></i> Signal Mitigation & Solutions
                 </h2>
                 <label class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer hover:border-sky-500/40">
                     <input id="solRepeater" type="checkbox" class="mt-1 accent-emerald-500">
                     <div class="text-xs">
-                        <div class="font-bold text-white">تفعيل عاكس ذكي / مكرر إشارة (RIS)</div>
-                        <div class="text-slate-400 text-[11px]">يتجاوز الحواجز ويعيد توجيه شعاع الموجة (+20 dB).</div>
+                        <div class="font-bold text-white">Smart Repeater / RIS</div>
+                        <div class="text-slate-400 text-[11px]">Bypasses obstacles and redirects signal (+20 dB).</div>
                     </div>
                 </label>
                 <label class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer hover:border-sky-500/40">
                     <input id="solBeamforming" type="checkbox" class="mt-1 accent-emerald-500">
                     <div class="text-xs">
-                        <div class="font-bold text-white">توجيه الحزمة الذكي (MIMO Beamforming)</div>
-                        <div class="text-slate-400 text-[11px]">تركيز طاقة الموجات مباشرة نحو المستقبِل.</div>
+                        <div class="font-bold text-white">MIMO Beamforming</div>
+                        <div class="text-slate-400 text-[11px]">Focuses energy directly toward the receiver.</div>
                     </div>
                 </label>
                 <div class="flex gap-2 pt-1">
                     <button onclick="addBuilding()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white border border-slate-700 transition">
-                        <i class="fa-solid fa-building ml-1 text-amber-400"></i> + إضافة بناية
+                        <i class="fa-solid fa-building ml-1 text-amber-400"></i> + Add Building
                     </button>
                     <button onclick="removeBuilding()" class="px-3 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 text-xs font-bold text-rose-300 border border-rose-800/50 transition">
-                        حذف بناية
+                        Remove
                     </button>
                 </div>
             </div>
 
-            <!-- Spectrum / Oscilloscope -->
+            <!-- Spectrum Analyzer -->
             <div class="glass-panel rounded-2xl p-4 space-y-2 shadow-xl">
                 <div class="flex justify-between items-center">
                     <h2 class="text-xs font-bold text-purple-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-wave-square"></i> راصد تحليل الطيف (Spectrum Analyzer)
+                        <i class="fa-solid fa-wave-square"></i> Spectrum Analyzer
                     </h2>
-                    <span id="phaseStatus" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">موجة متزامنة</span>
+                    <span id="phaseStatus" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Synced</span>
                 </div>
                 <canvas id="scopeCanvas" width="360" height="95" class="w-full rounded-xl bg-slate-950 border border-slate-800"></canvas>
             </div>
@@ -142,32 +134,32 @@
             <!-- Telemetry Metrics -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <div class="metric-card rounded-xl p-3 shadow-lg">
-                    <div class="text-[11px] text-slate-400">قوة الإشارة (RSSI)</div>
+                    <div class="text-[11px] text-slate-400">RSSI</div>
                     <div id="rssiMetric" class="text-xl font-extrabold text-emerald-400 mt-0.5">-65.2 dBm</div>
-                    <div id="signalQualityText" class="text-[11px] font-semibold text-emerald-300">إشارة ممتازة</div>
+                    <div id="signalQualityText" class="text-[11px] font-semibold text-emerald-300">Excellent</div>
                 </div>
                 <div class="metric-card rounded-xl p-3 shadow-lg">
-                    <div class="text-[11px] text-slate-400">فقد المسار (Path Loss)</div>
+                    <div class="text-[11px] text-slate-400">Path Loss</div>
                     <div id="pathLossMetric" class="text-xl font-extrabold text-amber-400 mt-0.5">102.4 dB</div>
-                    <div id="distanceText" class="text-[11px] text-slate-400">المسافة: 160م</div>
+                    <div id="distanceText" class="text-[11px] text-slate-400">Dist: 160m</div>
                 </div>
                 <div class="metric-card rounded-xl p-3 shadow-lg">
-                    <div class="text-[11px] text-slate-400">حالة المسار والانعكاس</div>
-                    <div id="reflectionMetric" class="text-lg font-extrabold text-sky-400 mt-0.5">مسار مباشر</div>
-                    <div id="multipathLossText" class="text-[11px] text-slate-400">انعكاسات متعددة نشطة</div>
+                    <div class="text-[11px] text-slate-400">Path Status</div>
+                    <div id="reflectionMetric" class="text-lg font-extrabold text-sky-400 mt-0.5">Direct LoS</div>
+                    <div id="multipathLossText" class="text-[11px] text-slate-400">Multipath Active</div>
                 </div>
                 <div class="metric-card rounded-xl p-3 shadow-lg">
-                    <div class="text-[11px] text-slate-400">معدل البيانات (Throughput)</div>
+                    <div class="text-[11px] text-slate-400">Throughput</div>
                     <div id="snrMetric" class="text-xl font-extrabold text-purple-400 mt-0.5">180 Mbps</div>
-                    <div id="speedText" class="text-[11px] text-slate-300">أمان عالي مفعل</div>
+                    <div id="speedText" class="text-[11px] text-slate-300">Secure link</div>
                 </div>
             </div>
 
             <!-- Canvas View -->
             <div class="glass-panel rounded-2xl p-3 flex-1 flex flex-col relative shadow-2xl">
                 <div class="flex justify-between items-center mb-2 px-1 text-xs text-slate-300 font-semibold">
-                    <span><i class="fa-solid fa-hand-pointer text-sky-400 ml-1"></i> اسحب <strong>البنايات</strong> أو <strong>المستقبل</strong> بالماوس أو اللمس لتغيير المحاكاة بحرية!</span>
-                    <span class="text-[11px] text-sky-400 font-bold">إعداد: سامر (أمن سيبراني - جامعة المعقل)</span>
+                    <span><i class="fa-solid fa-hand-pointer text-sky-400 ml-1"></i> Drag <strong>Buildings</strong> or <strong>Receiver</strong> freely!</span>
+                    <span class="text-[11px] text-sky-400 font-bold">Samer | Al-Maqal Univ</span>
                 </div>
                 <div class="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-[#070b14]">
                     <canvas id="simCanvas" width="820" height="440" class="w-full h-auto block cursor-grab active:cursor-grabbing"></canvas>
@@ -186,11 +178,11 @@
         const tower = { x: 130, y: 220 };
         const receiver = { x: 700, y: 220, r: 22 };
         let buildings = [
-            { x: 360, y: 150, w: 75, h: 140, name: 'بناية 1' },
-            { x: 500, y: 280, w: 90, h: 90, name: 'بناية 2' }
+            { x: 360, y: 150, w: 75, h: 140, name: 'Building 1' },
+            { x: 500, y: 280, w: 90, h: 90, name: 'Building 2' }
         ];
 
-        let draggingItem = null;
+        let activeTarget = null;
         let dragOffsetX = 0;
         let dragOffsetY = 0;
 
@@ -201,14 +193,12 @@
             return '#ef4444';
         }
 
-        // Ray Tracing & Advanced Wavefront Drawing
         function drawAdvancedWaves(tx, rx, currentDbm, isBlocked) {
             const dx = rx.x - tx.x;
             const dy = rx.y - tx.y;
             const dist = Math.hypot(dx, dy);
             const angle = Math.atan2(dy, dx);
 
-            // 1. Draw expanding radial wavefront rings from tower
             ctx.save();
             ctx.lineWidth = 1.8;
             for (let r = (phase * 15) % 40; r < dist; r += 40) {
@@ -220,7 +210,6 @@
             }
             ctx.restore();
 
-            // 2. Draw direct or multipath ray line
             ctx.save();
             ctx.translate(tx.x, tx.y);
             ctx.rotate(angle);
@@ -236,29 +225,23 @@
             }
             ctx.restore();
 
-            // 3. Draw Reflection Rays off buildings
             buildings.forEach((b, idx) => {
                 const reflX = b.x + b.w / 2;
                 const reflY = idx % 2 === 0 ? b.y - 10 : b.y + b.h + 10;
                 
-                // Ray from tower to building reflection point
                 ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
                 ctx.lineWidth = 1.5;
                 ctx.setLineDash([4, 4]);
                 ctx.beginPath(); ctx.moveTo(tx.x, tx.y); ctx.lineTo(reflX, reflY); ctx.stroke();
-                
-                // Ray from building to receiver
                 ctx.beginPath(); ctx.moveTo(reflX, reflY); ctx.lineTo(rx.x, rx.y); ctx.stroke();
-                ctx.setLineDash([]); // reset
+                ctx.setLineDash([]);
 
-                // Reflection point glowing dot
                 ctx.fillStyle = '#f59e0b';
                 ctx.beginPath(); ctx.arc(reflX, reflY, 4, 0, Math.PI*2); ctx.fill();
             });
         }
 
         function checkCollision(tx, rx, b) {
-            // Simple bounding box line intersection check
             return (rx.x > b.x && rx.x < b.x + b.w && rx.y > b.y && rx.y < b.y + b.h) ||
                    (tx.x < b.x + b.w && rx.x > b.x && Math.min(tx.y, rx.y) < b.y + b.h && Math.max(tx.y, rx.y) > b.y);
         }
@@ -275,107 +258,5 @@
             document.getElementById('txPowerVal').textContent = `${txPower} dBm`;
             document.getElementById('freqVal').textContent = `${(freqMHz / 1000).toFixed(1)} GHz`;
 
-            // Check if any building blocks the path
-            let isBlocked = false;
-            buildings.forEach(b => {
-                if (checkCollision(tower, receiver, b)) isBlocked = true;
-            });
-
-            const distPx = Math.hypot(receiver.x - tower.x, receiver.y - tower.y);
-            const distM = Math.round(distPx * 0.35);
-            let pathLoss = Math.round(28 + 22 * Math.log10(Math.max(10, distM)) + 20 * Math.log10(freqMHz / 1000));
-            if (isBlocked) pathLoss += 25;
-            if (isBeamformingOn) pathLoss -= 8;
-            if (isRepeaterOn) pathLoss -= 18;
-
-            let rssi = Math.round(txPower - pathLoss);
-            if (rssi > -45) rssi = -45;
-
-            // Update UI Metrics
-            document.getElementById('rssiMetric').textContent = `${rssi} dBm`;
-            document.getElementById('pathLossMetric').textContent = `${pathLoss} dB`;
-            document.getElementById('distanceText').textContent = `المسافة: ${distM}م`;
-            
-            const sigText = document.getElementById('signalQualityText');
-            if (rssi >= -70) { sigText.textContent = 'إشارة ممتازة (قوية)'; sigText.className = 'text-[11px] font-semibold text-emerald-300'; }
-            else if (rssi >= -85) { sigText.textContent = 'إشارة متوسطة'; sigText.className = 'text-[11px] font-semibold text-amber-300'; }
-            else { sigText.textContent = 'إشارة ضعيفة / محجوبة'; sigText.className = 'text-[11px] font-semibold text-rose-400'; }
-
-            // Draw Buildings (Draggable)
-            buildings.forEach(b => {
-                ctx.fillStyle = '#1e293b';
-                ctx.fillRect(b.x, b.y, b.w, b.h);
-                ctx.strokeStyle = isBlocked ? '#ef4444' : '#38bdf8';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(b.x, b.y, b.w, b.h);
-                ctx.fillStyle = '#f8fafc';
-                ctx.font = 'bold 11px Cairo';
-                ctx.fillText(b.name, b.x + 10, b.y + 22);
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '9px Cairo';
-                ctx.fillText('اسحبني ✋', b.x + 10, b.y + 38);
-            });
-
-            // Draw Tower (gNB)
-            ctx.fillStyle = '#38bdf8';
-            ctx.beginPath(); ctx.arc(tower.x, tower.y, 18, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Cairo'; ctx.fillText('gNB البرج الرئيسي', tower.x - 35, tower.y - 25);
-
-            // Draw Receiver (User Samer)
-            ctx.fillStyle = '#10b981';
-            ctx.beginPath(); ctx.arc(receiver.x, receiver.y, receiver.r, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#fff'; ctx.fillText('المستقبل (سامر)', receiver.x - 38, receiver.y - 28);
-
-            // Draw Waves & Ray tracing
-            drawAdvancedWaves(tower, receiver, rssi, isBlocked);
-
-            // Oscilloscope Spectrum
-            scopeCtx.clearRect(0, 0, scopeCanvas.width, scopeCanvas.height);
-            scopeCtx.strokeStyle = '#38bdf8'; scopeCtx.lineWidth = 2;
-            scopeCtx.beginPath();
-            for (let i = 0; i < scopeCanvas.width; i++) {
-                const y = scopeCanvas.height / 2 + Math.sin(i * 0.06 - phase * 3) * (rssi > -80 ? 25 : 8);
-                if (i === 0) scopeCtx.moveTo(i, y); else scopeCtx.lineTo(i, y);
-            }
-            scopeCtx.stroke();
-
-            requestAnimationFrame(loop);
-        }
-        loop();
-
-        // Universal Dragging Logic for both Receiver AND Buildings
-        let activeTarget = null;
-
-        canvas.addEventListener('pointerdown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-
-            // Check receiver
-            if (Math.hypot(x - receiver.x, y - receiver.y) < receiver.r + 15) {
-                activeTarget = receiver;
-                return;
-            }
-            // Check buildings
-            for (let b of buildings) {
-                if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) {
-                    activeTarget = b;
-                    dragOffsetX = x - b.x;
-                    dragOffsetY = y - b.y;
-                    break;
-                }
-            }
-        });
-
-        canvas.addEventListener('pointermove', (e) => {
-            if (!activeTarget) return;
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-
-            if (activeTarget === receiver) {
-                receiver.x = x;
-                receiver.y = y;
-            } else {
-                activeTarget.x = x - dragOffsetX;
-    
+            let isBlocked =
+                
