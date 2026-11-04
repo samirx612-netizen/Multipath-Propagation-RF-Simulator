@@ -1,191 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RF Propagation Simulator - Al-Maqal University</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RF Pro v5 - محاكي انتشار الموجات</title>
 <style>
-body{font-family:'Cairo',sans-serif;background-color:#0b1120;color:#f8fafc;overflow-x:hidden;}
-canvas{touch-action:none;user-select:none;display:block;width:100%;height:auto;}
-.glass-panel{background:rgba(15,23,42,0.9);backdrop-filter:blur(14px);border:1px solid rgba(56,189,248,0.25);}
-.metric-card{background:linear-gradient(145deg,rgba(30,41,59,0.95),rgba(15,23,42,0.95));border:1px solid rgba(148,163,184,0.15);}
-input[type=range]{accent-color:#38bdf8;}
+*{box-sizing:border-box}body{margin:0;background:#08111f;color:#eaf2ff;font-family:Tahoma,Arial,sans-serif}
+header,.panel,.metric{background:#111e31;border:1px solid #293c56;border-radius:13px}
+header{padding:15px;margin:10px}h1{font-size:20px;color:#38bdf8;margin:0 0 6px}p{margin:5px 0;color:#a9b9cc;font-size:12px}
+main{max-width:1200px;margin:auto;padding:5px 10px 20px;display:grid;grid-template-columns:300px 1fr;gap:12px}
+aside,.area{display:flex;flex-direction:column;gap:12px}.panel{padding:13px}.panel h2{font-size:15px;margin:0 0 12px;color:#38bdf8}
+label{display:block;font-size:12px;margin:10px 0 5px;color:#cbd5e1}input[type=range]{width:100%;accent-color:#38bdf8}
+select,button{background:#20334d;color:white;border:1px solid #38516e;border-radius:8px;padding:9px;font-size:12px}
+button{cursor:pointer}button:active{transform:scale(.98)}.buttons{display:flex;gap:7px;flex-wrap:wrap}
+.check{display:flex;align-items:center;gap:8px;font-size:12px;margin:9px 0}.check input{accent-color:#38bdf8}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{padding:10px}.metric small{display:block;color:#9fb0c5;font-size:11px}.value{font-size:19px;font-weight:bold;margin-top:5px;color:#34d399}
+canvas{display:block;width:100%;height:auto;touch-action:none;background:#050b14;border-radius:9px}
+#scope{background:#070d19;border:1px solid #293c56}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#b6c4d6;margin-top:9px}
+#analysis{font-size:12px;line-height:2;color:#cbd5e1}.hint{font-size:11px;color:#93a4b8;line-height:1.8}
+@media(max-width:760px){main{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}header{margin:7px}h1{font-size:17px}}
 </style>
 </head>
-<body class="min-h-screen flex flex-col">
-<header class="glass-panel border-b border-slate-800 px-4 py-3 sticky top-0 z-30 shadow-lg">
-<div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
-<div class="flex items-center gap-3">
-<div class="w-12 h-12 rounded-xl bg-white/10 border border-sky-400/30 flex items-center justify-center p-1 overflow-hidden shadow-inner">
-<img src="57934.jpg" alt="Logo" class="w-full h-full object-contain filter brightness-110" onerror="this.style.display='none'">
-</div>
-<div>
-<h1 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
-<span>Al-Maqal University</span>
-<span class="text-xs px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">Cyber Security - Eng</span>
-</h1>
-<p class="text-xs text-slate-400">Student: <strong class="text-sky-300">Samer</strong> | Advanced RF Simulator</p>
-</div>
-</div>
-<div class="flex items-center gap-2">
-<button onclick="loadScenario('los')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition shadow">LoS Path</button>
-<button onclick="loadScenario('nlos')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition shadow">Obstacle</button>
-<button onclick="loadScenario('solved')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/40 hover:bg-sky-500/30 transition shadow">Solutions</button>
-</div>
-</div>
-</header>
-<main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
-<aside class="lg:col-span-4 space-y-4 order-2 lg:order-1">
-<div class="glass-panel rounded-2xl p-4 space-y-3 shadow-xl">
-<h2 class="text-sm font-bold text-sky-400 flex items-center gap-2 border-b border-slate-800 pb-2"><i class="fa-solid fa-sliders"></i> RF Config</h2>
-<div>
-<div class="flex justify-between text-xs mb-1"><span class="text-slate-300">Tx Power:</span><span id="txPowerVal" class="font-bold text-sky-400">45 dBm</span></div>
-<input id="txPower" type="range" min="20" max="60" value="45" class="w-full">
-</div>
-<div>
-<div class="flex justify-between text-xs mb-1"><span class="text-slate-300">Frequency:</span><span id="freqVal" class="font-bold text-sky-400">3.5 GHz (5G)</span></div>
-<input id="freq" type="range" min="800" max="28000" step="500" value="3500" class="w-full">
-</div>
-</div>
-<div class="glass-panel rounded-2xl p-4 space-y-3 shadow-xl">
-<h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2 border-b border-slate-800 pb-2"><i class="fa-solid fa-shield-halved"></i> Mitigation</h2>
-<label class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer">
-<input id="solRepeater" type="checkbox" class="mt-1 accent-emerald-500">
-<div class="text-xs"><div class="font-bold text-white">Smart Repeater (RIS)</div><div class="text-slate-400 text-[11px]">Bypasses obstacles (+20 dB).</div></div>
-</label>
-<label class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer">
-<input id="solBeamforming" type="checkbox" class="mt-1 accent-emerald-500">
-<div class="text-xs"><div class="font-bold text-white">MIMO Beamforming</div><div class="text-slate-400 text-[11px]">Focuses energy toward receiver.</div></div>
-</label>
-<div class="flex gap-2 pt-1">
-<button onclick="addBuilding()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white border border-slate-700">+ Building</button>
-<button onclick="removeBuilding()" class="px-3 py-2 rounded-xl bg-rose-950/60 text-xs font-bold text-rose-300 border border-rose-800/50">Remove</button>
-</div>
-</div>
-<div class="glass-panel rounded-2xl p-4 space-y-2 shadow-xl">
-<div class="flex justify-between items-center"><h2 class="text-xs font-bold text-purple-400"><i class="fa-solid fa-wave-square"></i> Spectrum Analyzer</h2><span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Synced</span></div>
-<canvas id="scopeCanvas" width="360" height="95" class="w-full rounded-xl bg-slate-950 border border-slate-800"></canvas>
-</div>
+<body>
+<header><h1>RF Pro v5 | محاكي انتشار موجات الاتصالات</h1><p>جامعة المعقل - كلية الهندسة | إعداد الطالب: سامر</p></header>
+<main>
+<aside>
+<section class="panel">
+<h2>إعدادات الإرسال RF</h2>
+<label>قدرة الإرسال: <b id="powerVal">45 dBm</b></label><input id="power" type="range" min="10" max="60" value="45">
+<label>التردد: <b id="freqVal">3500 MHz</b></label><input id="freq" type="range" min="700" max="28000" step="100" value="3500">
+<label>سرعة الموجات: <b id="speedVal">1.0x</b></label><input id="speed" type="range" min="1" max="30" value="10">
+<label>مادة الحاجز</label><select id="material" style="width:100%"><option value="30">خرسانة مسلحة - 30 dB</option><option value="16">طابوق - 16 dB</option><option value="8">زجاج - 8 dB</option></select>
+</section>
+<section class="panel">
+<h2>خيارات المحاكاة</h2>
+<label class="check"><input id="heat" type="checkbox" checked> إظهار الخريطة الحرارية</label>
+<label class="check"><input id="wavesOn" type="checkbox" checked> إظهار الموجات المتحركة</label>
+<label class="check"><input id="raysOn" type="checkbox" checked> إظهار مسارات الانعكاس</label>
+<label class="check"><input id="beam" type="checkbox"> نموذج مكسب Beamforming</label>
+<label class="check"><input id="ris" type="checkbox"> نموذج مكسب RIS</label>
+<div class="buttons"><button onclick="addBuilding()">+ إضافة بناية</button><button onclick="removeBuilding()">حذف بناية</button></div>
+<div class="buttons" style="margin-top:8px"><button onclick="scenario('los')">مسار مباشر</button><button onclick="scenario('blocked')">حاجز</button><button onclick="scenario('multi')">متعدد المسارات</button></div>
+<div class="buttons" style="margin-top:8px"><button id="pause" onclick="togglePause()">إيقاف الحركة</button><button onclick="resetAll()">إعادة ضبط</button></div>
+<p class="hint">اسحب البرج أو المستقبل أو البنايات باللمس أو الماوس. أوقف الحركة إذا أردت فحص الخريطة بهدوء.</p>
+</section>
+<section class="panel"><h2>راصد الموجة</h2><canvas id="scope" width="500" height="115"></canvas></section>
 </aside>
-<section class="lg:col-span-8 flex flex-col gap-4 order-1 lg:order-2">
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-<div class="metric-card rounded-xl p-3 shadow-lg"><div class="text-[11px] text-slate-400">RSSI</div><div id="rssiMetric" class="text-xl font-extrabold text-emerald-400 mt-0.5">-65.2 dBm</div><div id="signalQualityText" class="text-[11px] font-semibold text-emerald-300">Excellent</div></div>
-<div class="metric-card rounded-xl p-3 shadow-lg"><div class="text-[11px] text-slate-400">Path Loss</div><div id="pathLossMetric" class="text-xl font-extrabold text-amber-400 mt-0.5">102.4 dB</div><div id="distanceText" class="text-[11px] text-slate-400">Dist: 160m</div></div>
-<div class="metric-card rounded-xl p-3 shadow-lg"><div class="text-[11px] text-slate-400">Path Status</div><div id="reflectionMetric" class="text-lg font-extrabold text-sky-400 mt-0.5">Direct LoS</div><div id="multipathLossText" class="text-[11px] text-slate-400">Multipath Active</div></div>
-<div class="metric-card rounded-xl p-3 shadow-lg"><div class="text-[11px] text-slate-400">Throughput</div><div id="snrMetric" class="text-xl font-extrabold text-purple-400 mt-0.5">180 Mbps</div><div id="speedText" class="text-[11px] text-slate-300">Secure link</div></div>
+<section class="area">
+<div class="metrics">
+<div class="metric"><small>قوة الاستقبال RSSI</small><div id="rssi" class="value">--</div><small id="quality">--</small></div>
+<div class="metric"><small>فقد المسار Path Loss</small><div id="loss" class="value" style="color:#fbbf24">--</div><small>dB</small></div>
+<div class="metric"><small>المسافة</small><div id="distance" class="value" style="color:#38bdf8">--</div><small>متر تقديري</small></div>
+<div class="metric"><small>حالة الرابط</small><div id="status" class="value">--</div><small>Link status</small></div>
 </div>
-<div class="glass-panel rounded-2xl p-3 flex-1 flex flex-col relative shadow-2xl">
-<div class="flex justify-between items-center mb-2 px-1 text-xs text-slate-300 font-semibold"><span><i class="fa-solid fa-hand-pointer text-sky-400 ml-1"></i> Drag <strong>Buildings</strong> or <strong>Receiver</strong> freely!</span><span class="text-[11px] text-sky-400 font-bold">Samer | Al-Maqal Univ</span></div>
-<div class="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-[#070b14]">
-<canvas id="simCanvas" width="820" height="440"></canvas>
-</div>
-</div>
+<section class="panel"><h2>بيئة انتشار الموجات - اسحب العناصر لتغيير المشهد</h2><canvas id="world" width="900" height="520"></canvas>
+<div class="legend"><span style="color:#38bdf8">● موجات الإرسال</span><span style="color:#34d399">● المستقبل</span><span style="color:#fbbf24">● انعكاس تقريبي</span><span style="color:#fb7185">● مسار محجوب</span></div></section>
+<section class="panel"><h2>تحليل الإشارة</h2><div id="analysis">جاري التحليل...</div></section>
 </section>
 </main>
 <script>
-const canvas=document.getElementById('simCanvas'),ctx=canvas.getContext('2d');
-const scopeCanvas=document.getElementById('scopeCanvas'),scopeCtx=scopeCanvas.getContext('2d');
-let phase=0,tower={x:130,y:220},receiver={x:700,y:220,r:22};
-let buildings=[{x:360,y:150,w:75,h:140,name:'Building 1'},{x:500,y:280,w:90,h:90,name:'Building 2'}];
-let activeTarget=null,dragOffsetX=0,dragOffsetY=0;
-function getSignalColor(d){return d>=-70?'#10b981':d>=-85?'#f59e0b':d>=-98?'#f97316':'#ef4444';}
-function drawAdvancedWaves(tx,rx,curDbm,isBlocked){
-let dx=rx.x-tx.x,dy=rx.y-tx.y,dist=Math.hypot(dx,dy),angle=Math.atan2(dy,dx);
-ctx.save();ctx.lineWidth=1.8;
-for(let r=(phase*15)%40;r<dist;r+=40){
-let alpha=Math.max(0,1-r/dist);
-ctx.strokeStyle=isBlocked?`rgba(239,68,68,${alpha*0.4})`:`rgba(56,189,248,${alpha*0.5})`;
-ctx.beginPath();ctx.arc(tx.x,tx.y,r,-Math.PI/3,Math.PI/3);ctx.stroke();
+"use strict";
+const canvas=document.getElementById('world'),ctx=canvas.getContext('2d'),scope=document.getElementById('scope'),sctx=scope.getContext('2d');
+const W=canvas.width,H=canvas.height,SCALE=.35;
+const initial={tower:{x:105,y:255},rx:{x:790,y:255},buildings:[{x:350,y:145,w:85,h:145,name:'بناية 1'},{x:555,y:295,w:95,h:105,name:'بناية 2'}]};
+let tower={...initial.tower},rx={...initial.rx},buildings=initial.buildings.map(b=>({...b}));
+let phase=0,paused=false,drag=null,off={x:0,y:0},last=0,heatCanvas=document.createElement('canvas'),heatCtx=heatCanvas.getContext('2d'),heatDirty=true,lastHeat=0,metrics={};
+heatCanvas.width=450;heatCanvas.height=260;
+const $=id=>document.getElementById(id);
+function intersects(x1,y1,x2,y2,b){
+ let t0=0,t1=1,dx=x2-x1,dy=y2-y1,p=[-dx,dx,-dy,dy],q=[x1-b.x,b.x+b.w-x1,y1-b.y,b.y+b.h-y1];
+ for(let i=0;i<4;i++){if(p[i]===0){if(q[i]<0)return false}else{let r=q[i]/p[i];if(p[i]<0)t0=Math.max(t0,r);else t1=Math.min(t1,r);if(t0>t1)return false}}
+ return t1>0&&t0<1;
 }
-ctx.restore();
-ctx.save();ctx.translate(tx.x,tx.y);ctx.rotate(angle);
-let steps=Math.max(30,Math.floor(dist/4));
-for(let i=0;i<steps;i++){
-let t1=i/steps,t2=(i+1)/steps,px1=t1*dist,px2=t2*dist;
-let py1=Math.sin(px1*0.08-phase*2)*6,py2=Math.sin(px2*0.08-phase*2)*6;
-ctx.strokeStyle=getSignalColor(curDbm);ctx.lineWidth=isBlocked?2:3.5;
-ctx.beginPath();ctx.moveTo(px1,py1);ctx.lineTo(px2,py2);ctx.stroke();
+function atten(x1,y1,x2,y2,ignore){let db=0;for(const b of buildings)if(b!==ignore&&intersects(x1,y1,x2,y2,b))db+=+$('material').value;return Math.pow(10,-db/20)}
+function fieldAt(x,y){
+ const f=+$('freq').value*1e6,c=299792458,k=2*Math.PI*f/c;
+ const d=Math.max(1,Math.hypot(x-tower.x,y-tower.y)*SCALE);
+ let re=atten(tower.x,tower.y,x,y)*Math.cos(k*d),im=atten(tower.x,tower.y,x,y)*Math.sin(k*d);
+ for(const b of buildings){
+  const pts=[{x:b.x+b.w/2,y:b.y},{x:b.x+b.w/2,y:b.y+b.h}];
+  for(const p of pts){
+   const d1=Math.hypot(p.x-tower.x,p.y-tower.y)*SCALE,d2=Math.hypot(x-p.x,y-p.y)*SCALE,total=Math.max(1,d1+d2);
+   const a=-.55*(d/total)*atten(tower.x,tower.y,p.x,p.y,b)*atten(p.x,p.y,x,y,b);
+   const ph=k*total;re+=a*Math.cos(ph);im+=a*Math.sin(ph);
+  }
+ }
+ return Math.max(.00001,Math.hypot(re,im));
 }
-ctx.restore();
-buildings.forEach((b,idx)=>{
-let reflX=b.x+b.w/2,reflY=idx%2===0?b.y-10:b.y+b.h+10;
-ctx.strokeStyle='rgba(245,158,11,0.4)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
-ctx.beginPath();ctx.moveTo(tx.x,tx.y);ctx.lineTo(reflX,reflY);ctx.stroke();
-ctx.beginPath();ctx.moveTo(reflX,reflY);ctx.lineTo(rx.x,rx.y);ctx.stroke();
-ctx.setLineDash([]);
-ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.arc(reflX,reflY,4,0,Math.PI*2);ctx.fill();
-});
+function fieldDb(x,y){return 20*Math.log10(fieldAt(x,y))}
+function heatColor(db){
+ const stops=[[-24,[24,45,105]],[-17,[37,99,235]],[-11,[6,182,212]],[-5,[16,185,129]],[1,[234,179,8]],[7,[239,68,68]]];
+ db=Math.max(-24,Math.min(7,db));let i=0;while(i<stops.length-2&&db>stops[i+1][0])i++;
+ const a=stops[i],b=stops[i+1],t=(db-a[0])/(b[0]-a[0]),v=a[1].map((n,j)=>Math.round(n+(b[1][j]-n)*t));
+ return `rgb(${v.join(',')})`;
 }
-function checkCollision(tx,rx,b){
-return(rx.x>b.x&&rx.x<b.x+b.w&&rx.y>b.y&&rx.y<b.y+b.h)||(tx.x<b.x+b.w&&rx.x>b.x&&Math.min(tx.y,rx.y)<b.y+b.h&&Math.max(tx.y,rx.y)>b.y);
+function rebuildHeat(now){
+ if(!$('heat').checked)return;
+ if(!heatDirty&&now-lastHeat<450)return;
+ heatDirty=false;lastHeat=now;
+ const w=heatCanvas.width,h=heatCanvas.height,step=6;
+ for(let y=0;y<h;y+=step)for(let x=0;x<w;x+=step){
+  const db=fieldDb(x*2,y*2);heatCtx.fillStyle=heatColor(db);heatCtx.fillRect(x,y,step,step);
+ }
 }
-function loop(){
-ctx.clearRect(0,0,canvas.width,canvas.height);phase+=0.08;
-let txPower=parseFloat(document.getElementById('txPower').value);
-let freqMHz=parseFloat(document.getElementById('freq').value);
-let isRepeaterOn=document.getElementById('solRepeater').checked;
-let isBeamformingOn=document.getElementById('solBeamforming').checked;
-document.getElementById('txPowerVal').textContent=`${txPower} dBm`;
-document.getElementById('freqVal').textContent=`${(freqMHz/1000).toFixed(1)} GHz`;
-let isBlocked=false;buildings.forEach(b=>{if(checkCollision(tower,receiver,b))isBlocked=true;});
-let distPx=Math.hypot(receiver.x-tower.x,receiver.y-tower.y),distM=Math.round(distPx*0.35);
-let pathLoss=Math.round(28+22*Math.log10(Math.max(10,distM))+20*Math.log10(freqMHz/1000));
-if(isBlocked)pathLoss+=25;if(isBeamformingOn)pathLoss-=8;if(isRepeaterOn)pathLoss-=18;
-let rssi=Math.round(txPower-pathLoss);if(rssi>-45)rssi=-45;
-document.getElementById('rssiMetric').textContent=`${rssi} dBm`;
-document.getElementById('pathLossMetric').textContent=`${pathLoss} dB`;
-document.getElementById('distanceText').textContent=`Dist: ${distM}m`;
-let sigText=document.getElementById('signalQualityText');
-if(rssi>=-70){sigText.textContent='Excellent';sigText.className='text-[11px] font-semibold text-emerald-300';}
-else if(rssi>=-85){sigText.textContent='Moderate';sigText.className='text-[11px] font-semibold text-amber-300';}
-else{sigText.textContent='Weak / Blocked';sigText.className='text-[11px] font-semibold text-rose-400';}
-buildings.forEach(b=>{
-ctx.fillStyle='#1e293b';ctx.fillRect(b.x,b.y,b.w,b.h);
-ctx.strokeStyle=isBlocked?'#ef4444':'#38bdf8';ctx.lineWidth=2;ctx.strokeRect(b.x,b.y,b.w,b.h);
-ctx.fillStyle='#f8fafc';ctx.font='bold 11px Cairo';ctx.fillText(b.name,b.x+10,b.y+22);
-ctx.fillStyle='#94a3b8';ctx.font='9px Cairo';ctx.fillText('Drag me ✋',b.x+10,b.y+38);
-});
-ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(tower.x,tower.y,18,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#fff';ctx.font='bold 11px Cairo';ctx.fillText('gNB Tower',tower.x-30,tower.y-25);
-ctx.fillStyle='#10b981';ctx.beginPath();ctx.arc(receiver.x,receiver.y,receiver.r,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#fff';ctx.fillText('Receiver (Samer)',receiver.x-45,receiver.y-28);
-drawAdvancedWaves(tower,receiver,rssi,isBlocked);
-scopeCtx.clearRect(0,0,scopeCanvas.width,scopeCanvas.height);
-scopeCtx.strokeStyle='#38bdf8';scopeCtx.lineWidth=2;scopeCtx.beginPath();
-for(let i=0;i<scopeCanvas.width;i++){
-let y=scopeCanvas.height/2+Math.sin(i*0.06-phase*3)*(rssi>-80?25:8);
-if(i===0)scopeCtx.moveTo(i,y);else scopeCtx.lineTo(i,y);
+function signal(){
+ const power=+$('power').value,freq=+$('freq').value,dist=Math.max(1,Math.hypot(rx.x-tower.x,rx.y-tower.y)*SCALE);
+ const blocked=buildings.filter(b=>intersects(tower.x,tower.y,rx.x,rx.y,b));
+ const wall=blocked.length*(+$('material').value);
+ const fspl=32.44+20*Math.log10(freq)+20*Math.log10(dist/1000);
+ const intDb=fieldDb(rx.x,rx.y);
+ const beam=$('beam').checked?6:0,ris=$('ris').checked?12:0;
+ const loss=fspl+wall-intDb-beam-ris,rssi=power-loss;
+ metrics={power,freq,dist,blocked,wall,intDb,loss,rssi,beam,ris};
+ $('powerVal').textContent=power+' dBm';$('freqVal').textContent=freq+' MHz';$('speedVal').textContent=(+$('speed').value/10).toFixed(1)+'x';
+ $('rssi').textContent=rssi.toFixed(1)+' dBm';$('loss').textContent=loss.toFixed(1);$('distance').textContent=dist.toFixed(0)+' m';
+ $('quality').textContent='الجودة: '+(rssi>=-70?'ممتازة':rssi>=-85?'متوسطة':rssi>=-100?'ضعيفة':'ضعيفة جداً');
+ $('status').textContent=rssi>=-100?'متصل':'ضعيف';$('status').style.color=rssi>=-100?'#34d399':'#fb7185';
+ const interference=intDb>1?'تداخل بنّاء غالب':intDb < -3?'تداخل هدّام غالب':'تداخل متوسط';
+ $('analysis').innerHTML=`المسافة: <b>${dist.toFixed(1)} m</b><br>العوائق على خط الرؤية: <b>${blocked.length}</b><br>خسارة الحواجز المقدرة: <b>${wall} dB</b><br>مؤشر التداخل النسبي: <b>${intDb.toFixed(2)} dB</b> (${interference})<br>مكسب Beamforming الافتراضي: <b>${beam} dB</b><br>مكسب RIS الافتراضي: <b>${ris} dB</b><br>RSSI المحسوبة: <b>${rssi.toFixed(2)} dBm</b>`;
 }
-scopeCtx.stroke();
-requestAnimationFrame(loop);
+function line(x1,y1,x2,y2,color,width=2,dash=[]){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore()}
+function grid(){ctx.strokeStyle='rgba(130,160,190,.12)';ctx.lineWidth=1;for(let x=0;x<W;x+=40)line(x,0,x,H,ctx.strokeStyle);for(let y=0;y<H;y+=40)line(0,y,W,y,ctx.strokeStyle)}
+function drawHeat(now){rebuildHeat(now);if($('heat').checked)ctx.drawImage(heatCanvas,0,0,W,H)}
+function waves(){
+ if(!$('wavesOn').checked)return;
+ const blocked=metrics.blocked.length>0;
+ for(let r=phase%55;r<1050;r+=55){ctx.beginPath();ctx.arc(tower.x,tower.y,r,0,Math.PI*2);ctx.strokeStyle=blocked?'rgba(248,113,113,.35)':'rgba(56,189,248,.48)';ctx.lineWidth=2;ctx.stroke()}
 }
-loop();
-canvas.addEventListener('pointerdown',(e)=>{
-let rect=canvas.getBoundingClientRect();
-let x=(e.clientX-rect.left)*(canvas.width/rect.width),y=(e.clientY-rect.top)*(canvas.height/rect.height);
-if(Math.hypot(x-receiver.x,y-receiver.y)<receiver.r+15){activeTarget=receiver;return;}
-for(let b of buildings){
-if(x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h){activeTarget=b;dragOffsetX=x-b.x;dragOffsetY=y-b.y;break;}
+function rays(){
+ const blocked=metrics.blocked.length>0;
+ line(tower.x,tower.y,rx.x,rx.y,blocked?'#fb7185':'#38bdf8',2,blocked?[7,6]:[]);
+ if(!$('raysOn').checked)return;
+ buildings.forEach((b,i)=>{const x=b.x+b.w/2,y=i%2?b.y+b.h:b.y;line(tower.x,tower.y,x,y,'rgba(251,191,36,.6)',1.5,[5,5]);line(x,y,rx.x,rx.y,'rgba(251,191,36,.6)',1.5,[5,5]);ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(x,y,4,0,7);ctx.fill()});
 }
-});
-canvas.addEventListener('pointermove',(e)=>{
-if(!activeTarget)return;
-let rect=canvas.getBoundingClientRect();
-let x=(e.clientX-rect.left)*(canvas.width/rect.width),y=(e.clientY-rect.top)*(canvas.height/rect.height);
-if(activeTarget===receiver){receiver.x=x;receiver.y=y;}
-else{activeTarget.x=x-dragOffsetX;activeTarget.y=y-dragOffsetY;}
-});
-canvas.addEventListener('pointerup',()=>activeTarget=null);
-function loadScenario(type){
-if(type==='los'){receiver.x=700;receiver.y=220;buildings[0].x=1000;}
-else if(type==='nlos'){receiver.x=700;receiver.y=100;buildings[0].x=360;buildings[0].y=150;}
-else if(type==='solved'){receiver.x=720;receiver.y=360;document.getElementById('solRepeater').checked=true;}
+function drawBuildings(){buildings.forEach(b=>{ctx.fillStyle='#26364d';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.strokeStyle=metrics.blocked.includes(b)?'#fb7185':'#38bdf8';ctx.lineWidth=2;ctx.strokeRect(b.x,b.y,b.w,b.h);for(let x=b.x+10;x<b.x+b.w-8;x+=23)for(let y=b.y+38;y<b.y+b.h-8;y+=28){ctx.fillStyle='#64748b';ctx.fillRect(x,y,11,15)}ctx.fillStyle='white';ctx.font='bold 12px Tahoma';ctx.textAlign='center';ctx.fillText(b.name,b.x+b.w/2,b.y+21)})}
+function drawNodes(){
+ ctx.strokeStyle='#38bdf8';ctx.lineWidth=4;line(tower.x,tower.y-22,tower.x,tower.y+15,'#38bdf8',4);line(tower.x,tower.y+12,tower.x-15,tower.y+48,'#38bdf8',3);line(tower.x,tower.y+12,tower.x+15,tower.y+48,'#38bdf8',3);ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(tower.x,tower.y-23,5,0,7);ctx.fill();
+ ctx.fillStyle='white';ctx.font='bold 12px Tahoma';ctx.textAlign='center';ctx.fillText('برج الإرسال',tower.x,tower.y-52);
+ ctx.fillStyle='#10b981';ctx.beginPath();ctx.arc(rx.x,rx.y,19,0,7);ctx.fill();ctx.fillStyle='#064e3b';ctx.beginPath();ctx.arc(rx.x,rx.y,8,0,7);ctx.fill();ctx.fillStyle='white';ctx.fillText('المستقبل',rx.x,rx.y-30);
 }
-function addBuilding(){buildings.push({x:420,y:80,w:70,h:100,name:`Building ${buildings.length+1}`});}
-function removeBuilding(){if(buildings.length>0)buildings.pop();}
+function osc(){sctx.clearRect(0,0,500,115);sctx.strokeStyle='#334155';sctx.beginPath();sctx.moveTo(0,57);sctx.lineTo(500,57);sctx.stroke();sctx.beginPath();for(let x=0;x<500;x++){let y=57+Math.sin(x*.055-phase*.12)*28;if(!x)sctx.moveTo(x,y);else sctx.lineTo(x,y)}sctx.strokeStyle='#a78bfa';sctx.lineWidth=2;sctx.stroke()}
+function draw(now){ctx.clearRect(0,0,W,H);grid();signal();drawHeat(now);waves();rays();drawBuildings();drawNodes();osc()}
+function frame(now){if(!last)last=now;const dt=Math.min((now-last)/16.67,3);last=now;if(!paused)phase+=(+$('speed').value/10)*dt;draw(now);requestAnimationFrame(frame)}requestAnimationFrame(frame);
+function pos(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
+canvas.addEventListener('pointerdown',e=>{const p=pos(e);if(Math.hypot(p.x-rx.x,p.y-rx.y)<28)drag=rx;else if(Math.hypot(p.x-tower.x,p.y-tower.y)<35)drag=tower;else for(let i=buildings.length-1;i>=0;i--){let b=buildings[i];if(p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h){drag=b;break}}if(drag){off={x:p.x-drag.x,y:p.y-drag.y};canvas.setPointerCapture(e.pointerId)}});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pos(e),w=drag.w||0,h=drag.h||0;drag.x=Math.max(20,Math.min(W-w-20,p.x-off.x));drag.y=Math.max(55,Math.min(H-h-20,p.y-off.y));heatDirty=true});
+function endDrag(){drag=null}canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
+function addBuilding(){let n=buildings.length+1;buildings.push({x:260+(n%4)*75,y:100+(n%3)*75,w:80,h:110,name:'بناية '+n});heatDirty=true}
+function removeBuilding(){buildings.pop();heatDirty=true}
+function scenario(type){tower={x:105,y:255};rx={x:790,y:255};buildings=[];if(type==='blocked')buildings=[{x:390,y:160,w:100,h:180,name:'حاجز'}];if(type==='multi')buildings=[{x:310,y:100,w:80,h:160,name:'بناية 1'},{x:500,y:275,w:100,h:130,name:'بناية 2'},{x:650,y:100,w:65,h:120,name:'بناية 3'}];heatDirty=true}
+function togglePause(){paused=!paused;$('pause').textContent=paused?'تشغيل الحركة':'إيقاف الحركة'}
+function resetAll(){tower={...initial.tower};rx={...initial.rx};buildings=initial.buildings.map(b=>({...b}));paused=false;$('pause').textContent='إيقاف الحركة';phase=0;heatDirty=true}
+['power','freq','speed','material','heat','wavesOn','raysOn','beam','ris'].forEach(id=>$(id).addEventListener('input',()=>{heatDirty=true;signal()}));
 </script>
-</body>
-</html>
+</body></html>
