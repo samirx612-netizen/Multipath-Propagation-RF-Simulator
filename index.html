@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 body{font-family:'Cairo',sans-serif;background-color:#0b1120;color:#f8fafc;overflow-x:hidden;}
-canvas{touch-action:none;user-select:none;}
+canvas{touch-action:none;user-select:none;display:block;width:100%;height:auto;}
 .glass-panel{background:rgba(15,23,42,0.9);backdrop-filter:blur(14px);border:1px solid rgba(56,189,248,0.25);}
 .metric-card{background:linear-gradient(145deg,rgba(30,41,59,0.95),rgba(15,23,42,0.95));border:1px solid rgba(148,163,184,0.15);}
 input[type=range]{accent-color:#38bdf8;}
@@ -80,7 +80,7 @@ input[type=range]{accent-color:#38bdf8;}
 <div class="glass-panel rounded-2xl p-3 flex-1 flex flex-col relative shadow-2xl">
 <div class="flex justify-between items-center mb-2 px-1 text-xs text-slate-300 font-semibold"><span><i class="fa-solid fa-hand-pointer text-sky-400 ml-1"></i> Drag <strong>Buildings</strong> or <strong>Receiver</strong> freely!</span><span class="text-[11px] text-sky-400 font-bold">Samer | Al-Maqal Univ</span></div>
 <div class="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-[#070b14]">
-<canvas id="simCanvas" width="820" height="440" class="w-full h-auto block cursor-grab active:cursor-grabbing"></canvas>
+<canvas id="simCanvas" width="820" height="440"></canvas>
 </div>
 </div>
 </section>
