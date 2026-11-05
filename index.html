@@ -1,159 +1,660 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#080d18">
-<title>RF STUDIO PRO | Wireless Transmission Laboratory</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محاكي الموجات ثلاثي الأبعاد (3D Ripple Tank) - سامر وفي جري</title>
 <style>
-:root{--bg:#080d18;--p:#111b2d;--p2:#15223a;--line:#273854;--txt:#edf4ff;--muted:#91a4c2;--cyan:#58e4ff;--blue:#7895ff;--green:#4be0ad;--gold:#ffc46b;--red:#ff6f91;--violet:#bd9bff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#203963 0,transparent 38%),radial-gradient(ellipse at 100% 20%,#30234d 0,transparent 28%),var(--bg);color:var(--txt);font-family:Tahoma,Arial,sans-serif}
-button,input,select{font:inherit}button{cursor:pointer;color:var(--txt);background:#1b2a44;border:1px solid #354b6d;border-radius:10px;padding:9px 12px;font-size:11px}button:hover{border-color:var(--cyan);filter:brightness(1.12)}button.active,.primary{background:linear-gradient(110deg,#126c91,#465fca);border:0}.danger{background:#47243a;border-color:#75405a}
-header{max-width:1500px;margin:auto;padding:22px 22px 14px;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#4ce5f5,#6278f5 65%,#a47bff);display:grid;place-items:center;color:#071323;font-size:27px;font-weight:bold;box-shadow:0 8px 30px #4c9eff44}h1{font-size:clamp(18px,3vw,27px);margin:0;letter-spacing:.4px}.sub{color:var(--muted);font-size:10px;margin-top:6px}.headright{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.live{font-size:10px;color:#7af2c5;background:#10352e;border:1px solid #236d59;padding:8px 11px;border-radius:99px}
-main{max-width:1500px;margin:auto;padding:8px 22px 30px}.tabs{display:flex;gap:7px;overflow:auto;padding:5px 0 14px}.tabs button{white-space:nowrap}.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(290px,.8fr);gap:14px}.col{display:flex;flex-direction:column;gap:14px;min-width:0}.card{background:linear-gradient(145deg,rgba(19,31,52,.96),rgba(12,20,35,.97));border:1px solid var(--line);border-radius:17px;box-shadow:0 15px 45px #0003;overflow:hidden}.head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.head h2{font-size:13px;margin:0}.hint{font-size:9px;color:var(--muted);margin-top:5px}.tag{font-size:9px;color:#9aefff;background:#123349;border:1px solid #25566e;border-radius:99px;padding:6px 9px;white-space:nowrap}.stagepad{padding:10px}.stage{position:relative;background:#070e1b;border:1px solid #263a58;border-radius:12px;overflow:hidden}canvas{display:block;width:100%;height:auto}#world{aspect-ratio:1000/560;touch-action:none;cursor:crosshair}.tip{position:absolute;top:10px;right:10px;background:#0d1a2cdd;border:1px solid #3c5273;border-radius:8px;padding:7px 9px;font-size:9px;color:#b7c8df;pointer-events:none}.tools,.legend{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:9px 3px 1px}.tools button{font-size:9px;padding:7px 9px}.legend{font-size:9px;color:#a7b9d1;gap:13px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:4px}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{padding:12px;background:linear-gradient(145deg,#172944,#101a2e);border:1px solid var(--line);border-radius:12px;min-width:0}.metric small{color:var(--muted);font-size:9px}.value{direction:ltr;text-align:right;font-size:clamp(17px,2vw,23px);font-weight:bold;margin-top:8px}.unit{font-size:9px;color:#9aacc7;margin-right:3px}.foot{font-size:8px;color:#7084a3;margin-top:5px}
-.controls{padding:14px 15px}.control{margin-bottom:16px}.control:last-child{margin:0}.ctop{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#cbd8e9;margin-bottom:8px}.ctop b{color:var(--cyan);direction:ltr}input[type=range]{width:100%;accent-color:#58e4ff}select{width:100%;background:#0d192c;border:1px solid #304461;color:var(--txt);border-radius:9px;padding:10px;font-size:10px}.scale{display:flex;justify-content:space-between;color:#6e83a3;font-size:8px;direction:ltr;margin-top:3px}
-.switches{display:grid;grid-template-columns:1fr 1fr;gap:7px}.switch{display:flex;gap:7px;align-items:center;background:#101d31;border:1px solid #263a56;padding:9px;border-radius:9px;font-size:9px;color:#c5d3e7}.switch input{accent-color:#58e4ff}
-#wave{height:125px;background:#080f1c}.wavepad{padding:11px 13px}.wavecaption{display:flex;justify-content:space-between;font-size:10px;margin-bottom:7px}.wavecaption span:last-child{color:var(--muted);font-size:9px}
-.explain{padding:13px 15px;font-size:10px;line-height:1.9;color:#c3d2e6}.explain b{color:var(--cyan)}.formula{direction:ltr;text-align:center;font:13px Georgia,serif;color:#9ceeff;background:#0a1729;border:1px solid #243c5b;border-radius:9px;padding:10px;margin:8px 0;overflow:auto}.result{color:var(--green);font-weight:bold}.warning{color:var(--gold)}
-.data-table{width:100%;border-collapse:collapse;font-size:9px}.data-table td,.data-table th{padding:9px 7px;border-bottom:1px solid #263750;text-align:right}.data-table th{color:#9fb4d1;font-weight:normal}.data-table td:last-child{direction:ltr;text-align:left;color:#a9edff}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mini{background:#101d31;border:1px solid var(--line);padding:11px;border-radius:10px}.mini small{font-size:9px;color:var(--muted)}.mini strong{display:block;margin-top:7px;direction:ltr;text-align:right;font-size:17px}
-.hidden{display:none!important}.section-title{font-size:15px;margin:8px 0 12px}.footer{text-align:center;color:#667c9c;font-size:9px;padding:18px}
-@media(max-width:950px){.grid{grid-template-columns:1fr}.right{display:grid;grid-template-columns:1fr 1fr}.right .settings{grid-row:span 2}}
-@media(max-width:620px){header{padding:14px 12px 9px;align-items:flex-start}.logo{width:40px;height:40px}main{padding:6px 9px 22px}.grid{gap:9px}.col{gap:9px}.right{display:flex}.card{border-radius:14px}.head{padding:12px}.metrics{grid-template-columns:1fr 1fr;gap:6px}.metric{padding:10px}.value{font-size:19px}.switches{grid-template-columns:1fr}.headright .live{display:none}.tools button{font-size:8px;padding:7px}.tip{font-size:8px}.two{gap:6px}}
-</style></head>
+  :root {
+    --bg: #050811;
+    --panel: #0f172a;
+    --border: #1e293b;
+    --cyan: #06b6d4;
+    --emerald: #10b981;
+    --amber: #f59e0b;
+    --rose: #ef4444;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body { background-color: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 24px; }
+
+  header {
+    background: linear-gradient(90deg, #090d16, #111827);
+    border-bottom: 1px solid rgba(6, 182, 212, 0.35);
+    padding: 10px 16px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  }
+  .header-inner { max-width: 1360px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo-box {
+    width: 48px; height: 48px; border-radius: 10px; background: #fff;
+    padding: 3px; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--cyan); overflow: hidden; flex-shrink: 0;
+  }
+  .logo-box img { width: 100%; height: 100%; object-fit: contain; }
+  .brand-text h1 { font-size: 15px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .badge { font-size: 11px; background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); padding: 2px 8px; border-radius: 99px; }
+  .brand-text p { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .brand-text strong { color: #22d3ee; }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; }
+  .btn {
+    border: 1px solid var(--border); background: #1e293b; color: #fff;
+    padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: 0.15s;
+  }
+  .btn:hover { border-color: var(--cyan); transform: translateY(-1px); }
+  .btn.active, .btn-cyan { background: rgba(6, 182, 212, 0.2); color: #67e8f9; border-color: rgba(6, 182, 212, 0.5); }
+  .btn-emerald { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.5); }
+  .btn-amber { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border-color: rgba(245, 158, 11, 0.5); }
+  .btn-rose { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.5); }
+
+  .layout { max-width: 1360px; margin: 14px auto; padding: 0 12px; display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 1024px) { .layout { grid-template-columns: 350px 1fr; } }
+
+  .panel { background: var(--panel); border: 1px solid rgba(6, 182, 212, 0.22); border-radius: 14px; padding: 13px; box-shadow: 0 8px 25px rgba(0,0,0,0.45); }
+  .panel-title { font-size: 13px; font-weight: 800; color: #22d3ee; border-bottom: 1px solid var(--border); padding-bottom: 7px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+  .control-group { margin-bottom: 10px; }
+  .control-header { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 3px; }
+  .control-val { font-weight: 800; color: #22d3ee; direction: ltr; }
+  input[type=range] { width: 100%; accent-color: var(--cyan); cursor: pointer; height: 6px; }
+  select { width: 100%; background: #090d16; color: #fff; border: 1px solid #334155; padding: 6px 8px; border-radius: 8px; font-size: 11.5px; }
+
+  /* Telemetry Stats */
+  .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+  @media (min-width: 680px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+  .stat-card { background: linear-gradient(145deg, #162032, #090d16); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 11px; padding: 10px; }
+  .stat-label { font-size: 10.5px; color: var(--muted); }
+  .stat-val { font-size: 18px; font-weight: 900; margin: 3px 0; direction: ltr; text-align: right; }
+  .stat-sub { font-size: 10.5px; font-weight: 600; }
+
+  /* Energy Breakdown Bars */
+  .energy-bar-wrap { background: #090d16; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; margin-top: 8px; }
+  .bar-row { margin-bottom: 7px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-labels { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
+  .bar-track { width: 100%; height: 8px; background: #1e293b; border-radius: 99px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 99px; transition: width 0.2s; }
+
+  /* Canvas Display */
+  .canvas-container {
+    width: 100%; background: #020409; border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 12px; overflow: hidden; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  canvas { display: block; width: 100%; max-height: 540px; touch-action: none; user-select: none; cursor: grab; }
+  canvas:active { cursor: grabbing; }
+
+  .legend-bar {
+    display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: #090d16; border-radius: 10px; border: 1px solid #1e293b; font-size: 11px;
+  }
+  .legend-items { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-left: 5px; }
+</style>
+</head>
 <body>
-<header><div class="brand"><img class="logo" src="./57934.png" alt="RF Studio Logo" style="object-fit:contain;padding:4px;"><div><h1>RF STUDIO <span style="color:var(--cyan)">PRO</span></h1><div class="sub">مختبر هندسي وتعليمي تفاعلي للانتقال اللاسلكي · WIRELESS TRANSMISSION</div></div></div><div class="headright"><span class="live">● LIVE LAB</span><button id="pause">Ⅱ إيقاف</button><button class="primary" id="reset">↻ إعادة ضبط</button></div></header>
-<main>
-<nav class="tabs"><button class="active" data-tab="lab">🌐 المحاكي الحي</button><button data-tab="theory">📘 المفاهيم والمعادلات</button><button data-tab="budget">🧮 Link Budget</button><button data-tab="doppler">🚀 Doppler & Delay</button><button data-tab="guide">🎓 دليل التجارب</button></nav>
-<section id="lab" class="tab">
-<div class="grid">
-<div class="col">
-<article class="card"><div class="head"><div><h2>بيئة الانتشار اللاسلكي ثلاثية المسارات</h2><div class="hint">حرّك محطة الإرسال والمستقبل والمباني — راقب تغير القناة فورياً</div></div><span class="tag">INTERACTIVE CHANNEL</span></div>
-<div class="stagepad"><div class="stage"><canvas id="world" width="1000" height="560"></canvas><div class="tip">اسحب العناصر لتغيير هندسة الانتشار</div></div><div class="tools"><button id="add">＋ إضافة مبنى</button><button id="clear">⌫ حذف المباني</button><button data-preset="los">LOS مباشر</button><button data-preset="blocked">NLOS محجوب</button><button data-preset="multi">Multipath</button><button data-preset="dense">بيئة كثيفة</button></div><div class="legend"><span><i class="dot" style="background:#4be0ad"></i>مباشر</span><span><i class="dot" style="background:#ffc46b"></i>منعكس</span><span><i class="dot" style="background:#ff6f91"></i>محصلة المجال</span><span><i class="dot" style="background:#7895ff"></i>مناطق الانتشار</span></div></div></article>
-<div class="metrics">
-<div class="metric"><small>Received Power · RSSI</small><div class="value" id="rssi">−68.0 <span class="unit">dBm</span></div><div class="foot">قدرة الاستقبال المقدّرة</div></div>
-<div class="metric"><small>Signal to Noise · SNR</small><div class="value" id="snr">13.0 <span class="unit">dB</span></div><div class="foot">دون احتساب التداخل</div></div>
-<div class="metric"><small>Signal to Interference + Noise</small><div class="value" id="sinr">6.0 <span class="unit">dB</span></div><div class="foot">جودة القناة المقدّرة</div></div>
-<div class="metric"><small>Free Space Path Loss</small><div class="value" id="fspl">80.0 <span class="unit">dB</span></div><div class="foot">خط أساس الفضاء الحر</div></div>
-</div>
-<article class="card"><div class="head"><div><h2>الإشارة المركبة عند المستقبل</h2><div class="hint">جمع المركبات حسب السعة والطور · Complex baseband illustration</div></div><span class="tag">TIME DOMAIN</span></div><div class="wavepad"><div class="wavecaption"><span>الموجة المستقبلة</span><span id="waveinfo">Direct + reflected components</span></div><canvas id="wave" width="900" height="230"></canvas></div></article>
-</div>
-<aside class="col right">
-<article class="card settings"><div class="head"><div><h2>إعدادات الإرسال والقناة</h2><div class="hint">عدّل المتغيرات وشاهد تأثيرها</div></div><span class="tag">RF PARAMETERS</span></div><div class="controls">
-<div class="control"><div class="ctop"><label>التردد Frequency</label><b id="freqout">2.4 GHz</b></div><input id="freq" type="range" min=".7" max="28" step=".1" value="2.4"><div class="scale"><span>0.7 GHz</span><span>28 GHz</span></div></div>
-<div class="control"><div class="ctop"><label>قدرة الإرسال Tx Power</label><b id="powerout">30 dBm</b></div><input id="power" type="range" min="0" max="46" value="30"><div class="scale"><span>0 dBm</span><span>46 dBm</span></div></div>
-<div class="control"><div class="ctop"><label>سرعة الحركة النسبية</label><b id="speedout">1.5 m/s</b></div><input id="speed" type="range" min="0" max="30" step=".5" value="1.5"><div class="scale"><span>0 m/s</span><span>30 m/s</span></div></div>
-<div class="control"><div class="ctop"><label>مادة العائق (خسارة تعليمية)</label></div><select id="wall"><option value="3">خشب خفيف · 3 dB</option><option value="8">زجاج / حاجز خفيف · 8 dB</option><option value="18" selected>خرسانة مسلحة · 18 dB</option><option value="25">جدار كثيف · 25 dB</option></select></div>
-<div class="control"><div class="ctop"><label>Noise Power</label><b id="noiseout">−104 dBm</b></div><input id="noise" type="range" min="-120" max="-80" value="-104"><div class="scale"><span>−120 dBm</span><span>−80 dBm</span></div></div>
-<div class="control"><div class="ctop"><label>خيارات العرض والتقنيات</label></div><div class="switches">
-<label class="switch"><input type="checkbox" id="heat" checked> خريطة حرارية نسبية</label><label class="switch"><input type="checkbox" id="rays" checked> مسارات الانعكاس</label><label class="switch"><input type="checkbox" id="beam"> مكسب Beamforming</label><label class="switch"><input type="checkbox" id="ris"> مكسب RIS افتراضي</label></div></div></div></article>
-<article class="card"><div class="head"><h2>تحليل القناة الذكي</h2><span class="tag">DIAGNOSTICS</span></div><div class="explain" id="diagnosis">تحليل الحالة...</div></article>
-<article class="card"><div class="head"><h2>ملخص المسارات</h2><span class="tag">CHANNEL MODEL</span></div><div style="padding:4px 12px 10px"><table class="data-table"><thead><tr><th>المسار</th><th>طول المسار</th><th>تأخير نسبي</th></tr></thead><tbody id="pathrows"></tbody></table></div></article>
-</aside></div></section>
 
-<section id="theory" class="tab hidden"><h2 class="section-title">المفاهيم الأساسية ومعادلات المحاضرة</h2><div class="grid"><div class="col">
-<article class="card"><div class="head"><h2>01 · التردد والطول الموجي</h2><span class="tag">WAVELENGTH</span></div><div class="explain">الطول الموجي هو المسافة التي تقطعها الموجة خلال دورة واحدة. سرعة الضوء التقريبية في الفراغ <b>c = 3×10⁸ m/s</b>.</div><div class="formula">λ = c / f</div><div class="explain" id="wavelengthText"></div></article>
-<article class="card"><div class="head"><h2>02 · آليات الانتشار</h2><span class="tag">PROPAGATION</span></div><div class="explain"><b>Reflection:</b> انعكاس الموجة عن سطح مثل الجدار أو الأرض.<br><b>Diffraction:</b> امتداد الطاقة حول حافة عائق.<br><b>Scattering:</b> تشتت الطاقة باتجاهات متعددة بسبب الأسطح الخشنة أو الأجسام.<br><b>Absorption:</b> امتصاص المادة جزءاً من الطاقة.<br><br>هذه آليات وصفية، ولا تعطي وحدها قيمة خسارة رقمية ثابتة.</div></article>
-<article class="card"><div class="head"><h2>03 · التمييز بين أنواع التغير</h2><span class="tag">CHANNEL EFFECTS</span></div><div class="explain"><b>Path Loss:</b> اتجاه متوسط فقد القدرة مع المسافة والسيناريو.<br><b>Shadowing:</b> تغير المتوسط المحلي بسبب العوائق.<br><b>Small-Scale Fading:</b> تغير سريع محلي ناتج عن جمع مركبات متعددة الأطوار والسعات.<br><br><span class="warning">لا يمكن تشخيص هذه التأثيرات الثلاثة من عينة إشارة واحدة فقط.</span></div></article>
-<article class="card"><div class="head"><h2>04 · Multipath والتداخل</h2><span class="tag">PHASE & SUPERPOSITION</span></div><div class="explain">تصل نسخ من الإشارة عبر مسارات مختلفة؛ يختلف طول كل مسار وتأخيره وطورُه. إذا تعززت المركبات يحدث <b>Constructive Interference</b>، وإذا ألغى بعضها بعضاً جزئياً يحدث <b>Destructive Interference</b>. قد يؤدي تحريك المستقبل لمسافة صغيرة إلى تغيير الطور النسبي.</div><div class="formula">E<sub>total</sub> = Σ Aᵢ · e<sup>jφᵢ</sup></div></article>
-</div><div class="col">
-<article class="card"><div class="head"><h2>05 · Free Space Path Loss</h2><span class="tag">ITU-R P.525</span></div><div class="formula">L<sub>FS</sub>(dB) = 32.4 + 20log₁₀(f<sub>MHz</sub>) + 20log₁₀(d<sub>km</sub>)</div><div class="explain">مثال المحاضرة: عند f = 2400 MHz و d = 0.1 km:<div class="formula">32.4 + 67.60 − 20 ≈ 80.0 dB</div><b>مهم:</b> هذه معادلة خط أساس للفضاء الحر، ولا تشمل الجدران أو التظليل أو التلاشي أو التداخل.</div></article>
-<article class="card"><div class="head"><h2>06 · dB و dBm</h2><span class="tag">POWER SCALE</span></div><div class="formula">P(dBm) = 10log₁₀(P(mW))</div><div class="explain">dB تمثل نسبة بين قيمتين، أما dBm فتعبّر عن قدرة مطلقة مرجعها 1 mW. مثال: 1 mW = 0 dBm، و10 mW = 10 dBm. مضاعفة القدرة تعطي زيادة تقارب 3.01 dB.</div></article>
-<article class="card"><div class="head"><h2>07 · SINR</h2><span class="tag">SIGNAL QUALITY</span></div><div class="formula">SINR = S / (I + N)</div><div class="explain">مثال المحاضرة: S=10 mW، I=2 mW، N=0.5 mW. إذن SINR=10/2.5=4، أي <b>6.02 dB</b>. يجب جمع التداخل والضوضاء بوحدات القدرة الخطية أولاً، لا بجمع قيم dBm مباشرة.</div></article>
-</div></div></section>
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo-box">
+        <img src="57934.jpg" alt="AMIU" onerror="this.outerHTML='<span style=\'color:#0284c7;font-weight:900;font-size:12px\'>AMIU</span>'">
+      </div>
+      <div class="brand-text">
+        <h1>
+          جامعة المعقل - كلية الهندسة
+          <span class="badge">قسم الأمن السيبراني | 3D Wave & Reflection Lab</span>
+        </h1>
+        <p>إعداد الطالب: <strong>سامر وفي جري</strong> | محاكي الفيزياء الموجية ثلاثي الأبعاد (الانتشار، الانعكاس الكلي والجزئي، النفاذ، والارتداد المتعدد)</p>
+      </div>
+    </div>
 
-<section id="budget" class="tab hidden"><h2 class="section-title">حاسبة ميزانية الوصلة Link Budget</h2><div class="grid"><div class="col"><article class="card"><div class="head"><h2>أدخل قيم النظام</h2><span class="tag">LINK CALCULATOR</span></div><div class="controls">
-<div class="control"><div class="ctop"><label>قدرة الإرسال dBm</label><b id="bpout">30 dBm</b></div><input id="bp" type="range" min="0" max="46" value="30"></div>
-<div class="control"><div class="ctop"><label>كسب هوائي الإرسال dBi</label><b id="gtout">2 dBi</b></div><input id="gt" type="range" min="0" max="20" value="2"></div>
-<div class="control"><div class="ctop"><label>كسب هوائي الاستقبال dBi</label><b id="grout">2 dBi</b></div><input id="gr" type="range" min="0" max="20" value="2"></div>
-<div class="control"><div class="ctop"><label>فقد المسار dB</label><b id="blout">100 dB</b></div><input id="bl" type="range" min="40" max="150" value="100"></div>
-<div class="control"><div class="ctop"><label>خسائر أخرى dB</label><b id="olout">2 dB</b></div><input id="ol" type="range" min="0" max="30" value="2"></div>
-<div class="control"><div class="ctop"><label>مستوى الاستقبال المطلوب dBm</label><b id="reqout">−85 dBm</b></div><input id="req" type="range" min="-120" max="-50" value="-85"></div></div></article></div>
-<div class="col"><article class="card"><div class="head"><h2>نتيجة الميزانية</h2><span class="tag">CALCULATED</span></div><div class="explain"><div class="formula">Pᵣₓ = Pₜₓ + Gₜ + Gᵣ − L − Lₒ</div><div class="two"><div class="mini"><small>Received Power</small><strong id="bpr">−68 dBm</strong></div><div class="mini"><small>Fade Margin</small><strong id="margin">17 dB</strong></div></div><p id="budgetExplain"></p><table class="data-table"><tbody id="budgetRows"></tbody></table></div></article></div></div></section>
+    <div class="presets">
+      <button class="btn btn-cyan" onclick="setScenario('reflect100')">1. حاجز عاكس 100% (انعكاس كلي)</button>
+      <button class="btn btn-emerald" onclick="setScenario('partial50')">2. حاجز نصف نافذ (50% يمر / 50% ينعكس)</button>
+      <button class="btn btn-amber" onclick="setScenario('doubleBounce')">3. ارتداد مزدوج بين بنايتين (Multiple Reflections)</button>
+      <button class="btn btn-rose" onclick="clearWaves()">مسح الموجات (Clear Waves)</button>
+    </div>
+  </div>
+</header>
 
-<section id="doppler" class="tab hidden"><h2 class="section-title">تأثير الحركة والتأخير الزمني</h2><div class="grid"><div class="col"><article class="card"><div class="head"><h2>Doppler Shift Calculator</h2><span class="tag">MOTION</span></div><div class="controls"><div class="control"><div class="ctop"><label>سرعة الحركة m/s</label><b id="dvout">1.5 m/s</b></div><input id="dv" type="range" min="0" max="60" step=".5" value="1.5"></div><div class="control"><div class="ctop"><label>التردد GHz</label><b id="dfout">2.0 GHz</b></div><input id="df" type="range" min=".7" max="28" step=".1" value="2"></div><div class="control"><div class="ctop"><label>زاوية اتجاه الحركة بالنسبة للمسار</label><b id="angleout">0°</b></div><input id="angle" type="range" min="0" max="180" value="0"></div></div></article></div><div class="col"><article class="card"><div class="head"><h2>النتيجة الفيزيائية</h2><span class="tag">DOPPLER</span></div><div class="explain"><div class="formula">f<sub>D</sub> = (v · f / c) cos(θ)</div><div class="mini"><small>Doppler Shift</small><strong id="dopplerResult">10 Hz</strong></div><p id="dopplerText"></p><hr style="border-color:#273854"><h3 style="font-size:12px">Excess Path Delay</h3><div class="control"><div class="ctop"><label>فرق طول المسار بالمتر</label><b id="extraout">300 m</b></div><input id="extra" type="range" min="0" max="1500" step="10" value="300"></div><div class="formula">τ = Δd / c</div><div class="mini"><small>Excess Delay</small><strong id="delayResult">1 μs</strong></div><p id="delayText"></p></div></article></div></div></section>
+<main class="layout">
+  <!-- Right Controls Panel -->
+  <aside style="display:flex; flex-direction:column; gap:12px;">
+    
+    <!-- View & Rendering Mode -->
+    <div class="panel">
+      <div class="panel-title">
+        <span>طور العرض ثلاثي الأبعاد (View & 3D Mesh)</span>
+        <span style="font-size:10px; color:var(--muted)">Falstad 3D Style</span>
+      </div>
 
-<section id="guide" class="tab hidden"><h2 class="section-title">دليل التجارب التعليمية</h2><div class="grid"><div class="col">
-<article class="card"><div class="head"><h2>تجربة 01 · أثر المسافة والتردد</h2><span class="tag">5 MIN</span></div><div class="explain">1. اختر LOS مباشر.<br>2. سجّل FSPL عند 100 متر.<br>3. ضاعف المسافة مع تثبيت التردد.<br>4. غيّر التردد إلى الضعف مع تثبيت المسافة.<br><b>المتوقع:</b> يزداد فقد الفضاء الحر بنحو 6.02 dB عند مضاعفة المسافة أو التردد، وفق فرضيات النموذج.</div></article>
-<article class="card"><div class="head"><h2>تجربة 02 · التداخل متعدد المسارات</h2><span class="tag">8 MIN</span></div><div class="explain">1. اختر سيناريو Multipath.<br>2. فعّل مسارات الانعكاس.<br>3. حرّك المستقبل تدريجياً.<br>4. راقب تغيّر المجال المركب وقوة الاستقبال.<br><b>المتوقع:</b> قد يحدث تعزيز أو إلغاء جزئي بسبب اختلاف الأطوار.</div></article>
-<article class="card"><div class="head"><h2>تجربة 03 · ميزانية الوصلة والهامش</h2><span class="tag">6 MIN</span></div><div class="explain">افتح Link Budget واستخدم القيم: 30 dBm قدرة إرسال، 2 dBi لكل هوائي، 100 dB فقد مسار، و2 dB خسائر أخرى. قارن القدرة المستقبلة بعتبة −85 dBm.<br><b>النتيجة:</b> −68 dBm وهامش 17 dB. أضف 20 dB خسارة لترى كيف يصبح الهامش −3 dB.</div></article>
-</div><div class="col">
-<article class="card"><div class="head"><h2>تجربة 04 · SNR مقابل SINR</h2><span class="tag">6 MIN</span></div><div class="explain">استخدم القيم التعليمية S=10 mW، I=2 mW، N=0.5 mW.<br>SNR = 10/0.5 = 20 ≈ 13.01 dB.<br>SINR = 10/(2+0.5) = 4 ≈ 6.02 dB.<br><b>الاستنتاج:</b> تجاهل التداخل يعطي انطباعاً أفضل من جودة القناة الفعلية.</div></article>
-<article class="card"><div class="head"><h2>تجربة 05 · Doppler وDelay</h2><span class="tag">5 MIN</span></div><div class="explain">استخدم 1.5 m/s و2 GHz وزاوية صفر. القيمة القصوى لمقدار Doppler تساوي 10 Hz. ثم استخدم فرق مسار 300 متر لتحصل على تأخير زائد يساوي 1 μs.<br><b>تنبيه:</b> التأخير الزائد لمسار واحد ليس زمن استجابة الإنترنت ولا RMS Delay Spread.</div></article>
-<article class="card"><div class="head"><h2>حدود النموذج العلمي</h2><span class="tag">IMPORTANT</span></div><div class="explain">هذا المختبر نموذج تعليمي مبسّط. أرقام الجدران والمكاسب الافتراضية ليست قياسات ميدانية. نموذج القناة في الرسم توضيحي؛ أما التنبؤ الدقيق فيحتاج هندسة ثلاثية الأبعاد وخصائص المواد والهوائيات وقياسات أو نماذج معيارية معتمدة. لا تستخدمه لتصميم تغطية شبكة فعلية.</div></article>
-</div></div></section>
-<div class="footer">RF STUDIO PRO · Educational engineering simulator · يعتمد المفاهيم والأمثلة التعليمية الواردة في Lecture 05 — Wireless Transmission</div>
+      <div style="display:flex; gap:6px; margin-bottom:10px;">
+        <button id="btnView3D" class="btn active" style="flex:1; padding:8px;" onclick="setViewMode('3d')">⛰️ عرض مجسم 3D واقعي</button>
+        <button id="btnView2D" class="btn" style="flex:1; padding:8px;" onclick="setViewMode('2d')">🌊 عرض علوي 2D</button>
+      </div>
+
+      <div class="control-group">
+        <div class="control-header"><span>ارتفاع قمم الموجة 3D (Wave 3D Height):</span><span id="lblHeight" class="control-val">38 px</span></div>
+        <input id="slHeight" type="range" min="10" max="75" value="38">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header"><span>زاوية ميل الكاميرا (3D Pitch Tilt):</span><span id="lblTilt" class="control-val">55°</span></div>
+        <input id="slTilt" type="range" min="25" max="80" value="55">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header"><span>شدة الإضاءة والتباين (Brightness):</span><span id="lblBright" class="control-val">130%</span></div>
+        <input id="slBright" type="range" min="60" max="220" value="130">
+      </div>
+    </div>
+
+    <!-- Wave Source & Damping Config -->
+    <div class="panel">
+      <div class="panel-title">
+        <span>خصائص المنبع وانتشار الموجة</span>
+      </div>
+
+      <div class="control-group">
+        <div class="control-header"><span>تردد الموجة (Source Frequency):</span><span id="lblFreq" class="control-val">متوسط (2.4 GHz)</span></div>
+        <input id="slFreq" type="range" min="15" max="55" value="32">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header"><span>سرعة المحاكاة (Simulation Speed):</span><span id="lblSpeed" class="control-val">1x</span></div>
+        <input id="slSpeed" type="range" min="1" max="3" step="1" value="1">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header"><span>اضمحلال الموجة بالمسافة (Damping):</span><span id="lblDamp" class="control-val">منخفض (واضح)</span></div>
+        <input id="slDamp" type="range" min="1" max="30" value="5">
+      </div>
+    </div>
+
+    <!-- Wall Reflection & Transmission Physics -->
+    <div class="panel">
+      <div class="panel-title">
+        <span>فيزياء الحاجز (الانعكاس والنفاذ والامتصاص)</span>
+      </div>
+
+      <div class="control-group">
+        <div class="control-header"><span>مادة البناية / السطح الأول (Wall 1):</span></div>
+        <select id="selMaterial" onchange="applyMaterialPreset()">
+          <option value="metal">معدن مصقول / مرآة (يعكس 100% - يمر 0%)</option>
+          <option value="concrete">خرسانة مسلحة (يعكس 70% - يمر 20% - يمتص 10%)</option>
+          <option value="brick">حاجز طابوق نصف نافذ (يعكس 50% - يمر 40% - يمتص 10%)</option>
+          <option value="glass">زجاج سميك (يعكس 30% - يمر 65% - يمتص 5%)</option>
+        </select>
+      </div>
+
+      <div class="control-group" style="margin-top:8px;">
+        <div class="control-header"><span>نسبة الانعكاس (Reflection %):</span><span id="lblRefl" class="control-val">100%</span></div>
+        <input id="slRefl" type="range" min="0" max="100" value="100" oninput="updatePhysicsBars()">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header"><span>نسبة العبور / النفاذ خلف الجدار (Transmission %):</span><span id="lblTrans" class="control-val">0%</span></div>
+        <input id="slTrans" type="range" min="0" max="100" value="0" oninput="updatePhysicsBars()">
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:8px 0; padding:6px 8px; background:#090d16; border-radius:8px; border:1px solid #1e293b;">
+        <label for="chkWall2" style="font-size:11.5px; font-weight:700; color:#fcd34d; cursor:pointer;">تفعيل السطح العاكس الثاني (بناية 2 للارتداد المتعدد)</label>
+        <input id="chkWall2" type="checkbox" checked onchange="rebuildWalls()" style="width:16px; height:16px; accent-color:var(--amber); cursor:pointer;">
+      </div>
+
+      <!-- Live Percentage Breakdown -->
+      <div class="energy-bar-wrap">
+        <div class="bar-row">
+          <div class="bar-labels"><span>الموجة المنعكسة المرتدة (Reflected):</span><strong id="barReflTxt" style="color:#22d3ee">100%</strong></div>
+          <div class="bar-track"><div id="barRefl" class="bar-fill" style="width:100%; background:#06b6d4;"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-labels"><span>الموجة العابرة خلف الحاجز (Transmitted):</span><strong id="barTransTxt" style="color:#10b981">0%</strong></div>
+          <div class="bar-track"><div id="barTrans" class="bar-fill" style="width:0%; background:#10b981;"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-labels"><span>الضعف عند الارتداد بالسطح الثاني (Bounce 2):</span><strong id="barBounce2Txt" style="color:#f59e0b">85% من المرتدة</strong></div>
+          <div class="bar-track"><div id="barBounce2" class="bar-fill" style="width:85%; background:#f59e0b;"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Main 3D Visualization Area -->
+  <section style="display:flex; flex-direction:column; gap:12px;">
+    
+    <!-- Live Telemetry Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">سعة الموجة عند المنبع (Source Peak)</div>
+        <div class="stat-val" style="color:#22d3ee">100% (0 dB)</div>
+        <div class="stat-sub" style="color:#67e8f9">انتشار كروي 3D مستمر</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">طاقة الارتداد الأول (First Reflection)</div>
+        <div class="stat-val" id="cardRef1" style="color:#10b981">100%</div>
+        <div class="stat-sub" id="cardRef1Sub" style="color:#6ee7b7">انعكاس كلي واضح القمم</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">الجزء العابر خلف الحاجز (Transmitted)</div>
+        <div class="stat-val" id="cardTrans" style="color:#f59e0b">0% (محجوب)</div>
+        <div class="stat-sub" id="cardTransSub" style="color:#fcd34d">منطقة ظل خلف البناية</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">الارتداد الثاني (Second Surface Bounce)</div>
+        <div class="stat-val" id="cardBounce2" style="color:#a855f7">مفعّل (تداخل 3D)</div>
+        <div class="stat-sub" style="color:#d8b4fe">تضعف تدريجياً بعد كل اصطدام</div>
+      </div>
+    </div>
+
+    <!-- 3D Wave Canvas Box -->
+    <div class="panel" style="flex:1; display:flex; flex-direction:column; gap:10px;">
+      <div class="legend-bar">
+        <div class="legend-items">
+          <span><span class="dot" style="background:#22d3ee;"></span>قمة الموجة الموجبة (+Crest)</span>
+          <span><span class="dot" style="background:#991b1b;"></span>قعر الموجة السالب (-Trough)</span>
+          <span><span class="dot" style="background:#f59e0b;"></span>حاجز عاكس (بناية / جدار)</span>
+          <span><span class="dot" style="background:#facc15;"></span>منبع الموجة (اسحبه بالماوس/اللمس ✋)</span>
+        </div>
+        <span style="color:#38bdf8; font-weight:700;">اسحب منبع الموجة الأصفر أو اضغط بأي مكان لإطلاق موجة!</span>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="rippleCanvas" width="900" height="520"></canvas>
+      </div>
+    </div>
+
+  </section>
 </main>
+
 <script>
-(()=>{'use strict';
-const $=id=>document.getElementById(id), world=$('world'),c=world.getContext('2d'),wave=$('wave'),w=wave.getContext('2d');
-const S={tx:{x:145,y:280},rx:{x:855,y:280},build:[{x:475,y:205,w:76,h:155}],t:0,paused:false,drag:null,metrics:{},paths:[]};
-const C={cyan:'#58e4ff',green:'#4be0ad',gold:'#ffc46b',red:'#ff6f91',blue:'#7895ff',violet:'#bd9bff'};
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),log=x=>Math.log10(Math.max(x,1e-20));
-function intersects(a,b,r){let dx=b.x-a.x,dy=b.y-a.y,t0=0,t1=1;let p=[-dx,dx,-dy,dy],q=[a.x-r.x,r.x+r.w-a.x,a.y-r.y,r.y+r.h-a.y];for(let i=0;i<4;i++){if(Math.abs(p[i])<1e-9){if(q[i]<0)return false}else{let t=q[i]/p[i];if(p[i]<0)t0=Math.max(t0,t);else t1=Math.min(t1,t);if(t0>t1)return false}}return true}
-function hits(a,b){return S.build.filter(r=>intersects(a,b,r)).length}
-function fspl(km,mhz){return 32.44+20*log(mhz)+20*log(km)}
-function dbmToMw(v){return Math.pow(10,v/10)}
-function mwToDbm(v){return 10*log(v)}
-function complexPaths(){
- const f=+$('freq').value*1e9,lambda=3e8/f,metersPerPixel=.12, direct=d(S.tx,S.rx)*metersPerPixel, paths=[{name:'مباشر',len:direct,loss:hits(S.tx,S.rx)*(+$('wall').value),phase:0}];
- if($('rays').checked)S.build.forEach((b,i)=>[{x:b.x+b.w/2,y:b.y-12},{x:b.x+b.w/2,y:b.y+b.h+12}].forEach((p,j)=>{let len=(d(S.tx,p)+d(p,S.rx))*metersPerPixel;paths.push({name:`انعكاس ${i+1}.${j+1}`,len,loss:3+hhitsDummy(),phase:Math.PI})}));
- function hhitsDummy(){return 0}
- const ref=paths[0].len||1;paths.forEach(p=>{p.delay=(p.len-ref)/3e8;p.phase=(2*Math.PI*(p.len-ref)/lambda)+(p.phase||0);p.amp=Math.pow(10,-(fspl(Math.max(.001,p.len/1000),f/1e6)+p.loss)/20)});
- return paths;
-}
-function calculate(){
- const f=+$('freq').value,mhz=f*1000,km=Math.max(.001,d(S.tx,S.rx)*.12/1000),free=fspl(km,mhz),walls=hits(S.tx,S.rx),wallLoss=walls*(+$('wall').value),paths=complexPaths();
- const tx=+$('power').value,beam=$('beam').checked?6:0,ris=$('ris').checked?8:0;
- // Link-budget baseline; multipath is represented as a relative educational fade term, not calibrated ray tracing.
- const phase=Math.cos((d(S.tx,S.rx)*.12*2*Math.PI/(3e8/(f*1e9)))+S.t*.035);
- const multipath=$('rays').checked?Math.max(0,7*(1-phase)/2):0;
- const rx=tx-free-wallLoss-multipath+beam+ris,noise=+$('noise').value;
- const interference=rx-6+3*Math.sin(S.t*.04); // illustrative interfering power relative to desired signal
- const snr=rx-noise, sinr=mwToDbm(dbmToMw(rx)/(dbmToMw(interference)+dbmToMw(noise)));
- S.metrics={km,free,walls,wallLoss,multipath,rx,noise,snr,sinr,phase,interference,lambda:3e8/(f*1e9)};S.paths=paths;
- $('rssi').innerHTML=`${rx.toFixed(1)} <span class="unit">dBm</span>`;$('snr').innerHTML=`${snr.toFixed(1)} <span class="unit">dB</span>`;$('sinr').innerHTML=`${sinr.toFixed(1)} <span class="unit">dB</span>`;$('fspl').innerHTML=`${free.toFixed(1)} <span class="unit">dB</span>`;
- $('freqout').textContent=f.toFixed(1)+' GHz';$('powerout').textContent=tx+' dBm';$('speedout').textContent=(+$('speed').value).toFixed(1)+' m/s';$('noiseout').textContent=noise+' dBm';
- let txt=walls?`<span class="warning">يوجد ${walls} عائق/عوائق على خط النظر المباشر.</span> خسارة الحواجز المفترضة ${wallLoss} dB. `:'<b>خط النظر المباشر LOS متاح</b> في هندسة الرسم. ';
- txt+=sinr>15?'قيمة SINR التعليمية جيدة نسبياً.':sinr>5?'جودة القناة متوسطة في هذه الفرضيات.':'جودة القناة ضعيفة وفق القيم المفترضة.';
- txt+=`<br>المسافة التقريبية ${km.toFixed(3)} km، والطول الموجي ${(S.metrics.lambda*100).toFixed(2)} cm.`;
- if($('beam').checked)txt+='<br>تم تطبيق مكسب افتراضي 6 dB لـ Beamforming.';if($('ris').checked)txt+='<br>تم تطبيق مكسب افتراضي 8 dB لـ RIS.';
- txt+='<br><span class="warning">النتائج نموذجية وليست قياسات شبكة فعلية.</span>';$('diagnosis').innerHTML=txt;
- $('pathrows').innerHTML=paths.map(p=>`<tr><td>${p.name}</td><td>${p.len.toFixed(1)} m</td><td>${(p.delay*1e6).toFixed(3)} μs</td></tr>`).join('');
- $('wavelengthText').innerHTML=`عند التردد الحالي ${f.toFixed(1)} GHz يكون الطول الموجي التقريبي <span class="result">${(S.metrics.lambda*100).toFixed(2)} cm</span>.`;
-}
-function grid(){c.fillStyle='#070e1b';c.fillRect(0,0,1000,560);c.strokeStyle='rgba(120,157,205,.085)';c.lineWidth=1;for(let x=0;x<=1000;x+=40){c.beginPath();c.moveTo(x,0);c.lineTo(x,560);c.stroke()}for(let y=0;y<=560;y+=40){c.beginPath();c.moveTo(0,y);c.lineTo(1000,y);c.stroke()}}
-function heat(){if(!$('heat').checked)return;for(let y=8;y<560;y+=16)for(let x=8;x<1000;x+=16){let p={x,y},a=d(p,S.tx),b=d(p,S.rx),phase=Math.cos((a+b)*.09),atten=Math.exp(-a/520)*(1-.16*hits(S.tx,p)),strength=(.5+.5*phase)*atten;c.fillStyle=`hsla(${210-strength*185},90%,58%,${.025+strength*.17})`;c.fillRect(x,y,16,16)}}
-function draw(){
- grid();heat();
- for(let i=0;i<6;i++){let r=(S.t*2.1+i*95)%650;c.beginPath();c.arc(S.tx.x,S.tx.y,r,0,Math.PI*2);c.strokeStyle=`rgba(88,228,255,${Math.max(.015,.27-r/900)})`;c.lineWidth=2;c.stroke()}
- c.save();c.setLineDash([10,8]);c.strokeStyle=C.green;c.lineWidth=3;c.beginPath();c.moveTo(S.tx.x,S.tx.y);c.lineTo(S.rx.x,S.rx.y);c.stroke();c.restore();
- if($('rays').checked)S.build.forEach(b=>[{x:b.x+b.w/2,y:b.y-12},{x:b.x+b.w/2,y:b.y+b.h+12}].forEach(p=>{c.beginPath();c.moveTo(S.tx.x,S.tx.y);c.lineTo(p.x,p.y);c.lineTo(S.rx.x,S.rx.y);c.strokeStyle='#ffc46b99';c.lineWidth=2;c.stroke()}));
- c.beginPath();c.moveTo(S.tx.x,S.tx.y);c.lineTo(S.rx.x,S.rx.y);c.strokeStyle='#ff6f9180';c.lineWidth=5;c.stroke();
- S.build.forEach((b,i)=>{c.save();c.shadowColor='#ff6f9166';c.shadowBlur=20;c.fillStyle='#2b1a36';c.strokeStyle=C.red;c.lineWidth=3;c.beginPath();c.roundRect(b.x,b.y,b.w,b.h,9);c.fill();c.stroke();c.restore();for(let y=b.y+14;y<b.y+b.h-8;y+=30)for(let x=b.x+11;x<b.x+b.w-8;x+=23){c.fillStyle='#ffc46b77';c.fillRect(x,y,12,16)}c.fillStyle='#f5d6e4';c.font='13px Tahoma';c.textAlign='center';c.fillText('مبنى '+(i+1),b.x+b.w/2,b.y-10)});
- node(S.tx,'محطة الإرسال','gNB · Tx',C.cyan,'⌁');node(S.rx,'المستقبل','UE · Rx',C.gold,'◉');
- c.fillStyle='#91a4c2';c.font='12px Tahoma';c.textAlign='center';c.fillText(`المسافة: ${(d(S.tx,S.rx)*.12/1000).toFixed(3)} km`,500,535);
-}
-function node(p,title,sub,color,icon){c.save();c.shadowColor=color;c.shadowBlur=22;c.beginPath();c.arc(p.x,p.y,27,0,7);c.fillStyle='#11213a';c.fill();c.strokeStyle=color;c.lineWidth=3;c.stroke();c.restore();c.font='25px Arial';c.textAlign='center';c.fillStyle=color;c.fillText(icon,p.x,p.y+8);c.font='bold 13px Tahoma';c.fillStyle='#f0f6ff';c.fillText(title,p.x,p.y+46);c.font='10px Tahoma';c.fillStyle='#91a4c2';c.fillText(sub,p.x,p.y+62)}
-function drawWave(){let W=900,H=230;w.fillStyle='#080f1c';w.fillRect(0,0,W,H);w.strokeStyle='#263750';for(let y=25;y<H;y+=45){w.beginPath();w.moveTo(0,y);w.lineTo(W,y);w.stroke()}w.beginPath();w.moveTo(0,H/2);w.lineTo(W,H/2);w.strokeStyle='#526987';w.stroke();let ph=S.metrics.phase||0,amp=.42+.27*ph-(S.metrics.walls||0)*.07;amp=clamp(amp,.12,.85);w.beginPath();for(let x=0;x<W;x++){let y=H/2-Math.sin(x*.035-S.t*.085)*amp*78-Math.sin(x*.071-S.t*.11+1.3)*amp*20;x?w.lineTo(x,y):w.moveTo(x,y)}w.strokeStyle=C.gold;w.lineWidth=4;w.shadowColor=C.gold;w.shadowBlur=12;w.stroke();w.shadowBlur=0;w.beginPath();for(let x=0;x<W;x++){let y=H/2-Math.sin(x*.035-S.t*.085)*65;x?w.lineTo(x,y):w.moveTo(x,y)}w.strokeStyle='#58e4ff77';w.lineWidth=1.5;w.setLineDash([6,6]);w.stroke();w.setLineDash([])}
-function animate(){if(!S.paused){S.t++;if(S.t%7===0)calculate()}draw();drawWave();requestAnimationFrame(animate)}
-function pointer(e){let r=world.getBoundingClientRect();return{x:(e.clientX-r.left)*1000/r.width,y:(e.clientY-r.top)*560/r.height}}
-world.addEventListener('pointerdown',e=>{let p=pointer(e),items=[{kind:'tx',o:S.tx},{kind:'rx',o:S.rx},...S.build.map(o=>({kind:'b',o}))].reverse(),hit=items.find(q=>q.kind==='b'?p.x>=q.o.x-8&&p.x<=q.o.x+q.o.w+8&&p.y>=q.o.y-8&&p.y<=q.o.y+q.o.h+8:d(p,q.o)<38);if(hit){S.drag={...hit,dx:p.x-hit.o.x,dy:p.y-hit.o.y};world.setPointerCapture(e.pointerId)}});
-world.addEventListener('pointermove',e=>{if(!S.drag)return;let p=pointer(e),q=S.drag;if(q.kind==='b'){q.o.x=clamp(p.x-q.dx,5,995-q.o.w);q.o.y=clamp(p.y-q.dy,45,510-q.o.h)}else{q.o.x=clamp(p.x-q.dx,35,965);q.o.y=clamp(p.y-q.dy,75,485)}calculate()});world.addEventListener('pointerup',()=>S.drag=null);world.addEventListener('pointercancel',()=>S.drag=null);
-$('add').onclick=()=>{S.build.push({x:330+Math.random()*330,y:110+Math.random()*280,w:65,h:125});calculate()};$('clear').onclick=()=>{S.build=[];calculate()};
-document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{S.tx={x:145,y:280};S.rx={x:855,y:280};let p=b.dataset.preset;S.build=p==='los'?[]:p==='blocked'?[{x:470,y:190,w:90,h:180}]:p==='multi'?[{x:350,y:110,w:65,h:130},{x:590,y:320,w:65,h:130}]:[{x:290,y:90,w:70,h:150},{x:450,y:215,w:80,h:160},{x:640,y:90,w:75,h:150},{x:700,y:370,w:65,h:100}];calculate()});
-$('pause').onclick=()=>{S.paused=!S.paused;$('pause').textContent=S.paused?'▶ تشغيل':'Ⅱ إيقاف'};
-$('reset').onclick=()=>{S.tx={x:145,y:280};S.rx={x:855,y:280};S.build=[{x:475,y:205,w:76,h:155}];S.t=0;S.paused=false;$('pause').textContent='Ⅱ إيقاف';['freq','power','speed','noise'].forEach((id,i)=>$(id).value=[2.4,30,1.5,-104][i]);$('wall').value=18;['heat','rays'].forEach(id=>$(id).checked=true);['beam','ris'].forEach(id=>$(id).checked=false);calculate()};
-document.querySelectorAll('#lab input,#lab select').forEach(el=>el.addEventListener('input',calculate));
-// Link budget
-const ids=['bp','gt','gr','bl','ol','req'],outs=['bpout','gtout','grout','blout','olout','reqout'];
-function budget(){let v=ids.map(id=>+$(id).value);v.forEach((n,i)=>$(outs[i]).textContent=(n<0?'−'+Math.abs(n):n)+' '+(i===0||i===5?'dBm':i===1||i===2?'dBi':'dB'));let [p,gt,gr,l,ol,req]=v,pr=p+gt+gr-l-ol,m=pr-req;$('bpr').textContent=pr.toFixed(1)+' dBm';$('margin').textContent=m.toFixed(1)+' dB';$('margin').style.color=m>=0?'#4be0ad':'#ff6f91';$('budgetExplain').innerHTML=m>=0?`الهامش موجب بمقدار <b>${m.toFixed(1)} dB</b> بالنسبة إلى عتبة الاستقبال المفترضة. لا يثبت وحده جودة SINR أو نجاح التطبيق.`:`الهامش سالب بمقدار <b>${m.toFixed(1)} dB</b>؛ القدرة المقدّرة أقل من العتبة المفترضة.`;$('budgetRows').innerHTML=[['Transmit power',p+' dBm'],['Tx antenna gain','+'+gt+' dB'],['Rx antenna gain','+'+gr+' dB'],['Path loss','−'+l+' dB'],['Other losses','−'+ol+' dB'],['Required level',req+' dBm']].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}
-ids.forEach(id=>$(id).addEventListener('input',budget));
-// Doppler and delay
-function doppler(){let v=+$('dv').value,f=+$('df').value*1e9,a=+$('angle').value,fd=v*f/3e8*Math.cos(a*Math.PI/180),extra=+$('extra').value,delay=extra/3e8*1e6;$('dvout').textContent=v+' m/s';$('dfout').textContent=(f/1e9).toFixed(1)+' GHz';$('angleout').textContent=a+'°';$('dopplerResult').textContent=fd.toFixed(2)+' Hz';$('dopplerText').textContent=`القيمة القصوى للمقدار عند اتجاه الحركة على خط المسار هي ${(v*f/3e8).toFixed(2)} Hz. الزاوية تغيّر الإسقاط على اتجاه المسار.`;$('extraout').textContent=extra+' m';$('delayResult').textContent=delay.toFixed(3)+' μs';$('delayText').textContent='هذا فرق زمن وصول لمسار إضافي مفترض، وليس زمن استجابة الإنترنت ولا RMS Delay Spread.'}
-['dv','df','angle','extra'].forEach(id=>$(id).addEventListener('input',doppler));
-// Tabs
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab))});
-calculate();budget();doppler();requestAnimationFrame(animate);
-})();
-</script></body></html>
+  // 2D Wave Equation FDTD Grid Setup (Real Physical Wave Simulation)
+  const NX = 150;
+  const NY = 110;
+  let uCurr = new Float32Array(NX * NY);
+  let uPrev = new Float32Array(NX * NY);
+  let uNext = new Float32Array(NX * NY);
+
+  // Grid cell types: 0 = free space, 1 = Wall 1 (Main Reflector), 2 = Wall 2 (Secondary Reflector)
+  let cellType = new Uint8Array(NX * NY);
+
+  let sourceX = 62;
+  let sourceY = 42;
+  let simTime = 0;
+  let viewMode = '3d'; // '3d' or '2d'
+
+  const canvas = document.getElementById('rippleCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Interactive Wall Positions
+  let wall1Y = 72;
+  let wall1X1 = 28, wall1X2 = 122;
+
+  let wall2Y = 18;
+  let wall2X1 = 35, wall2X2 = 115;
+
+  function idx(x, y) { return y * NX + x; }
+
+  function rebuildWalls() {
+    cellType.fill(0);
+    // Build Wall 1 (Bottom/Middle Main Reflecting Building Surface)
+    for (let y = wall1Y; y <= wall1Y + 2; y++) {
+      for (let x = wall1X1; x <= wall1X2; x++) {
+        if (x >= 1 && x < NX - 1 && y >= 1 && y < NY - 1) {
+          cellType[idx(x, y)] = 1;
+        }
+      }
+    }
+    // Build Wall 2 (Top/Secondary Reflecting Building Surface for Multi-bounce)
+    const hasWall2 = document.getElementById('chkWall2').checked;
+    if (hasWall2) {
+      for (let y = wall2Y; y <= wall2Y + 2; y++) {
+        for (let x = wall2X1; x <= wall2X2; x++) {
+          if (x >= 1 && x < NX - 1 && y >= 1 && y < NY - 1) {
+            cellType[idx(x, y)] = 2;
+          }
+        }
+      }
+    }
+  }
+
+  function clearWaves() {
+    uCurr.fill(0);
+    uPrev.fill(0);
+    uNext.fill(0);
+  }
+
+  function setViewMode(mode) {
+    viewMode = mode;
+    document.getElementById('btnView3D').classList.toggle('active', mode === '3d');
+    document.getElementById('btnView2D').classList.toggle('active', mode === '2d');
+  }
+
+  function applyMaterialPreset() {
+    const mat = document.getElementById('selMaterial').value;
+    const slRefl = document.getElementById('slRefl');
+    const slTrans = document.getElementById('slTrans');
+    if (mat === 'metal') { slRefl.value = 100; slTrans.value = 0; }
+    else if (mat === 'concrete') { slRefl.value = 70; slTrans.value = 20; }
+    else if (mat === 'brick') { slRefl.value = 50; slTrans.value = 40; }
+    else if (mat === 'glass') { slRefl.value = 30; slTrans.value = 65; }
+    updatePhysicsBars();
+  }
+
+  function updatePhysicsBars() {
+    let refl = parseInt(document.getElementById('slRefl').value);
+    let trans = parseInt(document.getElementById('slTrans').value);
+
+    // Ensure physical conservation (Refl + Trans <= 100%)
+    if (refl + trans > 100) {
+      trans = 100 - refl;
+      document.getElementById('slTrans').value = trans;
+    }
+
+    const absorb = Math.max(0, 100 - refl - trans);
+    const hasWall2 = document.getElementById('chkWall2').checked;
+    const bounce2Pct = hasWall2 ? Math.round(refl * 0.75) : 0;
+
+    document.getElementById('lblRefl').textContent = refl + '%';
+    document.getElementById('lblTrans').textContent = trans + '%';
+
+    document.getElementById('barReflTxt').textContent = `${refl}% (امتصاص الجدار: ${absorb}%)`;
+    document.getElementById('barRefl').style.width = refl + '%';
+
+    document.getElementById('barTransTxt').textContent = `${trans}%`;
+    document.getElementById('barTrans').style.width = trans + '%';
+
+    document.getElementById('barBounce2Txt').textContent = hasWall2 ? `${bounce2Pct}% بعد الاصطدام الثاني` : 'غير مفعّل';
+    document.getElementById('barBounce2').style.width = bounce2Pct + '%';
+
+    // Update Top Telemetry Cards
+    document.getElementById('cardRef1').textContent = `${refl}%`;
+    document.getElementById('cardRef1Sub').textContent = refl >= 85 ? 'ارتداد 3D قوي جداً' : (refl >= 40 ? 'ارتداد متوسط' : 'ارتداد ضعيف');
+
+    document.getElementById('cardTrans').textContent = `${trans}%`;
+    document.getElementById('cardTransSub').textContent = trans === 0 ? 'حجب كامل خلف الحاجز (0%)' : `يعبر ${trans}% من ارتفاع الموجة`;
+
+    document.getElementById('cardBounce2').textContent = hasWall2 ? `${bounce2Pct}% (نشط)` : 'مغلق';
+  }
+
+  function setScenario(scen) {
+    clearWaves();
+    if (scen === 'reflect100') {
+      document.getElementById('selMaterial').value = 'metal';
+      document.getElementById('chkWall2').checked = false;
+      sourceX = 75; sourceY = 42;
+      applyMaterialPreset();
+      rebuildWalls();
+    } else if (scen === 'partial50') {
+      document.getElementById('selMaterial').value = 'brick';
+      document.getElementById('chkWall2').checked = false;
+      sourceX = 75; sourceY = 45;
+      applyMaterialPreset();
+      rebuildWalls();
+    } else if (scen === 'doubleBounce') {
+      document.getElementById('selMaterial').value = 'metal';
+      document.getElementById('chkWall2').checked = true;
+      sourceX = 75; sourceY = 45;
+      applyMaterialPreset();
+      rebuildWalls();
+    }
+  }
+
+  // Step 2D Wave Equation Physics
+  function stepWavePhysics() {
+    const freqVal = parseFloat(document.getElementById('slFreq').value);
+    const dampVal = parseFloat(document.getElementById('slDamp').value);
+    const reflPct = parseFloat(document.getElementById('slRefl').value) / 100.0;
+    const transPct = parseFloat(document.getElementById('slTrans').value) / 100.0;
+
+    document.getElementById('lblFreq').textContent = freqVal + ' Hz';
+    document.getElementById('lblDamp').textContent = (dampVal * 0.1).toFixed(1) + '%';
+
+    // Damping factor
+    const damping = 1.0 - (dampVal * 0.00045);
+    const c2 = 0.24; // Courant wave speed squared
+
+    simTime += 1;
+
+    // Continuous oscillating RF / Acoustic wave source
+    const omega = freqVal * 0.0095;
+    const drive = Math.sin(simTime * omega) * 2.8;
+    uCurr[idx(sourceX, sourceY)] = drive;
+    uCurr[idx(sourceX + 1, sourceY)] = drive * 0.85;
+    uCurr[idx(sourceX - 1, sourceY)] = drive * 0.85;
+    uCurr[idx(sourceX, sourceY + 1)] = drive * 0.85;
+    uCurr[idx(sourceX, sourceY - 1)] = drive * 0.85;
+
+    for (let y = 1; y < NY - 1; y++) {
+      for (let x = 1; x < NX - 1; x++) {
+        const i = y * NX + x;
+        const type = cellType[i];
+
+        if (type === 0) {
+          // Standard 2D Wave Equation in Free Space
+          const laplacian = uCurr[i - 1] + uCurr[i + 1] + uCurr[i - NX] + uCurr[i + NX] - 4 * uCurr[i];
+          let val = (2 * uCurr[i] - uPrev[i] + c2 * laplacian) * damping;
+
+          // If adjacent to a reflecting wall, scale reflected wave amplitude according to Reflection %
+          if (cellType[i + NX] === 1 || cellType[i - NX] === 1) {
+            val *= (0.35 + 0.65 * reflPct);
+          } else if (cellType[i + NX] === 2 || cellType[i - NX] === 2) {
+            // Second wall reflection attenuates slightly (~75% of primary reflection)
+            val *= 0.82;
+          }
+          uNext[i] = val;
+        } else if (type === 1) {
+          // Inside Wall 1: Controlled Transmission (if transPct > 0, allow fraction of wave to pass through)
+          if (transPct <= 0.01) {
+            uNext[i] = 0; // 100% hard barrier (Dirichlet 0 boundary -> full reflection!)
+          } else {
+            // Partial transmission through obstacle
+            const laplacian = uCurr[i - 1] + uCurr[i + 1] + uCurr[i - NX] + uCurr[i + NX] - 4 * uCurr[i];
+            uNext[i] = (2 * uCurr[i] - uPrev[i] + (c2 * 0.6) * laplacian) * transPct;
+          }
+        } else if (type === 2) {
+          // Wall 2: Secondary reflector with partial absorption
+          uNext[i] = 0;
+        }
+      }
+    }
+
+    // Absorbing Boundary Conditions (ABC) at outer edges so border doesn't reflect artificially
+    for (let x = 0; x < NX; x++) {
+      uNext[idx(x, 0)] = uCurr[idx(x, 1)] * 0.7;
+      uNext[idx(x, NY - 1)] = uCurr[idx(x, NY - 2)] * 0.7;
+    }
+    for (let y = 0; y < NY; y++) {
+      uNext[idx(0, y)] = uCurr[idx(1, y)] * 0.7;
+      uNext[idx(NX - 1, y)] = uCurr[idx(NX - 2, y)] * 0.7;
+    }
+
+    // Swap buffers
+    let temp = uPrev;
+    uPrev = uCurr;
+    uCurr = uNext;
+    uNext = temp;
+  }
+
+  // Falstad-style Color Shader (Cyan crests, Black zero, Dark Red/Rust troughs + 3D slope shading)
+  function getWaveColor(val, slope, brightness, cType) {
+    if (cType === 1) return 'rgb(245, 158, 11)'; // Main Wall Amber
+    if (cType === 2) return 'rgb(168, 85, 247)'; // Second Wall Purple
+
+    const v = Math.max(-1.5, Math.min(1.5, val * brightness));
+    const light = Math.max(-0.6, Math.min(0.6, slope * 0.8));
+
+    let r = 8, g = 14, b = 22;
+    if (v >= 0) {
+      // Cyan / White highlight on 3D crests (matches attached photos!)
+      const t = Math.min(1, v);
+      r = Math.round(10 + t * 45 + Math.max(0, light) * 180);
+      g = Math.round(20 + t * 215 + Math.max(0, light) * 60);
+      b = Math.round(30 + t * 225 + Math.max(0, light) * 50);
+    } else {
+      // Deep Rust / Red in troughs (matches attached 3D photos!)
+      const t = Math.min(1, -v);
+      r = Math.round(15 + t * 175);
+      g = Math.round(12 + t * 35);
+      b = Math.round(18 + t * 25);
+    }
+    return `rgb(${Math.min(255,r)},${Math.min(255,g)},${Math.min(255,b)})`;
+  }
+
+  function render() {
+    const speed = parseInt(document.getElementById('slSpeed').value);
+    const heightScale = parseFloat(document.getElementById('slHeight').value);
+    const tiltDeg = parseFloat(document.getElementById('slTilt').value);
+    const brightness = parseFloat(document.getElementById('slBright').value) / 100.0;
+
+    document.getElementById('lblHeight').textContent = heightScale + ' px';
+    document.getElementById('lblTilt').textContent = tiltDeg + '°';
+    document.getElementById('lblBright').textContent = Math.round(brightness * 100) + '%';
+    document.getElementById('lblSpeed').textContent = speed + 'x';
+
+    for (let s = 0; s < speed; s++) {
+      stepWavePhysics();
+    }
+
+    ctx.fillStyle = '#03060c';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (viewMode === '2d') {
+      // Top-down 2D Ripple Tank View
+      const cellW = canvas.width / NX;
+      const cellH = canvas.height / NY;
+
+      for (let y = 0; y < NY; y++) {
+        for (let x = 0; x < NX; x++) {
+          const i = y * NX + x;
+          const cType = cellType[i];
+          const val = uCurr[i];
+          const slope = (x < NX - 1) ? (uCurr[i + 1] - val) : 0;
+          ctx.fillStyle = getWaveColor(val, slope, brightness * 1.4, cType);
+          ctx.fillRect(x * cellW, y * cellH, Math.ceil(cellW), Math.ceil(cellH));
+        }
+      }
+
+      // Draw Source indicator
+      ctx.fillStyle = '#facc15';
+      ctx.fillRect((sourceX - 2) * cellW, (sourceY - 1) * cellH, cellW * 5, cellH * 2);
+
+      // Labels on 2D
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('السطح العاكس الأول (Wall 1)', wall1X1 * cellW, (wall1Y - 2) * cellH);
+      ctx.fillStyle = '#6ee7b7';
+      ctx.fillText('منطقة ما وراء الحاجز (Transmitted Zone)', wall1X1 * cellW, (wall1Y + 10) * cellH);
+
+    } else {
+      // True 3D Isometric Surface Mesh View (Matches Falstad 3-D View in photos!)
+      const centerX = canvas.width * 0.5;
+      const centerY = canvas.height * 0.52;
+      const scaleX = 4.2;
+      const scaleY = 3.6 * Math.sin(tiltDeg * Math.PI / 180);
+      const rotCos = Math.cos(-0.42);
+      const rotSin = Math.sin(-0.42);
+
+      function project3D(gx, gy, gz) {
+        const cx = gx - NX / 2;
+        const cy = gy - NY / 2;
+        const rx = cx * rotCos - cy * rotSin;
+        const ry = cx * rotSin + cy * rotCos;
+        return {
+          px: centerX + rx * scaleX,
+          py: centerY + ry * scaleY - gz
+        };
+      }
+
+      // Painter's Algorithm: Back-to-Front row rendering for crisp 3D ridges
+      const step = 1;
+      for (let y = 1; y < NY - 2; y += step) {
+        for (let x = 1; x < NX - 2; x += step) {
+          const i = y * NX + x;
+          const cType = cellType[i];
+
+          let h00 = uCurr[i] * heightScale;
+          let h10 = uCurr[i + 1] * heightScale;
+          let h01 = uCurr[i + NX] * heightScale;
+          let h11 = uCurr[i + NX + 1] * heightScale;
+
+          if (cType === 1) { h00 = h10 = h01 = h11 = 18; }
+          else if (cType === 2) { h00 = h10 = h01 = h11 = 18; }
+
+          const p00 = project3D(x, y, h00);
+          const p10 = project3D(x + 1, y, h10);
+          const p01 = project3D(x, y + 1, h01);
+          const p11 = project3D(x + 1, y + 1, h11);
+
+          const slope = (uCurr[i + 1] - uCurr[i]) + (uCurr[i + NX] - uCurr[i]);
+          ctx.fillStyle = getWaveColor(uCurr[i], slope, brightness, cType);
+
+          ctx.beginPath();
+          ctx.moveTo(p00.px, p00.py);
+          ctx.lineTo(p10.px, p10.py);
+          ctx.lineTo(p11.px, p11.py);
+          ctx.lineTo(p01.px, p01.py);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      // Draw 3D Floating Annotations for Samer's Presentation
+      const srcProj = project3D(sourceX, sourceY, 28);
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath(); ctx.arc(srcProj.px, srcProj.py, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fef08a';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('منبع الموجة (Source)', srcProj.px - 45, srcProj.py - 12);
+
+      const w1Proj = project3D((wall1X1 + wall1X2) / 2, wall1Y, 26);
+      ctx.fillStyle = '#fcd34d';
+      ctx.fillText(`سطح عاكس 1 (انعكاس ${document.getElementById('slRefl').value}% | عبور ${document.getElementById('slTrans').value}%)`, w1Proj.px - 95, w1Proj.py - 8);
+
+      const transProj = project3D((wall1X1 + wall1X2) / 2, wall1Y + 18, 10);
+      ctx.fillStyle = '#6ee7b7';
+      ctx.fillText('المنطقة خلف الحاجز (Transmitted Wave)', transProj.px - 90, transProj.py);
+
+      if (document.getElementById('chkWall2').checked) {
+        const w2Proj = project3D((wall2X1 + wall2X2) / 2, wall2Y, 26);
+        ctx.fillStyle = '#d8b4fe';
+        ctx.fillText('السطح العاكس الثاني (ارتداد مضاعف)', w2Proj.px - 80, w2Proj.py - 8);
+      }
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  // Interactive Pointer / Touch Controls to move Source or create wave splashes
+  let isDragging = false;
+  function handlePointer(e) {
+    const rect = canvas.getBoundingClientRect();
+    const relX = (e.clientX - rect.left) / rect.width;
+    const relY = (e.clientY - rect.top) / rect.height;
+
+    const gx = Math.max(8, Math.min(NX - 8, Math.round(relX * NX)));
+    const gy = Math.max(8, Math.min(NY - 8, Math.round(relY * NY)));
+
+    if (cellType[idx(gx, gy)] === 0) {
+      sourceX = gx;
+      sourceY = gy;
+    }
+  }
+
+  canvas.addEventListener('pointerdown', (e) => { isDragging = true; handlePointer(e); });
+  canvas.addEventListener('pointermove', (e) => { if (isDragging) handlePointer(e); });
+  window.addEventListener('pointerup', () => { isDragging = false; });
+
+  // Initialize Default State
+  rebuildWalls();
+  updatePhysicsBars();
+  render();
+</script>
+</body>
+</html>
