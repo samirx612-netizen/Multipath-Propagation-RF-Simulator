@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>المحاكي الهندسي المتقدم للموجات (Advanced 3D Ripple & Barrier Lab) - سامر</title>
+<title>المحاكي الهندسي المتقدم للموجات والمواد العازلة (Advanced 3D Wave & Multi-Material Lab) - سامر</title>
 <style>
   :root {
     --bg: #03060d;
@@ -42,7 +42,7 @@
   .brand-text strong { color: #22d3ee; }
 
   .layout { max-width: 1440px; margin: 14px auto; padding: 0 12px; display: grid; grid-template-columns: 1fr; gap: 14px; }
-  @media (min-width: 1024px) { .layout { grid-template-columns: 360px 1fr; } }
+  @media (min-width: 1024px) { .layout { grid-template-columns: 365px 1fr; } }
 
   .sidebar { display: flex; flex-direction: column; gap: 10px; }
   
@@ -84,12 +84,24 @@
   .btn-rose { background: rgba(239, 68, 68, 0.22); color: #fca5a5; border-color: rgba(239, 68, 68, 0.5); }
   .btn-purple { background: rgba(168, 85, 247, 0.22); color: #d8b4fe; border-color: rgba(168, 85, 247, 0.5); }
 
+  /* Material Selector Grid */
+  .mat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .mat-btn {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+    padding: 7px 9px; border-radius: 9px; border: 1px solid #334155;
+    background: #090d16; color: #f8fafc; cursor: pointer; transition: 0.15s; text-align: right;
+  }
+  .mat-btn:hover { border-color: var(--cyan); background: #131c31; }
+  .mat-btn.active { border-width: 2px; background: rgba(6, 182, 212, 0.14); }
+  .mat-title { font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+  .mat-desc { font-size: 9.5px; color: var(--muted); }
+
   /* Stats Grid */
   .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
   @media (min-width: 680px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
   .stat-card { background: linear-gradient(145deg, #162032, #090d16); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 11px; padding: 10px; }
   .stat-label { font-size: 10px; color: var(--muted); }
-  .stat-val { font-size: 17px; font-weight: 900; margin: 3px 0; direction: ltr; text-align: right; }
+  .stat-val { font-size: 16px; font-weight: 900; margin: 3px 0; direction: ltr; text-align: right; }
   .stat-sub { font-size: 10px; font-weight: 600; }
 
   /* Main Panel & Bottom Camera Controls */
@@ -130,15 +142,15 @@
       <div class="brand-text">
         <h1>
           جامعة المعقل - كلية الهندسة
-          <span class="badge">الأمن السيبراني | Ultimate 3D Wave Lab</span>
+          <span class="badge">الأمن السيبراني | Multi-Material RF Wave Lab</span>
         </h1>
-        <p>الطالب: <strong>سامر وفي جري</strong> | رقم الملف: <strong>57934</strong> | انسيابية تامة بدون قفزات ✨ | دقة 3D/2D مطابقة 🎯</p>
+        <p>الطالب: <strong>سامر وفي جري</strong> | رقم الملف: <strong>57934</strong> | محاكاة النفاذية والانعكاس (زجاج • خرسانة • سندويج بنل • معدن)</p>
       </div>
     </div>
 
     <div class="presets">
       <button class="btn btn-cyan" onclick="setPreset('dual')">⚡ مصدرين</button>
-      <button class="btn btn-emerald" onclick="setPreset('reflection')">🏢 حاجز عاكس</button>
+      <button class="btn btn-emerald" onclick="setPreset('multi_wall')">🏗️ مقارنة المواد</button>
       <button class="btn btn-amber" onclick="setTool('draw')" id="btnPresetDraw">✏️ ارسم حاجز</button>
       <button class="btn btn-rose" onclick="clearWaves()">مسح الموجات</button>
     </div>
@@ -149,17 +161,41 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     
-    <!-- Dropdown 1: Barrier, Undo/Redo & Drawing Tool -->
+    <!-- Dropdown 1: Multi-Permeability Materials & Drawing Tools -->
     <div class="dropdown-menu" id="dropDraw">
       <div class="dropdown-header" onclick="toggleDropdown('dropDraw')">
-        <span>✏️ رسم الحواجز والتراجع (Undo / Redo)</span>
+        <span>🧱 مواد الحواجز ونفاذية الإشارة (Materials)</span>
         <span class="arrow">▼</span>
       </div>
       <div class="dropdown-content">
-        <div style="font-size:11px; color:var(--muted); line-height:1.5;">
-          ارسم حواجز عاكسة بدقة متناهية في وضعي 2D و 3D، وتراجع خطوة بخطوة بضغطة واحدة!
+        <div style="font-size:11px; color:var(--muted); line-height:1.4;">
+          اختر نوع المادة الهندسية ثم ارسم الحاجز لمشاهدة فرق الانعكاس والنفاذية (Attenuation):
         </div>
-        <div style="display:flex; gap:6px;">
+
+        <!-- 4 Engineering Materials Grid -->
+        <div class="mat-grid">
+          <button id="matBtn1" class="mat-btn" style="border-color:#38bdf8;" onclick="selectMaterial(1)">
+            <span class="mat-title" style="color:#38bdf8;">🪟 زجاج (Glass)</span>
+            <span class="mat-desc">نفاذية عالية ~75% | توهين 3dB</span>
+          </button>
+
+          <button id="matBtn2" class="mat-btn active" style="border-color:#94a3b8;" onclick="selectMaterial(2)">
+            <span class="mat-title" style="color:#cbd5e1;">🧱 خرسانة (Concrete)</span>
+            <span class="mat-desc">نفاذية منخفضة ~22% | توهين 15dB</span>
+          </button>
+
+          <button id="matBtn3" class="mat-btn" style="border-color:#a855f7;" onclick="selectMaterial(3)">
+            <span class="mat-title" style="color:#d8b4fe;">🥪 سندويج بنل (Panel)</span>
+            <span class="mat-desc">عزل مزدوج ~6% | توهين 28dB</span>
+          </button>
+
+          <button id="matBtn4" class="mat-btn" style="border-color:#f59e0b;" onclick="selectMaterial(4)">
+            <span class="mat-title" style="color:#fcd34d;">🛡️ معدن/عاكس 100%</span>
+            <span class="mat-desc">نفاذية 0% | انعكاس كامل</span>
+          </button>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:2px;">
           <button id="btnToolDraw" class="btn btn-amber active" style="flex:1" onclick="setTool('draw')">✏️ رسم حاجز</button>
           <button id="btnToolMove" class="btn" style="flex:1" onclick="setTool('move')">✋ تحريك الأبراج</button>
         </div>
@@ -216,9 +252,9 @@
         <div class="control-group">
           <div class="control-header"><span>معيار شبكة الاتصالات:</span></div>
           <select id="selTech" onchange="applyTechPreset()">
-            <option value="3g">3G Network (تردد منخفض - 2.1 GHz)</option>
+            <option value="3g">3G Network (نفاذية أعلى للجدران - 2.1 GHz)</option>
             <option value="4g" selected>4G LTE (تردد متوسط - 2.6 GHz)</option>
-            <option value="5g">5G mmWave (تردد عالي - 28 GHz)</option>
+            <option value="5g">5G mmWave (توهين عالي جداً بالجدران - 28 GHz)</option>
           </select>
         </div>
         <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px; padding:6px 8px; background:#04070f; border-radius:8px; border:1px solid #1e293b;">
@@ -247,9 +283,9 @@
     <!-- Telemetry Cards -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">المصادر النشطة</div>
-        <div class="stat-val" id="statSources" style="color:#22d3ee">2 أبراج</div>
-        <div class="stat-sub" style="color:#67e8f9">طور متصل انسيابي</div>
+        <div class="stat-label">المادة المختارة للرسم</div>
+        <div class="stat-val" id="statMatName" style="color:#cbd5e1">خرسانة 🧱</div>
+        <div class="stat-sub" id="statMatProp" style="color:#94a3b8">نفاذية: 22% | انعكاس: 78%</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">أداة العمل الحالية</div>
@@ -259,7 +295,7 @@
       <div class="stat-card">
         <div class="stat-label">حالة الموجات الخطية</div>
         <div class="stat-val" id="statLinear" style="color:#10b981">متوقفة</div>
-        <div class="stat-sub" id="statLinearSub" style="color:#6ee7b7">بدون قفزات طورية</div>
+        <div class="stat-sub" id="statLinearSub" style="color:#6ee7b7">طور مستمر انسيابي</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">العوائق المرسومة</div>
@@ -270,12 +306,13 @@
 
     <div class="legend-bar">
       <div class="legend-items">
-        <span><span class="dot" style="background:#22d3ee;"></span><strong>Solid (قمة / Crest)</strong></span>
-        <span><span class="dot" style="background:#ef4444; border:1px dashed #fff;"></span><strong>Dashed (قعر / Trough)</strong></span>
-        <span><span class="dot" style="background:#f59e0b;"></span>حاجز عاكس (Dirichlet BC)</span>
-        <span><span class="dot" style="background:#facc15;"></span>برج إرسال (57934)</span>
+        <span><span class="dot" style="background:#38bdf8;"></span>زجاج (75% نفاذ)</span>
+        <span><span class="dot" style="background:#94a3b8;"></span>خرسانة (22% نفاذ)</span>
+        <span><span class="dot" style="background:#a855f7;"></span>سندويج بنل (6% نفاذ)</span>
+        <span><span class="dot" style="background:#f59e0b;"></span>عاكس تام (0% نفاذ)</span>
+        <span><span class="dot" style="background:#facc15;"></span>برج (57934)</span>
       </div>
-      <span style="color:#38bdf8; font-weight:700;" id="modeHint">حرّك المنزلقات أو ارسم حواجز في 2D/3D، كل خط رسم يُحفظ كخطوة واحدة للتراجع السريع!</span>
+      <span style="color:#38bdf8; font-weight:700;" id="modeHint">اختر المادة (زجاج، خرسانة، سندويج بنل، أو عاكس) وارسم لمشاهدة اختراق وانعكاس الإشارة!</span>
     </div>
 
     <div class="canvas-container">
@@ -314,9 +351,25 @@
   let uCurr = new Float32Array(NX * NY);
   let uPrev = new Float32Array(NX * NY);
   let uNext = new Float32Array(NX * NY);
-  let cellType = new Uint8Array(NX * NY); // 0 = free, 1 = wall
+  
+  // cellType values:
+  // 0 = Free Air
+  // 1 = Glass (زجاج) -> High transmission, low damping, slight refractive index slowdown
+  // 2 = Concrete (خرسانة) -> Low transmission (~22%), high attenuation + strong reflection
+  // 3 = Sandwich Panel (سندويج بنل) -> Metal skins + foam core -> Very high shielding (~6% transmission)
+  // 4 = Perfect Reflector / Metal (عاكس 100%) -> 0% transmission, Dirichlet u=0
+  let cellType = new Uint8Array(NX * NY);
 
-  // Clean History Stacks (Each stroke = 1 exact state)
+  const MATERIALS = {
+    1: { name: 'زجاج 🪟', color: 'rgb(56, 189, 248)', hex: '#38bdf8', prop: 'نفاذية: 75% | توهين: 3 dB', c2: 0.14, damping: 0.945, height3D: 16 },
+    2: { name: 'خرسانة 🧱', color: 'rgb(148, 163, 184)', hex: '#cbd5e1', prop: 'نفاذية: 22% | توهين: 15 dB', c2: 0.08, damping: 0.72, height3D: 22 },
+    3: { name: 'سندويج بنل 🥪', color: 'rgb(168, 85, 247)', hex: '#d8b4fe', prop: 'نفاذية: 6% | توهين: 28 dB', c2: 0.05, damping: 0.48, height3D: 24 },
+    4: { name: 'عاكس 100% 🛡️', color: 'rgb(245, 158, 11)', hex: '#fcd34d', prop: 'نفاذية: 0% | انعكاس تام', c2: 0.0, damping: 0.0, height3D: 26 }
+  };
+
+  let currentMaterial = 2; // Default: Concrete
+
+  // History Stacks
   let undoStack = [];
   let redoStack = [];
   let currentStrokeModified = false;
@@ -326,13 +379,11 @@
   let activeTool = 'draw';
   let pulseTimer = 0;
 
-  // Phase Accumulators (Eliminates phase jumps when changing frequency/wavelength or toggling on/off!)
   let linearPhase = 0;
-  let linearSmoothEnv = 0; // Smooth fade-in / fade-out envelope (0.0 -> 1.0)
+  let linearSmoothEnv = 0;
 
   let sources = [
-    { x: 50, y: 55, freq: 32, amp: 2.5, phase: 0, name: 'برج A' },
-    { x: 110, y: 55, freq: 32, amp: 2.5, phase: 0, name: 'برج B' }
+    { x: 45, y: 55, freq: 32, amp: 2.8, phase: 0, name: 'برج A' }
   ];
 
   const canvas = document.getElementById('simCanvas');
@@ -351,11 +402,21 @@
     content.classList.toggle('collapsed');
   }
 
+  function selectMaterial(matId) {
+    currentMaterial = matId;
+    for (let id = 1; id <= 4; id++) {
+      document.getElementById('matBtn' + id).classList.toggle('active', id === matId);
+    }
+    const m = MATERIALS[matId];
+    document.getElementById('statMatName').textContent = m.name;
+    document.getElementById('statMatName').style.color = m.hex;
+    document.getElementById('statMatProp').textContent = m.prop;
+    setTool('draw');
+  }
+
   function arraysEqual(a, b) {
     if (!a || !b || a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (a[i] !== b[i]) return false;
-    }
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
     return true;
   }
 
@@ -390,7 +451,7 @@
     if (tool === 'draw') {
       document.getElementById('statTool').textContent = 'رسم حاجز ✏️';
       document.getElementById('statToolSub').textContent = 'تراجع بضغطة واحدة';
-      document.getElementById('modeHint').textContent = 'وضع الرسم: ارسم أي حاجز في 2D أو 3D، وكل خط يُحفظ كخطوة واحدة للتراجع الفوري!';
+      document.getElementById('modeHint').textContent = `وضع الرسم (${MATERIALS[currentMaterial].name}): ارسم الحاجز وشاهد كيف تمر الموجة أو تنعكس!`;
       canvas.style.cursor = 'crosshair';
     } else {
       document.getElementById('statTool').textContent = 'تحريك / سحب ✋';
@@ -412,9 +473,8 @@
   }
 
   function clearCustomWalls() {
-    // Only push to undo if there are walls to clear
     let hasWalls = false;
-    for (let i = 0; i < cellType.length; i++) if (cellType[i] === 1) { hasWalls = true; break; }
+    for (let i = 0; i < cellType.length; i++) if (cellType[i] > 0) { hasWalls = true; break; }
     if (!hasWalls) return;
 
     undoStack.push(new Uint8Array(cellType));
@@ -426,7 +486,7 @@
 
   function updateWallStats() {
     let count = 0;
-    for (let i = 0; i < cellType.length; i++) if (cellType[i] === 1) count++;
+    for (let i = 0; i < cellType.length; i++) if (cellType[i] > 0) count++;
     document.getElementById('statWalls').textContent = count + ' خلية';
   }
 
@@ -456,25 +516,33 @@
     renderSourceControls();
   }
 
+  // Preset comparing Glass, Concrete, and Sandwich Panel side-by-side!
   function setPreset(type) {
     clearWaves();
     undoStack.push(new Uint8Array(cellType));
     redoStack = [];
+    cellType.fill(0);
+
     if (type === 'dual') {
       sources = [
-        { x: 45, y: 55, freq: 32, amp: 2.5, phase: 0, name: 'برج A' },
-        { x: 115, y: 55, freq: 32, amp: 2.5, phase: 0, name: 'برج B' }
+        { x: 45, y: 55, freq: 32, amp: 2.6, phase: 0, name: 'برج A' },
+        { x: 115, y: 55, freq: 32, amp: 2.6, phase: 0, name: 'برج B' }
       ];
-      cellType.fill(0);
       document.getElementById('chkLinearWave').checked = false;
       toggleLinearWave();
-    } else if (type === 'reflection') {
-      sources = [{ x: 40, y: 55, freq: 32, amp: 3.0, phase: 0, name: 'برج إرسال' }];
-      cellType.fill(0);
-      for (let y = 20; y < 90; y++) {
-        let wx = 100;
-        cellType[y * NX + wx] = 1;
-        cellType[y * NX + (wx+1)] = 1;
+    } else if (type === 'multi_wall') {
+      sources = [{ x: 35, y: 55, freq: 34, amp: 3.2, phase: 0, name: 'برج البث' }];
+      // Top section: Glass (mat 1)
+      for (let y = 12; y <= 36; y++) {
+        for (let dx = 0; dx < 3; dx++) cellType[y * NX + (90 + dx)] = 1;
+      }
+      // Middle section: Concrete (mat 2)
+      for (let y = 42; y <= 68; y++) {
+        for (let dx = 0; dx < 3; dx++) cellType[y * NX + (90 + dx)] = 2;
+      }
+      // Bottom section: Sandwich Panel (mat 3)
+      for (let y = 74; y <= 98; y++) {
+        for (let dx = 0; dx < 3; dx++) cellType[y * NX + (90 + dx)] = 3;
       }
       document.getElementById('chkLinearWave').checked = true;
       toggleLinearWave();
@@ -486,7 +554,7 @@
 
   function addSource() {
     if (sources.length >= 4) { alert('حد أقصى 4 مصادر.'); return; }
-    sources.push({ x: 40 + sources.length * 30, y: 60, freq: 32, amp: 2.5, phase: 0, name: `برج ${sources.length + 1}` });
+    sources.push({ x: 40 + sources.length * 30, y: 60, freq: 32, amp: 2.6, phase: 0, name: `برج ${sources.length + 1}` });
     renderSourceControls();
   }
 
@@ -498,7 +566,6 @@
   function renderSourceControls() {
     const container = document.getElementById('sourcesContainer');
     container.innerHTML = '';
-    document.getElementById('statSources').textContent = sources.length + ' أبراج';
 
     if (sources.length === 0) {
       container.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:8px;">لا توجد مصادر نقطية نشطة حالياً</div>`;
@@ -524,19 +591,22 @@
   function stepPhysics() {
     if (!document.getElementById('chkRippleSim').checked) return;
 
-    // 1. Point Sources with Continuous Phase Accumulation (no jump on frequency change!)
+    // Frequency-dependent extra attenuation factor for 5G mmWave (higher frequency = harder to penetrate walls!)
+    const tech = document.getElementById('selTech').value;
+    const freqAttenScale = (tech === '5g') ? 0.82 : (tech === '4g' ? 0.96 : 1.02);
+
+    // 1. Point Sources
     sources.forEach(s => {
       s.phase += s.freq * 0.01;
       const drive = Math.sin(s.phase) * s.amp;
       const si = s.y * NX + s.x;
-      if (si >= 0 && si < NX * NY && cellType[si] === 0) uCurr[si] = drive;
+      if (si >= 0 && si < NX * NY && cellType[si] !== 4) uCurr[si] = drive;
     });
 
-    // 2. Phase-Continuous Linear Wave with Smooth Fade-in/Fade-out Envelope
+    // 2. Phase-Continuous Linear Wave
     const isLinearTargetOn = document.getElementById('chkLinearWave').checked || pulseTimer > 0;
     if (pulseTimer > 0) pulseTimer--;
 
-    // Smoothly ramp amplitude envelope between 0 and 1 so toggling or changing sliders NEVER causes shockwaves/jumps!
     if (isLinearTargetOn) {
       linearSmoothEnv = Math.min(1.0, linearSmoothEnv + 0.06);
     } else {
@@ -548,42 +618,49 @@
       const wavelength = parseFloat(document.getElementById('slLinearWavelength').value);
       const targetAmplitude = parseFloat(document.getElementById('slLinearAmp').value);
       
-      // Accumulate phase incrementally by d_phase = omega * dt
-      // Prevents the (simTime * omega) jump when wavelength slider moves!
       const k = (2 * Math.PI) / wavelength;
       const c = 0.5;
-      const dPhase = k * c * 0.14;
-      linearPhase += dPhase;
+      linearPhase += k * c * 0.14;
 
-      const effectiveAmp = targetAmplitude * linearSmoothEnv;
-      const lDrive = Math.sin(linearPhase) * effectiveAmp;
+      const lDrive = Math.sin(linearPhase) * targetAmplitude * linearSmoothEnv;
 
-      for (let dy = -24; dy <= 24; dy++) {
+      for (let dy = -38; dy <= 38; dy++) {
         let nx = primarySource.x;
         let ny = primarySource.y + dy;
         let idx = ny * NX + nx;
-        if (nx >= 1 && nx < NX - 1 && ny >= 1 && ny < NY - 1 && cellType[idx] === 0) {
+        if (nx >= 1 && nx < NX - 1 && ny >= 1 && ny < NY - 1 && cellType[idx] !== 4) {
           uCurr[idx] = lDrive;
         }
       }
     }
 
-    // 3. FDTD Wave Solver with Strict Dirichlet Barrier Reflection
-    const c2 = 0.25;
-    const damping = 0.997;
-
+    // 3. Multi-Material Dielectric & Lossy FDTD Wave Solver
+    // Different materials have different refractive wave speeds (c^2) and dielectric loss (damping)!
+    // Impedance mismatch (c_air vs c_material) naturally causes partial reflection AND partial transmission!
     for (let y = 1; y < NY - 1; y++) {
       for (let x = 1; x < NX - 1; x++) {
         const i = y * NX + x;
-        if (cellType[i] === 1) {
+        const mat = cellType[i];
+
+        if (mat === 4) {
+          // 100% Perfect Reflector (Metal / Dirichlet BC)
           uCurr[i] = 0;
           uPrev[i] = 0;
           uNext[i] = 0;
         } else {
-          const uL = cellType[i - 1] === 1 ? 0 : uCurr[i - 1];
-          const uR = cellType[i + 1] === 1 ? 0 : uCurr[i + 1];
-          const uU = cellType[i - NX] === 1 ? 0 : uCurr[i - NX];
-          const uD = cellType[i + NX] === 1 ? 0 : uCurr[i + NX];
+          let c2 = 0.25;
+          let damping = 0.997;
+
+          if (mat > 0) {
+            const mProps = MATERIALS[mat];
+            c2 = mProps.c2;
+            damping = Math.min(0.99, mProps.damping * freqAttenScale);
+          }
+
+          const uL = cellType[i - 1] === 4 ? 0 : uCurr[i - 1];
+          const uR = cellType[i + 1] === 4 ? 0 : uCurr[i + 1];
+          const uU = cellType[i - NX] === 4 ? 0 : uCurr[i - NX];
+          const uD = cellType[i + NX] === 4 ? 0 : uCurr[i + NX];
 
           const laplacian = uL + uR + uU + uD - 4 * uCurr[i];
           uNext[i] = (2 * uCurr[i] - uPrev[i] + c2 * laplacian) * damping;
@@ -611,8 +688,16 @@
     let temp = uPrev; uPrev = uCurr; uCurr = uNext; uNext = temp;
   }
 
-  function getWaveColor(val, slope, isWall) {
-    if (isWall) return 'rgb(245, 158, 11)';
+  function getCellVisualColor(val, slope, mat) {
+    if (mat > 0) {
+      // Blend material base color slightly with passing wave intensity so user can see wave penetrating glass/concrete!
+      const waveGlow = Math.min(45, Math.abs(val) * 40);
+      if (mat === 1) return `rgb(${56 + waveGlow}, ${189 + waveGlow}, 248)`;     // Glass (Translucent Cyan-Blue)
+      if (mat === 2) return `rgb(${135 + waveGlow}, ${150 + waveGlow}, ${170 + waveGlow})`; // Concrete (Grey)
+      if (mat === 3) return `rgb(${168 + waveGlow}, ${85 + waveGlow}, 247)`;      // Sandwich Panel (Purple)
+      if (mat === 4) return 'rgb(245, 158, 11)';                                  // Metal Reflector (Amber)
+    }
+
     const v = Math.max(-1.5, Math.min(1.5, val * 1.4));
     const light = Math.max(-0.5, Math.min(0.5, slope * 0.8));
 
@@ -658,7 +743,7 @@
           const i = y * NX + x;
           const val = uCurr[i];
           const slope = (x < NX - 1) ? (uCurr[i + 1] - val) : 0;
-          ctx.fillStyle = getWaveColor(val, slope, cellType[i] === 1);
+          ctx.fillStyle = getCellVisualColor(val, slope, cellType[i]);
           ctx.fillRect(x * cellW, y * cellH, Math.ceil(cellW), Math.ceil(cellH));
         }
       }
@@ -668,7 +753,7 @@
         for (let y = 2; y < NY - 2; y += 2) {
           for (let x = 2; x < NX - 2; x += 2) {
             const i = y * NX + x;
-            if (cellType[i] === 1) continue;
+            if (cellType[i] === 4) continue;
             const val = uCurr[i];
             const valR = uCurr[i + 1];
             const valD = uCurr[i + NX];
@@ -706,19 +791,24 @@
         };
       }
 
+      function getCellHeight3D(idx) {
+        const m = cellType[idx];
+        if (m > 0) return MATERIALS[m].height3D + uCurr[idx] * 4;
+        return uCurr[idx] * heightScale;
+      }
+
       for (let y = 1; y < NY - 2; y += 1) {
         for (let x = 1; x < NX - 2; x += 1) {
           const i = y * NX + x;
-          const isW = cellType[i] === 1;
-          let h = uCurr[i] * heightScale;
-          if (isW) h = 22;
+          const mat = cellType[i];
+          const h = getCellHeight3D(i);
 
           const p00 = project3D(x, y, h);
-          const p10 = project3D(x + 1, y, cellType[i+1]===1 ? 22 : uCurr[i + 1] * heightScale);
-          const p01 = project3D(x, y + 1, cellType[i+NX]===1 ? 22 : uCurr[i + NX] * heightScale);
+          const p10 = project3D(x + 1, y, getCellHeight3D(i + 1));
+          const p01 = project3D(x, y + 1, getCellHeight3D(i + NX));
 
           const slope = (uCurr[i + 1] - uCurr[i]);
-          ctx.fillStyle = getWaveColor(uCurr[i], slope, isW);
+          ctx.fillStyle = getCellVisualColor(uCurr[i], slope, mat);
 
           ctx.beginPath();
           ctx.moveTo(p00.px, p00.py);
@@ -727,7 +817,7 @@
           ctx.closePath();
           ctx.fill();
 
-          if (showContour && !isW && (x % 2 === 0) && (y % 2 === 0)) {
+          if (showContour && mat !== 4 && (x % 2 === 0) && (y % 2 === 0)) {
             const val = uCurr[i];
             const valR = uCurr[i + 1];
             if ((val - 0.55) * (valR - 0.55) < 0) {
@@ -776,8 +866,6 @@
     };
   }
 
-  // Exact Inverse Projection with 3D Wall Height Offset Compensation (22px)
-  // Ensures where the user clicks/touches in 3D matches the exact ground grid cell!
   function getGridCoords(e) {
     const rect = canvas.getBoundingClientRect();
     const px = ((e.clientX - rect.left) / rect.width) * canvas.width;
@@ -798,7 +886,6 @@
       const rotCos = Math.cos(yawRad - 0.42);
       const rotSin = Math.sin(yawRad - 0.42);
 
-      // Compensate slightly (+10px) for visual 3D elevation perspective
       const dx = (px - centerX) / scaleX;
       const dy = ((py + 10) - centerY) / scaleY;
 
@@ -829,8 +916,8 @@
           for (let by = -1; by <= 1; by++) {
             let nx = x0 + bx, ny = y0 + by;
             if (nx >= 1 && nx < NX - 1 && ny >= 1 && ny < NY - 1) {
-              if (cellType[ny * NX + nx] === 0) {
-                cellType[ny * NX + nx] = 1;
+              if (cellType[ny * NX + nx] !== currentMaterial) {
+                cellType[ny * NX + nx] = currentMaterial;
                 currentStrokeModified = true;
               }
             }
@@ -846,7 +933,7 @@
   }
 
   canvas.addEventListener('pointerdown', (e) => {
-    if (isInteracting) return; // Ignore secondary accidental multi-touch fingers
+    if (isInteracting) return;
     isInteracting = true;
     const { gx, gy } = getGridCoords(e);
     lastX = gx; lastY = gy;
@@ -856,7 +943,6 @@
         if (Math.hypot(s.x - gx, s.y - gy) < 16) draggedSource = s;
       });
     } else {
-      // Take clean snapshot BEFORE modifying anything
       strokeStartSnapshot = new Uint8Array(cellType);
       currentStrokeModified = false;
       drawLineOnGrid(gx, gy, gx, gy);
@@ -879,7 +965,6 @@
   function finishInteraction() {
     if (!isInteracting) return;
     if (activeTool === 'draw' && currentStrokeModified && strokeStartSnapshot) {
-      // Only commit 1 clean undo step if the stroke actually added wall cells!
       if (!arraysEqual(strokeStartSnapshot, cellType)) {
         undoStack.push(strokeStartSnapshot);
         if (undoStack.length > 40) undoStack.shift();
