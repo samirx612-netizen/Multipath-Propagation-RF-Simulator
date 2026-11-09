@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>محاكي الموجات والاتصالات المتقدم (3D Ripple & Multi-Source Lab) - سامر</title>
+<title>المحاكي الهندسي المتقدم للموجات (Advanced 3D Ripple & Barrier Lab) - سامر</title>
 <style>
   :root {
-    --bg: #04070f;
-    --panel: #0d1322;
+    --bg: #03060d;
+    --panel: #0b1120;
+    --panel-hover: #131c31;
     --border: #1e293b;
     --cyan: #06b6d4;
     --emerald: #10b981;
@@ -21,77 +22,101 @@
   body { background-color: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 24px; }
 
   header {
-    background: linear-gradient(90deg, #090d16, #111827);
+    background: linear-gradient(90deg, #070b14, #0f172a);
     border-bottom: 1px solid rgba(6, 182, 212, 0.35);
     padding: 10px 16px;
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 4px 20px rgba(0,0,0,0.6);
   }
-  .header-inner { max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+  .header-inner { max-width: 1440px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
   .brand { display: flex; align-items: center; gap: 12px; }
   .logo-box {
-    width: 48px; height: 48px; border-radius: 10px; background: #fff;
+    width: 46px; height: 46px; border-radius: 10px; background: #fff;
     padding: 3px; display: flex; align-items: center; justify-content: center;
     border: 2px solid var(--cyan); overflow: hidden; flex-shrink: 0;
   }
   .logo-box img { width: 100%; height: 100%; object-fit: contain; }
-  .brand-text h1 { font-size: 15px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .brand-text h1 { font-size: 14.5px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .badge { font-size: 11px; background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); padding: 2px 8px; border-radius: 99px; }
-  .brand-text p { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .brand-text p { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .brand-text strong { color: #22d3ee; }
 
-  .presets { display: flex; flex-wrap: wrap; gap: 6px; }
+  .layout { max-width: 1440px; margin: 14px auto; padding: 0 12px; display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 1024px) { .layout { grid-template-columns: 360px 1fr; } }
+
+  .sidebar { display: flex; flex-direction: column; gap: 10px; }
+  
+  .dropdown-menu {
+    background: var(--panel); border: 1px solid rgba(6, 182, 212, 0.22);
+    border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    transition: 0.2s;
+  }
+  .dropdown-header {
+    background: linear-gradient(90deg, #0f172a, #162032);
+    padding: 10px 14px; font-size: 12.5px; font-weight: 800; color: #22d3ee;
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+    border-bottom: 1px solid var(--border);
+  }
+  .dropdown-header:hover { background: var(--panel-hover); }
+  .dropdown-content { padding: 12px; display: flex; flex-direction: column; gap: 10px; background: rgba(9, 13, 22, 0.6); }
+  .dropdown-content.collapsed { display: none; }
+  .arrow { transition: transform 0.2s; font-size: 12px; }
+  .dropdown-menu.closed .arrow { transform: rotate(-90deg); }
+
+  .control-group { margin-bottom: 8px; }
+  .control-group:last-child { margin-bottom: 0; }
+  .control-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
+  .control-val { font-weight: 800; color: #22d3ee; direction: ltr; }
+  input[type=range] { width: 100%; accent-color: var(--cyan); cursor: pointer; height: 5px; }
+  select { width: 100%; background: #090d16; color: #fff; border: 1px solid #334155; padding: 6px 8px; border-radius: 8px; font-size: 11px; }
+
   .btn {
     border: 1px solid var(--border); background: #1e293b; color: #fff;
-    padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: 700;
-    cursor: pointer; transition: 0.15s;
+    padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: 0.15s; text-align: center; display: inline-flex;
+    align-items: center; justify-content: center; gap: 6px;
   }
-  .btn:hover { border-color: var(--cyan); transform: translateY(-1px); }
-  .btn.active, .btn-cyan { background: rgba(6, 182, 212, 0.2); color: #67e8f9; border-color: rgba(6, 182, 212, 0.5); }
-  .btn-emerald { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.5); }
-  .btn-amber { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border-color: rgba(245, 158, 11, 0.5); }
-  .btn-rose { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.5); }
-
-  .layout { max-width: 1400px; margin: 14px auto; padding: 0 12px; display: grid; grid-template-columns: 1fr; gap: 14px; }
-  @media (min-width: 1024px) { .layout { grid-template-columns: 370px 1fr; } }
-
-  .panel { background: var(--panel); border: 1px solid rgba(6, 182, 212, 0.22); border-radius: 14px; padding: 13px; box-shadow: 0 8px 25px rgba(0,0,0,0.45); margin-bottom: 12px; }
-  .panel:last-child { margin-bottom: 0; }
-  .panel-title { font-size: 13px; font-weight: 800; color: #22d3ee; border-bottom: 1px solid var(--border); padding-bottom: 7px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-
-  .control-group { margin-bottom: 10px; }
-  .control-header { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 3px; }
-  .control-val { font-weight: 800; color: #22d3ee; direction: ltr; }
-  input[type=range] { width: 100%; accent-color: var(--cyan); cursor: pointer; height: 6px; }
-  select { width: 100%; background: #090d16; color: #fff; border: 1px solid #334155; padding: 6px 8px; border-radius: 8px; font-size: 11.5px; }
+  .btn:hover:not(:disabled) { border-color: var(--cyan); transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn.active, .btn-cyan { background: rgba(6, 182, 212, 0.22); color: #67e8f9; border-color: rgba(6, 182, 212, 0.5); }
+  .btn-emerald { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.5); }
+  .btn-amber { background: rgba(245, 158, 11, 0.22); color: #fcd34d; border-color: rgba(245, 158, 11, 0.5); }
+  .btn-rose { background: rgba(239, 68, 68, 0.22); color: #fca5a5; border-color: rgba(239, 68, 68, 0.5); }
+  .btn-purple { background: rgba(168, 85, 247, 0.22); color: #d8b4fe; border-color: rgba(168, 85, 247, 0.5); }
 
   /* Stats Grid */
   .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
   @media (min-width: 680px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
   .stat-card { background: linear-gradient(145deg, #162032, #090d16); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 11px; padding: 10px; }
-  .stat-label { font-size: 10.5px; color: var(--muted); }
-  .stat-val { font-size: 18px; font-weight: 900; margin: 3px 0; direction: ltr; text-align: right; }
-  .stat-sub { font-size: 10.5px; font-weight: 600; }
+  .stat-label { font-size: 10px; color: var(--muted); }
+  .stat-val { font-size: 17px; font-weight: 900; margin: 3px 0; direction: ltr; text-align: right; }
+  .stat-sub { font-size: 10px; font-weight: 600; }
 
-  /* Source Card */
-  .source-card { background: #090d16; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; margin-bottom: 8px; position: relative; }
-  .source-card h4 { font-size: 11.5px; color: #fcd34d; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-
-  /* Canvas Container */
+  /* Main Panel & Bottom Camera Controls */
+  .main-panel { background: var(--panel); border: 1px solid rgba(6, 182, 212, 0.22); border-radius: 14px; padding: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.45); display: flex; flex-direction: column; gap: 10px; }
   .canvas-container {
     width: 100%; background: #020409; border: 1px solid rgba(6, 182, 212, 0.3);
     border-radius: 12px; overflow: hidden; position: relative;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  canvas { display: block; width: 100%; max-height: 560px; touch-action: none; user-select: none; cursor: grab; }
-  canvas:active { cursor: grabbing; }
+  canvas { display: block; width: 100%; max-height: 500px; touch-action: none; user-select: none; cursor: crosshair; }
+
+  .camera-control-box {
+    background: linear-gradient(90deg, #0f172a, #131c31);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    border-radius: 12px; padding: 10px 14px;
+    display: grid; grid-template-columns: 1fr; gap: 10px;
+  }
+  @media (min-width: 768px) {
+    .camera-control-box { grid-template-columns: repeat(3, 1fr); align-items: center; }
+  }
 
   .legend-bar {
-    display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center;
     padding: 8px 12px; background: #090d16; border-radius: 10px; border: 1px solid #1e293b; font-size: 11px;
   }
   .legend-items { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-left: 4px; }
+  .dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-left: 4px; }
 </style>
 </head>
 <body>
@@ -100,127 +125,183 @@
   <div class="header-inner">
     <div class="brand">
       <div class="logo-box">
-        <img src="57934.jpg" alt="AMIU" onerror="this.outerHTML='<span style=\'color:#0284c7;font-weight:900;font-size:12px\'>AMIU</span>'">
+        <img src="57934.jpg" id="logoImg" alt="AMIU" onerror="this.outerHTML='<span style='color:#0284c7;font-weight:900;font-size:12px'>57934</span>'">
       </div>
       <div class="brand-text">
         <h1>
           جامعة المعقل - كلية الهندسة
-          <span class="badge">الأمن السيبراني | Multi-Source RF Lab</span>
+          <span class="badge">الأمن السيبراني | Ultimate 3D Wave Lab</span>
         </h1>
-        <p>الطالب: <strong>سامر وفي جري</strong> | محاكي الموجات ثلاثي الأبعاد مع <strong>Solid Lines (قِمم) & Dashed Lines (قُعور)</strong> ومصادر متعددة وأبراج اتصالات (3G/5G)</p>
+        <p>الطالب: <strong>سامر وفي جري</strong> | رقم الملف: <strong>57934</strong> | انسيابية تامة بدون قفزات ✨ | دقة 3D/2D مطابقة 🎯</p>
       </div>
     </div>
 
     <div class="presets">
-      <button class="btn btn-cyan" onclick="setPreset('dual')">⚡ مصدرين (Dual Interference)</button>
-      <button class="btn btn-emerald" onclick="setPreset('triple')">📡 3 مصادر (3G/4G/5G Towers)</button>
-      <button class="btn btn-amber" onclick="setPreset('reflection')">🏢 حاجز عاكس + تداخل</button>
+      <button class="btn btn-cyan" onclick="setPreset('dual')">⚡ مصدرين</button>
+      <button class="btn btn-emerald" onclick="setPreset('reflection')">🏢 حاجز عاكس</button>
+      <button class="btn btn-amber" onclick="setTool('draw')" id="btnPresetDraw">✏️ ارسم حاجز</button>
       <button class="btn btn-rose" onclick="clearWaves()">مسح الموجات</button>
     </div>
   </div>
 </header>
 
 <main class="layout">
-  <!-- Sidebar Controls -->
-  <aside style="display:flex; flex-direction:column; gap:12px;">
+  <!-- Sidebar -->
+  <aside class="sidebar">
     
-    <!-- Network Technology & Display Mode -->
-    <div class="panel">
-      <div class="panel-title">
-        <span>نوع التقنية (3G / 4G / 5G) وعرض الخطوط</span>
+    <!-- Dropdown 1: Barrier, Undo/Redo & Drawing Tool -->
+    <div class="dropdown-menu" id="dropDraw">
+      <div class="dropdown-header" onclick="toggleDropdown('dropDraw')">
+        <span>✏️ رسم الحواجز والتراجع (Undo / Redo)</span>
+        <span class="arrow">▼</span>
       </div>
-
-      <div class="control-group">
-        <div class="control-header"><span>تقنية شبكة الاتصالات:</span></div>
-        <select id="selTech" onchange="applyTechPreset()">
-          <option value="3g">3G (تردد منخفض - طول موجي كبير 2.1 GHz)</option>
-          <option value="4g">4G LTE (تردد متوسط - 2.6 GHz)</option>
-          <option value="5g">5G / mmWave (تردد عالي - طول موجي قصير 28 GHz)</option>
-          <option value="custom">تخصيص يدوي كامل</option>
-        </select>
-      </div>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; margin:8px 0; padding:6px 8px; background:#090d16; border-radius:8px; border:1px solid #1e293b;">
-        <label for="chkContour" style="font-size:11.5px; font-weight:700; color:#22d3ee; cursor:pointer;">عرض خطوط التداخل (Solid & Dashed)</label>
-        <input id="chkContour" type="checkbox" checked style="width:16px; height:16px; accent-color:var(--cyan); cursor:pointer;">
-      </div>
-
-      <div style="display:flex; gap:6px; margin-top:8px;">
-        <button id="btnView3D" class="btn active" style="flex:1" onclick="setViewMode('3d')">⛰️ عرض 3D مجسّم</button>
-        <button id="btnView2D" class="btn" style="flex:1" onclick="setViewMode('2d')">🌊 عرض 2D علوي</button>
+      <div class="dropdown-content">
+        <div style="font-size:11px; color:var(--muted); line-height:1.5;">
+          ارسم حواجز عاكسة بدقة متناهية في وضعي 2D و 3D، وتراجع خطوة بخطوة بضغطة واحدة!
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button id="btnToolDraw" class="btn btn-amber active" style="flex:1" onclick="setTool('draw')">✏️ رسم حاجز</button>
+          <button id="btnToolMove" class="btn" style="flex:1" onclick="setTool('move')">✋ تحريك الأبراج</button>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button id="btnUndo" class="btn btn-cyan" style="flex:1" onclick="undoWall()" disabled>↪️ خطوة للوراء (Undo)</button>
+          <button id="btnRedo" class="btn btn-purple" style="flex:1" onclick="redoWall()" disabled>↩️ خطوة للأمام (Redo)</button>
+        </div>
+        <button class="btn btn-rose" style="width:100%;" onclick="clearCustomWalls()">🗑️ مسح كل الحواجز المرسومة</button>
       </div>
     </div>
 
-    <!-- Multi-Source Controller Panel -->
-    <div class="panel">
-      <div class="panel-title">
-        <span>إدارة مصادر الترددات والأبراج (Multi-Source)</span>
-        <button class="btn btn-emerald" style="padding:3px 8px; font-size:10px;" onclick="addSource()">+ إضافة مصدر</button>
+    <!-- Dropdown 2: Standalone Linear Waves Control -->
+    <div class="dropdown-menu" id="dropLinear">
+      <div class="dropdown-header" onclick="toggleDropdown('dropLinear')">
+        <span>🌊 الموجات الخطية (Linear Plane Waves)</span>
+        <span class="arrow">▼</span>
       </div>
+      <div class="dropdown-content">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 8px; background:#04070f; border-radius:8px; border:1px solid #1e293b;">
+          <label for="chkRippleSim" style="font-size:11.5px; font-weight:800; color:#22d3ee; cursor:pointer;">تفعيل/إبطال حركة الموجة (Ripple Anim)</label>
+          <input id="chkRippleSim" type="checkbox" checked style="width:16px; height:16px; accent-color:var(--cyan); cursor:pointer;">
+        </div>
+        
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 8px; background:#04070f; border-radius:8px; border:1px solid #1e293b; margin-top:4px;">
+          <label for="chkLinearWave" style="font-size:11.5px; font-weight:800; color:#10b981; cursor:pointer;">تفعيل الموجة الخطية من المصدر</label>
+          <input id="chkLinearWave" type="checkbox" onchange="toggleLinearWave()" style="width:16px; height:16px; accent-color:var(--emerald); cursor:pointer;">
+        </div>
 
-      <div id="sourcesContainer" style="max-height:260px; overflow-y:auto; padding-right:2px;">
+        <div style="background:linear-gradient(145deg, #162032, #090d16); border:1px solid rgba(6,182,212,0.3); border-radius:10px; padding:10px; margin-top:4px;">
+          <div style="font-size:12px; font-weight:800; color:#22d3ee; margin-bottom:8px;">إعدادات الموجة الخطية (Phase-Continuous)</div>
+          
+          <div class="control-group">
+            <div class="control-header"><span>الطول الموجي (Wavelength):</span><span id="lblLinearWavelength" class="control-val">35</span></div>
+            <input id="slLinearWavelength" type="range" min="15" max="75" value="35">
+          </div>
+
+          <div class="control-group" style="margin-top:6px;">
+            <div class="control-header"><span>السعة (Amplitude):</span><span id="lblLinearAmp" class="control-val">2.5</span></div>
+            <input id="slLinearAmp" type="range" min="0.5" max="5.0" step="0.1" value="2.5">
+          </div>
+        </div>
+
+        <button class="btn btn-emerald" style="width:100%; margin-top:2px;" onclick="launchLinearPulseFromSource()">⚡ إطلاق نبضة خطية مفردة</button>
+      </div>
+    </div>
+
+    <!-- Dropdown 3: Network & Tech (3G/4G/5G) -->
+    <div class="dropdown-menu" id="dropTech">
+      <div class="dropdown-header" onclick="toggleDropdown('dropTech')">
+        <span>📡 تقنيات الاتصالات والخطوط (3G / 5G)</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="dropdown-content">
+        <div class="control-group">
+          <div class="control-header"><span>معيار شبكة الاتصالات:</span></div>
+          <select id="selTech" onchange="applyTechPreset()">
+            <option value="3g">3G Network (تردد منخفض - 2.1 GHz)</option>
+            <option value="4g" selected>4G LTE (تردد متوسط - 2.6 GHz)</option>
+            <option value="5g">5G mmWave (تردد عالي - 28 GHz)</option>
+          </select>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px; padding:6px 8px; background:#04070f; border-radius:8px; border:1px solid #1e293b;">
+          <label for="chkContour" style="font-size:11px; font-weight:700; color:#22d3ee; cursor:pointer;">عرض خطوط التداخل (Solid & Dashed)</label>
+          <input id="chkContour" type="checkbox" checked style="width:16px; height:16px; accent-color:var(--cyan); cursor:pointer;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown 4: Multi-Source Manager -->
+    <div class="dropdown-menu" id="dropSources">
+      <div class="dropdown-header" onclick="toggleDropdown('dropSources')">
+        <span>📶 مصادر الإرسال النقطية (Point Sources)</span>
+        <button class="btn btn-emerald" style="padding:2px 6px; font-size:10px;" onclick="addSource(); event.stopPropagation();">+ إضافة</button>
+      </div>
+      <div class="dropdown-content" id="sourcesContainer" style="max-height:210px; overflow-y:auto;">
         <!-- Injected dynamically -->
-      </div>
-    </div>
-
-    <!-- Wall & Obstacle Settings -->
-    <div class="panel">
-      <div class="panel-title">
-        <span>العوائق والانعكاس (Walls / Buildings)</span>
-      </div>
-      <div class="control-group">
-        <div class="control-header"><span>نسبة انعكاس البناية (Reflection %):</span><span id="lblRefl" class="control-val">100%</span></div>
-        <input id="slRefl" type="range" min="0" max="100" value="100">
-      </div>
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
-        <label for="chkWall" style="font-size:11.5px; font-weight:700; color:#f59e0b; cursor:pointer;">تفعيل حاجز البناية العاكس</label>
-        <input id="chkWall" type="checkbox" checked onchange="rebuildWalls()" style="width:16px; height:16px; accent-color:var(--amber); cursor:pointer;">
       </div>
     </div>
 
   </aside>
 
-  <!-- Main View Area -->
-  <section style="display:flex; flex-direction:column; gap:12px;">
+  <!-- Main Canvas & Bottom Camera Panel -->
+  <section class="main-panel">
     
-    <!-- Telemetry Stats -->
+    <!-- Telemetry Cards -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">عدد المصادر النشطة (Active Sources)</div>
+        <div class="stat-label">المصادر النشطة</div>
         <div class="stat-val" id="statSources" style="color:#22d3ee">2 أبراج</div>
-        <div class="stat-sub" style="color:#67e8f9">تداخل موجي متزامن</div>
+        <div class="stat-sub" style="color:#67e8f9">طور متصل انسيابي</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">نوع التقنية المختارة</div>
-        <div class="stat-val" id="statTech" style="color:#10b981">4G LTE</div>
-        <div class="stat-sub" id="statFreq" style="color:#6ee7b7">التردد: 2.6 GHz</div>
+        <div class="stat-label">أداة العمل الحالية</div>
+        <div class="stat-val" id="statTool" style="color:#f59e0b">رسم حاجز ✏️</div>
+        <div class="stat-sub" id="statToolSub" style="color:#fcd34d">تراجع بضغطة واحدة</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">حالة التداخل (Interference)</div>
-        <div class="stat-val" style="color:#f59e0b">بناء و هدّام</div>
-        <div class="stat-sub" style="color:#fcd34d">Crest (Solid) & Trough (Dash)</div>
+        <div class="stat-label">حالة الموجات الخطية</div>
+        <div class="stat-val" id="statLinear" style="color:#10b981">متوقفة</div>
+        <div class="stat-sub" id="statLinearSub" style="color:#6ee7b7">بدون قفزات طورية</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">انعكاس الإشارة (Reflections)</div>
-        <div class="stat-val" id="statRefl" style="color:#a855f7">100% كلي</div>
-        <div class="stat-sub" id="statReflSub" style="color:#d8b4fe">ارتداد واضح عن البنايات</div>
+        <div class="stat-label">العوائق المرسومة</div>
+        <div class="stat-val" id="statWalls" style="color:#a855f7">0 خلية</div>
+        <div class="stat-sub" id="statWallsSub" style="color:#d8b4fe">سجل الخطوات: 0</div>
       </div>
     </div>
 
-    <!-- Canvas Box -->
-    <div class="panel" style="flex:1; display:flex; flex-direction:column; gap:10px;">
-      <div class="legend-bar">
-        <div class="legend-items">
-          <span><span class="dot" style="background:#22d3ee;"></span><strong>Solid Line (قمة / Crest)</strong></span>
-          <span><span class="dot" style="background:#ef4444; border:1px dashed #fff;"></span><strong>Dashed Line (قعر / Trough)</strong></span>
-          <span><span class="dot" style="background:#f59e0b;"></span>بناية عاكسة</span>
-          <span><span class="dot" style="background:#facc15;"></span>أبراج الإرسال (اسحبها بالماوس ✋)</span>
-        </div>
-        <span style="color:#38bdf8; font-weight:700;">يمكنك سحب أي برج في الشبكة لملاحظة تغير شكل التداخل!</span>
+    <div class="legend-bar">
+      <div class="legend-items">
+        <span><span class="dot" style="background:#22d3ee;"></span><strong>Solid (قمة / Crest)</strong></span>
+        <span><span class="dot" style="background:#ef4444; border:1px dashed #fff;"></span><strong>Dashed (قعر / Trough)</strong></span>
+        <span><span class="dot" style="background:#f59e0b;"></span>حاجز عاكس (Dirichlet BC)</span>
+        <span><span class="dot" style="background:#facc15;"></span>برج إرسال (57934)</span>
       </div>
+      <span style="color:#38bdf8; font-weight:700;" id="modeHint">حرّك المنزلقات أو ارسم حواجز في 2D/3D، كل خط رسم يُحفظ كخطوة واحدة للتراجع السريع!</span>
+    </div>
 
-      <div class="canvas-container">
-        <canvas id="simCanvas" width="920" height="520"></canvas>
+    <div class="canvas-container">
+      <canvas id="simCanvas" width="940" height="480"></canvas>
+    </div>
+
+    <!-- Bottom 3D Camera & Mesh Control Box -->
+    <div class="camera-control-box">
+      <div class="control-group">
+        <div class="control-header"><span>تدوير المجسم أفقيًا (Rotate Yaw):</span><span id="lblYaw" class="control-val">0°</span></div>
+        <input id="slYaw" type="range" min="-180" max="180" value="0">
+      </div>
+      <div class="control-group">
+        <div class="control-header"><span>زاوية ميل الكاميرا (Pitch Tilt):</span><span id="lblTilt" class="control-val">55°</span></div>
+        <input id="slTilt" type="range" min="25" max="80" value="55">
+      </div>
+      <div class="control-group">
+        <div class="control-header"><span>ارتفاع قمم الموجة (Wave Height):</span><span id="lblHeight" class="control-val">36 px</span></div>
+        <input id="slHeight" type="range" min="15" max="75" value="36">
+      </div>
+      <div style="grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e293b; padding-top:6px; margin-top:2px;">
+        <span style="font-size:11px; color:var(--muted);">طريقة العرض:</span>
+        <div style="display:flex; gap:6px;">
+          <button id="btnView3D" class="btn active" style="padding:4px 12px;" onclick="setViewMode('3d')">⛰️ عرض 3D مجسّم</button>
+          <button id="btnView2D" class="btn" style="padding:4px 12px;" onclick="setViewMode('2d')">🌊 عرض 2D علوي</button>
+        </div>
       </div>
     </div>
 
@@ -228,44 +309,95 @@
 </main>
 
 <script>
-  const NX = 150;
+  const NX = 160;
   const NY = 110;
   let uCurr = new Float32Array(NX * NY);
   let uPrev = new Float32Array(NX * NY);
   let uNext = new Float32Array(NX * NY);
-  let cellType = new Uint8Array(NX * NY);
+  let cellType = new Uint8Array(NX * NY); // 0 = free, 1 = wall
+
+  // Clean History Stacks (Each stroke = 1 exact state)
+  let undoStack = [];
+  let redoStack = [];
+  let currentStrokeModified = false;
+  let strokeStartSnapshot = null;
 
   let viewMode = '3d';
-  let simTime = 0;
+  let activeTool = 'draw';
+  let pulseTimer = 0;
 
-  // Multi-Sources Array (Supports multiple transmitters/towers!)
+  // Phase Accumulators (Eliminates phase jumps when changing frequency/wavelength or toggling on/off!)
+  let linearPhase = 0;
+  let linearSmoothEnv = 0; // Smooth fade-in / fade-out envelope (0.0 -> 1.0)
+
   let sources = [
-    { x: 50, y: 55, freq: 30, amp: 2.5, name: 'برج 1 (3G/5G)' },
-    { x: 100, y: 55, freq: 30, amp: 2.5, name: 'برج 2 (عقدة مجاورة)' }
+    { x: 50, y: 55, freq: 32, amp: 2.5, phase: 0, name: 'برج A' },
+    { x: 110, y: 55, freq: 32, amp: 2.5, phase: 0, name: 'برج B' }
   ];
-
-  let wallY = 82;
-  let wallX1 = 30, wallX2 = 120;
 
   const canvas = document.getElementById('simCanvas');
   const ctx = canvas.getContext('2d');
 
-  function rebuildWalls() {
-    cellType.fill(0);
-    const hasWall = document.getElementById('chkWall').checked;
-    if (!hasWall) return;
+  const userLogo = new Image();
+  userLogo.src = '57934.jpg';
+  userLogo.onload = function() {
+    document.querySelector('.logo-box').innerHTML = '<img src="57934.jpg" alt="57934" style="width:100%;height:100%;object-fit:contain;">';
+  };
 
-    for (let y = wallY; y <= wallY + 2; y++) {
-      for (let x = wallX1; x <= wallX2; x++) {
-        if (x >= 1 && x < NX - 1 && y >= 1 && y < NY - 1) {
-          cellType[y * NX + x] = 1;
-        }
-      }
-    }
+  function toggleDropdown(id) {
+    const drop = document.getElementById(id);
+    drop.classList.toggle('closed');
+    const content = drop.querySelector('.dropdown-content');
+    content.classList.toggle('collapsed');
   }
 
-  function clearWaves() {
-    uCurr.fill(0); uPrev.fill(0); uNext.fill(0);
+  function arraysEqual(a, b) {
+    if (!a || !b || a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+
+  function undoWall() {
+    if (undoStack.length === 0) return;
+    redoStack.push(new Uint8Array(cellType));
+    cellType = undoStack.pop();
+    updateWallStats();
+    updateHistoryButtons();
+  }
+
+  function redoWall() {
+    if (redoStack.length === 0) return;
+    undoStack.push(new Uint8Array(cellType));
+    cellType = redoStack.pop();
+    updateWallStats();
+    updateHistoryButtons();
+  }
+
+  function updateHistoryButtons() {
+    document.getElementById('btnUndo').disabled = undoStack.length === 0;
+    document.getElementById('btnRedo').disabled = redoStack.length === 0;
+    document.getElementById('statWallsSub').textContent = `سجل الخطوات: ${undoStack.length}`;
+  }
+
+  function setTool(tool) {
+    activeTool = tool;
+    document.getElementById('btnToolDraw').classList.toggle('active', tool === 'draw');
+    document.getElementById('btnToolMove').classList.toggle('active', tool === 'move');
+    document.getElementById('btnPresetDraw').classList.toggle('active', tool === 'draw');
+    
+    if (tool === 'draw') {
+      document.getElementById('statTool').textContent = 'رسم حاجز ✏️';
+      document.getElementById('statToolSub').textContent = 'تراجع بضغطة واحدة';
+      document.getElementById('modeHint').textContent = 'وضع الرسم: ارسم أي حاجز في 2D أو 3D، وكل خط يُحفظ كخطوة واحدة للتراجع الفوري!';
+      canvas.style.cursor = 'crosshair';
+    } else {
+      document.getElementById('statTool').textContent = 'تحريك / سحب ✋';
+      document.getElementById('statToolSub').textContent = 'اسحب الأبراج';
+      document.getElementById('modeHint').textContent = 'وضع التحريك: اسحب أبراج الإرسال في الشبكة!';
+      canvas.style.cursor = 'grab';
+    }
   }
 
   function setViewMode(mode) {
@@ -274,51 +406,91 @@
     document.getElementById('btnView2D').classList.toggle('active', mode === '2d');
   }
 
+  function clearWaves() {
+    uCurr.fill(0); uPrev.fill(0); uNext.fill(0);
+    linearSmoothEnv = 0;
+  }
+
+  function clearCustomWalls() {
+    // Only push to undo if there are walls to clear
+    let hasWalls = false;
+    for (let i = 0; i < cellType.length; i++) if (cellType[i] === 1) { hasWalls = true; break; }
+    if (!hasWalls) return;
+
+    undoStack.push(new Uint8Array(cellType));
+    redoStack = [];
+    cellType.fill(0);
+    updateWallStats();
+    updateHistoryButtons();
+  }
+
+  function updateWallStats() {
+    let count = 0;
+    for (let i = 0; i < cellType.length; i++) if (cellType[i] === 1) count++;
+    document.getElementById('statWalls').textContent = count + ' خلية';
+  }
+
+  function toggleLinearWave() {
+    const active = document.getElementById('chkLinearWave').checked;
+    document.getElementById('statLinear').textContent = active ? 'نشطة (انسيابية)' : 'متوقفة';
+    document.getElementById('statLinear').style.color = active ? '#10b981' : '#94a3b8';
+  }
+
+  function launchLinearPulseFromSource() {
+    pulseTimer = 38;
+    document.getElementById('statLinear').textContent = 'نبضة خطية ⚡';
+    setTimeout(() => {
+      if (!document.getElementById('chkLinearWave').checked) {
+        document.getElementById('statLinear').textContent = 'متوقفة';
+      }
+    }, 1200);
+  }
+
   function applyTechPreset() {
     const tech = document.getElementById('selTech').value;
-    let f = 30, a = 2.5;
-    if (tech === '3g') { f = 20; a = 3.0; document.getElementById('statTech').textContent = '3G Network'; document.getElementById('statFreq').textContent = 'التردد: 2.1 GHz'; }
-    else if (tech === '4g') { f = 32; a = 2.5; document.getElementById('statTech').textContent = '4G LTE'; document.getElementById('statFreq').textContent = 'التردد: 2.6 GHz'; }
-    else if (tech === '5g') { f = 50; a = 2.0; document.getElementById('statTech').textContent = '5G / mmWave'; document.getElementById('statFreq').textContent = 'التردد: 28 GHz'; }
-    
+    let f = 32;
+    if (tech === '3g') f = 20;
+    else if (tech === '4g') f = 32;
+    else if (tech === '5g') f = 52;
     sources.forEach(s => s.freq = f);
     renderSourceControls();
   }
 
   function setPreset(type) {
     clearWaves();
+    undoStack.push(new Uint8Array(cellType));
+    redoStack = [];
     if (type === 'dual') {
       sources = [
-        { x: 45, y: 55, freq: 30, amp: 2.5, name: 'برج A' },
-        { x: 105, y: 55, freq: 30, amp: 2.5, name: 'برج B' }
+        { x: 45, y: 55, freq: 32, amp: 2.5, phase: 0, name: 'برج A' },
+        { x: 115, y: 55, freq: 32, amp: 2.5, phase: 0, name: 'برج B' }
       ];
-      document.getElementById('chkWall').checked = false;
-    } else if (type === 'triple') {
-      sources = [
-        { x: 40, y: 40, freq: 35, amp: 2.0, name: 'برج 3G' },
-        { x: 110, y: 40, freq: 35, amp: 2.0, name: 'برج 4G' },
-        { x: 75, y: 85, freq: 35, amp: 2.0, name: 'برج 5G' }
-      ];
-      document.getElementById('chkWall').checked = false;
+      cellType.fill(0);
+      document.getElementById('chkLinearWave').checked = false;
+      toggleLinearWave();
     } else if (type === 'reflection') {
-      sources = [
-        { x: 75, y: 35, freq: 30, amp: 3.0, name: 'برج الإرسال' }
-      ];
-      document.getElementById('chkWall').checked = true;
+      sources = [{ x: 40, y: 55, freq: 32, amp: 3.0, phase: 0, name: 'برج إرسال' }];
+      cellType.fill(0);
+      for (let y = 20; y < 90; y++) {
+        let wx = 100;
+        cellType[y * NX + wx] = 1;
+        cellType[y * NX + (wx+1)] = 1;
+      }
+      document.getElementById('chkLinearWave').checked = true;
+      toggleLinearWave();
     }
-    rebuildWalls();
+    updateWallStats();
+    updateHistoryButtons();
     renderSourceControls();
   }
 
   function addSource() {
-    if (sources.length >= 4) { alert('يمكنك إضافة حتى 4 مصادر كحد أقصى.'); return; }
-    sources.push({ x: 50 + sources.length * 25, y: 60, freq: 30, amp: 2.5, name: `برج ${sources.length + 1}` });
-    rebuildWalls();
+    if (sources.length >= 4) { alert('حد أقصى 4 مصادر.'); return; }
+    sources.push({ x: 40 + sources.length * 30, y: 60, freq: 32, amp: 2.5, phase: 0, name: `برج ${sources.length + 1}` });
     renderSourceControls();
   }
 
   function removeSource(idx) {
-    if (sources.length <= 1) { alert('يجب أن يبقى مصدر واحد على الأقل.'); return; }
     sources.splice(idx, 1);
     renderSourceControls();
   }
@@ -326,22 +498,23 @@
   function renderSourceControls() {
     const container = document.getElementById('sourcesContainer');
     container.innerHTML = '';
-    document.getElementById('statSources').textContent = sources.length + ' مصادر';
+    document.getElementById('statSources').textContent = sources.length + ' أبراج';
+
+    if (sources.length === 0) {
+      container.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:8px;">لا توجد مصادر نقطية نشطة حالياً</div>`;
+      return;
+    }
 
     sources.forEach((s, idx) => {
       container.innerHTML += `
-        <div class="source-card">
-          <h4>
+        <div class="source-card" style="background:#04070f; border:1px solid #1e293b; border-radius:8px; padding:8px; margin-bottom:6px;">
+          <h4 style="font-size:11px; color:#fcd34d; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
             <span>${s.name}</span>
-            ${sources.length > 1 ? `<button class="btn btn-rose" style="padding:2px 6px; font-size:9px;" onclick="removeSource(${idx})">حذف</button>` : ''}
+            <button class="btn btn-rose" style="padding:1px 5px; font-size:9px;" onclick="removeSource(${idx})">حذف</button>
           </h4>
-          <div class="control-group" style="margin-bottom:6px;">
-            <div class="control-header"><span>الطول الموجي / التردد:</span><span class="control-val">${s.freq} Hz</span></div>
+          <div class="control-group" style="margin-bottom:4px;">
+            <div class="control-header"><span>التردد:</span><span class="control-val">${s.freq} Hz</span></div>
             <input type="range" min="15" max="60" value="${s.freq}" oninput="sources[${idx}].freq = parseFloat(this.value)">
-          </div>
-          <div class="control-group">
-            <div class="control-header"><span>السعة (Amplitude):</span><span class="control-val">${s.amp}</span></div>
-            <input type="range" min="1.0" max="5.0" step="0.5" value="${s.amp}" oninput="sources[${idx}].amp = parseFloat(this.value)">
           </div>
         </div>
       `;
@@ -349,69 +522,109 @@
   }
 
   function stepPhysics() {
-    const reflPct = parseFloat(document.getElementById('slRefl').value) / 100.0;
-    document.getElementById('statRefl').textContent = Math.round(reflPct * 100) + '% ارتداد';
+    if (!document.getElementById('chkRippleSim').checked) return;
 
-    simTime += 1;
-
-    // Inject all active sources simultaneously!
+    // 1. Point Sources with Continuous Phase Accumulation (no jump on frequency change!)
     sources.forEach(s => {
-      const omega = s.freq * 0.01;
-      const drive = Math.sin(simTime * omega) * s.amp;
+      s.phase += s.freq * 0.01;
+      const drive = Math.sin(s.phase) * s.amp;
       const si = s.y * NX + s.x;
-      if (si >= 0 && si < NX * NY) {
-        uCurr[si] = drive;
-      }
+      if (si >= 0 && si < NX * NY && cellType[si] === 0) uCurr[si] = drive;
     });
 
-    const c2 = 0.24;
-    const damping = 0.996;
+    // 2. Phase-Continuous Linear Wave with Smooth Fade-in/Fade-out Envelope
+    const isLinearTargetOn = document.getElementById('chkLinearWave').checked || pulseTimer > 0;
+    if (pulseTimer > 0) pulseTimer--;
 
-    for (let y = 1; y < NY - 1; y++) {
-      for (let x = 1; x < NX - 1; x++) {
-        const i = y * NX + x;
-        if (cellType[i] === 0) {
-          const laplacian = uCurr[i - 1] + uCurr[i + 1] + uCurr[i - NX] + uCurr[i + NX] - 4 * uCurr[i];
-          let val = (2 * uCurr[i] - uPrev[i] + c2 * laplacian) * damping;
+    // Smoothly ramp amplitude envelope between 0 and 1 so toggling or changing sliders NEVER causes shockwaves/jumps!
+    if (isLinearTargetOn) {
+      linearSmoothEnv = Math.min(1.0, linearSmoothEnv + 0.06);
+    } else {
+      linearSmoothEnv = Math.max(0.0, linearSmoothEnv - 0.06);
+    }
 
-          // Wall reflection interaction
-          if (cellType[i + NX] === 1 || cellType[i - NX] === 1) {
-            val *= (0.2 + 0.8 * reflPct);
-          }
-          uNext[i] = val;
-        } else {
-          uNext[i] = 0; // Hard wall boundary
+    if (linearSmoothEnv > 0.001 && sources.length > 0) {
+      const primarySource = sources[0];
+      const wavelength = parseFloat(document.getElementById('slLinearWavelength').value);
+      const targetAmplitude = parseFloat(document.getElementById('slLinearAmp').value);
+      
+      // Accumulate phase incrementally by d_phase = omega * dt
+      // Prevents the (simTime * omega) jump when wavelength slider moves!
+      const k = (2 * Math.PI) / wavelength;
+      const c = 0.5;
+      const dPhase = k * c * 0.14;
+      linearPhase += dPhase;
+
+      const effectiveAmp = targetAmplitude * linearSmoothEnv;
+      const lDrive = Math.sin(linearPhase) * effectiveAmp;
+
+      for (let dy = -24; dy <= 24; dy++) {
+        let nx = primarySource.x;
+        let ny = primarySource.y + dy;
+        let idx = ny * NX + nx;
+        if (nx >= 1 && nx < NX - 1 && ny >= 1 && ny < NY - 1 && cellType[idx] === 0) {
+          uCurr[idx] = lDrive;
         }
       }
     }
 
-    // ABC Boundaries
-    for (let x = 0; x < NX; x++) {
-      uNext[x] = uCurr[NX + x] * 0.7;
-      uNext[(NY - 1) * NX + x] = uCurr[(NY - 2) * NX + x] * 0.7;
+    // 3. FDTD Wave Solver with Strict Dirichlet Barrier Reflection
+    const c2 = 0.25;
+    const damping = 0.997;
+
+    for (let y = 1; y < NY - 1; y++) {
+      for (let x = 1; x < NX - 1; x++) {
+        const i = y * NX + x;
+        if (cellType[i] === 1) {
+          uCurr[i] = 0;
+          uPrev[i] = 0;
+          uNext[i] = 0;
+        } else {
+          const uL = cellType[i - 1] === 1 ? 0 : uCurr[i - 1];
+          const uR = cellType[i + 1] === 1 ? 0 : uCurr[i + 1];
+          const uU = cellType[i - NX] === 1 ? 0 : uCurr[i - NX];
+          const uD = cellType[i + NX] === 1 ? 0 : uCurr[i + NX];
+
+          const laplacian = uL + uR + uU + uD - 4 * uCurr[i];
+          uNext[i] = (2 * uCurr[i] - uPrev[i] + c2 * laplacian) * damping;
+        }
+      }
     }
-    for (let y = 0; y < NY; y++) {
-      uNext[y * NX] = uCurr[y * NX + 1] * 0.7;
-      uNext[y * NX + NX - 1] = uCurr[y * NX + NX - 2] * 0.7;
+
+    // Outer Mur Absorbing Boundary Conditions
+    const murCoeff = -0.333;
+    for (let x = 1; x < NX - 1; x++) {
+      uNext[x] = uCurr[NX + x] + murCoeff * (uNext[NX + x] - uCurr[x]);
+      const b0 = (NY - 1) * NX + x;
+      const b1 = (NY - 2) * NX + x;
+      uNext[b0] = uCurr[b1] + murCoeff * (uNext[b1] - uCurr[b0]);
+    }
+    for (let y = 1; y < NY - 1; y++) {
+      const l0 = y * NX;
+      const l1 = y * NX + 1;
+      uNext[l0] = uCurr[l1] + murCoeff * (uNext[l1] - uCurr[l0]);
+      const r0 = y * NX + (NX - 1);
+      const r1 = y * NX + (NX - 2);
+      uNext[r0] = uCurr[r1] + murCoeff * (uNext[r1] - uCurr[r0]);
     }
 
     let temp = uPrev; uPrev = uCurr; uCurr = uNext; uNext = temp;
   }
 
-  function getWaveColor(val, slope, cType) {
-    if (cType === 1) return 'rgb(245, 158, 11)'; // Wall Color
-    const v = Math.max(-1.5, Math.min(1.5, val * 1.3));
-    const light = Math.max(-0.5, Math.min(0.5, slope * 0.7));
+  function getWaveColor(val, slope, isWall) {
+    if (isWall) return 'rgb(245, 158, 11)';
+    const v = Math.max(-1.5, Math.min(1.5, val * 1.4));
+    const light = Math.max(-0.5, Math.min(0.5, slope * 0.8));
 
     let r = 6, g = 11, b = 20;
     if (v >= 0) {
       const t = Math.min(1, v);
       r = Math.round(10 + t * 40 + light * 150);
-      g = Math.round(20 + t * 220 + light * 60);
-      b = Math.round(30 + t * 225 + light * 50);
+      g = Math.round(20 + t * 225 + light * 60);
+      b = Math.round(30 + t * 230 + light * 50);
     } else {
       const t = Math.min(1, -v);
-      r = Math.round(15 + t * 180);
+      r = Math.round(15 + t * 185);
       g = Math.round(12 + t * 30);
       b = Math.round(18 + t * 20);
     }
@@ -421,10 +634,20 @@
   function render() {
     stepPhysics();
 
+    const yawDeg = parseFloat(document.getElementById('slYaw').value);
+    const tiltDeg = parseFloat(document.getElementById('slTilt').value);
+    const heightScale = parseFloat(document.getElementById('slHeight').value);
+    const showContour = document.getElementById('chkContour').checked;
+
+    document.getElementById('lblYaw').textContent = yawDeg + '°';
+    document.getElementById('lblTilt').textContent = tiltDeg + '°';
+    document.getElementById('lblHeight').textContent = heightScale + ' px';
+
+    document.getElementById('lblLinearWavelength').textContent = document.getElementById('slLinearWavelength').value;
+    document.getElementById('lblLinearAmp').textContent = parseFloat(document.getElementById('slLinearAmp').value).toFixed(1);
+
     ctx.fillStyle = '#020409';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    const showContour = document.getElementById('chkContour').checked;
 
     if (viewMode === '2d') {
       const cellW = canvas.width / NX;
@@ -435,23 +658,30 @@
           const i = y * NX + x;
           const val = uCurr[i];
           const slope = (x < NX - 1) ? (uCurr[i + 1] - val) : 0;
-          ctx.fillStyle = getWaveColor(val, slope, cellType[i]);
+          ctx.fillStyle = getWaveColor(val, slope, cellType[i] === 1);
           ctx.fillRect(x * cellW, y * cellH, Math.ceil(cellW), Math.ceil(cellH));
         }
       }
 
-      // Draw Solid Lines (Crests) and Dashed Lines (Troughs) as requested!
       if (showContour) {
-        ctx.lineWidth = 1.2;
-        for (let y = 2; y < NY - 2; y += 4) {
-          for (let x = 2; x < NX - 2; x += 4) {
-            const val = uCurr[y * NX + x];
-            if (Math.abs(val) > 0.6) {
-              ctx.strokeStyle = val > 0 ? 'rgba(34, 211, 238, 0.75)' : 'rgba(239, 68, 68, 0.75)';
-              if (val < 0) ctx.setLineDash([3, 3]); else ctx.setLineDash([]);
-              ctx.beginPath();
-              ctx.arc(x * cellW, y * cellH, 6, 0, Math.PI * 2);
-              ctx.stroke();
+        ctx.lineWidth = 1.3;
+        for (let y = 2; y < NY - 2; y += 2) {
+          for (let x = 2; x < NX - 2; x += 2) {
+            const i = y * NX + x;
+            if (cellType[i] === 1) continue;
+            const val = uCurr[i];
+            const valR = uCurr[i + 1];
+            const valD = uCurr[i + NX];
+
+            if ((val - 0.55) * (valR - 0.55) < 0 || (val - 0.55) * (valD - 0.55) < 0) {
+              ctx.strokeStyle = 'rgba(103, 232, 249, 0.9)';
+              ctx.setLineDash([]);
+              ctx.beginPath(); ctx.moveTo(x * cellW, y * cellH); ctx.lineTo((x + 1.5) * cellW, (y + 1.5) * cellH); ctx.stroke();
+            }
+            if ((val + 0.55) * (valR + 0.55) < 0 || (val + 0.55) * (valD + 0.55) < 0) {
+              ctx.strokeStyle = 'rgba(252, 165, 165, 0.9)';
+              ctx.setLineDash([4, 4]);
+              ctx.beginPath(); ctx.moveTo(x * cellW, y * cellH); ctx.lineTo((x + 1.5) * cellW, (y + 1.5) * cellH); ctx.stroke();
             }
           }
         }
@@ -459,13 +689,13 @@
       }
 
     } else {
-      // 3D Isometric View
       const centerX = canvas.width * 0.5;
       const centerY = canvas.height * 0.52;
       const scaleX = 4.2;
-      const scaleY = 3.6 * Math.sin(55 * Math.PI / 180);
-      const rotCos = Math.cos(-0.42);
-      const rotSin = Math.sin(-0.42);
+      const scaleY = 3.6 * Math.sin(tiltDeg * Math.PI / 180);
+      const yawRad = yawDeg * Math.PI / 180;
+      const rotCos = Math.cos(yawRad - 0.42);
+      const rotSin = Math.sin(yawRad - 0.42);
 
       function project3D(gx, gy, gz) {
         const cx = gx - NX / 2;
@@ -479,16 +709,16 @@
       for (let y = 1; y < NY - 2; y += 1) {
         for (let x = 1; x < NX - 2; x += 1) {
           const i = y * NX + x;
-          const cType = cellType[i];
-          let h = uCurr[i] * 36;
-          if (cType === 1) h = 18;
+          const isW = cellType[i] === 1;
+          let h = uCurr[i] * heightScale;
+          if (isW) h = 22;
 
           const p00 = project3D(x, y, h);
-          const p10 = project3D(x + 1, y, uCurr[i + 1] * 36);
-          const p01 = project3D(x, y + 1, uCurr[i + NX] * 36);
+          const p10 = project3D(x + 1, y, cellType[i+1]===1 ? 22 : uCurr[i + 1] * heightScale);
+          const p01 = project3D(x, y + 1, cellType[i+NX]===1 ? 22 : uCurr[i + NX] * heightScale);
 
           const slope = (uCurr[i + 1] - uCurr[i]);
-          ctx.fillStyle = getWaveColor(uCurr[i], slope, cType);
+          ctx.fillStyle = getWaveColor(uCurr[i], slope, isW);
 
           ctx.beginPath();
           ctx.moveTo(p00.px, p00.py);
@@ -496,34 +726,27 @@
           ctx.lineTo(p01.px, p01.py);
           ctx.closePath();
           ctx.fill();
+
+          if (showContour && !isW && (x % 2 === 0) && (y % 2 === 0)) {
+            const val = uCurr[i];
+            const valR = uCurr[i + 1];
+            if ((val - 0.55) * (valR - 0.55) < 0) {
+              ctx.strokeStyle = 'rgba(103, 232, 249, 0.9)';
+              ctx.lineWidth = 1.4;
+              ctx.setLineDash([]);
+              ctx.beginPath(); ctx.moveTo(p00.px, p00.py); ctx.lineTo(p10.px, p10.py); ctx.stroke();
+            } else if ((val + 0.55) * (valR + 0.55) < 0) {
+              ctx.strokeStyle = 'rgba(252, 165, 165, 0.9)';
+              ctx.lineWidth = 1.4;
+              ctx.setLineDash([4, 4]);
+              ctx.beginPath(); ctx.moveTo(p00.px, p00.py); ctx.lineTo(p10.px, p10.py); ctx.stroke();
+            }
+          }
         }
       }
-
-      // Render Solid & Dashed Interference Wavefront Rings on 3D Surface
-      if (showContour) {
-        sources.forEach(s => {
-          ctx.lineWidth = 1.8;
-          for (let r = (simTime * 1.5) % 35; r < 90; r += 30) {
-            // Crest (Solid Line)
-            ctx.strokeStyle = 'rgba(34, 211, 238, 0.85)';
-            ctx.setLineDash([]);
-            ctx.beginPath();
-            ctx.arc(project3D(s.x, s.y, 0).px, project3D(s.x, s.y, 0).py - r * 0.8, r * 2.2, 0, Math.PI);
-            ctx.stroke();
-
-            // Trough (Dashed Line)
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.85)';
-            ctx.setLineDash([5, 5]);
-            ctx.beginPath();
-            ctx.arc(project3D(s.x, s.y, 0).px, project3D(s.x, s.y, 0).py - (r + 15) * 0.8, (r + 15) * 2.2, 0, Math.PI);
-            ctx.stroke();
-          }
-          ctx.setLineDash([]);
-        });
-      }
+      ctx.setLineDash([]);
     }
 
-    // Draw Source Markers (Towers)
     sources.forEach(s => {
       const sp = viewMode === '3d' ? project3D_xy(s.x, s.y) : { px: s.x * (canvas.width / NX), py: s.y * (canvas.height / NY) };
       ctx.fillStyle = '#facc15';
@@ -540,9 +763,11 @@
     const centerX = canvas.width * 0.5;
     const centerY = canvas.height * 0.52;
     const scaleX = 4.2;
-    const scaleY = 3.6 * Math.sin(55 * Math.PI / 180);
-    const rotCos = Math.cos(-0.42);
-    const rotSin = Math.sin(-0.42);
+    const scaleY = 3.6 * Math.sin(parseFloat(document.getElementById('slTilt').value) * Math.PI / 180);
+    const yawDeg = parseFloat(document.getElementById('slYaw').value);
+    const yawRad = yawDeg * Math.PI / 180;
+    const rotCos = Math.cos(yawRad - 0.42);
+    const rotSin = Math.sin(yawRad - 0.42);
     const cx = gx - NX / 2;
     const cy = gy - NY / 2;
     return {
@@ -551,35 +776,126 @@
     };
   }
 
-  // Dragging sources with mouse/touch
-  let draggedSource = null;
-  canvas.addEventListener('pointerdown', (e) => {
+  // Exact Inverse Projection with 3D Wall Height Offset Compensation (22px)
+  // Ensures where the user clicks/touches in 3D matches the exact ground grid cell!
+  function getGridCoords(e) {
     const rect = canvas.getBoundingClientRect();
-    const rx = (e.clientX - rect.left) / rect.width;
-    const ry = (e.clientY - rect.top) / rect.height;
-    const gx = Math.round(rx * NX);
-    const gy = Math.round(ry * NY);
+    const px = ((e.clientX - rect.left) / rect.width) * canvas.width;
+    const py = ((e.clientY - rect.top) / rect.height) * canvas.height;
 
-    sources.forEach(s => {
-      if (Math.hypot(s.x - gx, s.y - gy) < 12) {
-        draggedSource = s;
+    if (viewMode === '2d') {
+      return {
+        gx: Math.max(2, Math.min(NX - 3, Math.round((px / canvas.width) * NX))),
+        gy: Math.max(2, Math.min(NY - 3, Math.round((py / canvas.height) * NY)))
+      };
+    } else {
+      const centerX = canvas.width * 0.5;
+      const centerY = canvas.height * 0.52;
+      const scaleX = 4.2;
+      const scaleY = 3.6 * Math.sin(parseFloat(document.getElementById('slTilt').value) * Math.PI / 180);
+      const yawDeg = parseFloat(document.getElementById('slYaw').value);
+      const yawRad = yawDeg * Math.PI / 180;
+      const rotCos = Math.cos(yawRad - 0.42);
+      const rotSin = Math.sin(yawRad - 0.42);
+
+      // Compensate slightly (+10px) for visual 3D elevation perspective
+      const dx = (px - centerX) / scaleX;
+      const dy = ((py + 10) - centerY) / scaleY;
+
+      const cx = dx * rotCos + dy * rotSin;
+      const cy = -dx * rotSin + dy * rotCos;
+
+      return {
+        gx: Math.max(2, Math.min(NX - 3, Math.round(cx + NX / 2))),
+        gy: Math.max(2, Math.min(NY - 3, Math.round(cy + NY / 2)))
+      };
+    }
+  }
+
+  let isInteracting = false;
+  let draggedSource = null;
+  let lastX = 0, lastY = 0;
+
+  function drawLineOnGrid(x0, y0, x1, y1) {
+    let dx = Math.abs(x1 - x0);
+    let dy = Math.abs(y1 - y0);
+    let sx = (x0 < x1) ? 1 : -1;
+    let sy = (y0 < y1) ? 1 : -1;
+    let err = dx - dy;
+
+    while (true) {
+      if (x0 >= 1 && x0 < NX - 1 && y0 >= 1 && y0 < NY - 1) {
+        for (let bx = -1; bx <= 1; bx++) {
+          for (let by = -1; by <= 1; by++) {
+            let nx = x0 + bx, ny = y0 + by;
+            if (nx >= 1 && nx < NX - 1 && ny >= 1 && ny < NY - 1) {
+              if (cellType[ny * NX + nx] === 0) {
+                cellType[ny * NX + nx] = 1;
+                currentStrokeModified = true;
+              }
+            }
+          }
+        }
       }
-    });
+      if (x0 === x1 && y0 === y1) break;
+      let e2 = 2 * err;
+      if (e2 > -dy) { err -= dy; x0 += sx; }
+      if (e2 < dx) { err += dx; y0 += sy; }
+    }
+    updateWallStats();
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (isInteracting) return; // Ignore secondary accidental multi-touch fingers
+    isInteracting = true;
+    const { gx, gy } = getGridCoords(e);
+    lastX = gx; lastY = gy;
+
+    if (activeTool === 'move') {
+      sources.forEach(s => {
+        if (Math.hypot(s.x - gx, s.y - gy) < 16) draggedSource = s;
+      });
+    } else {
+      // Take clean snapshot BEFORE modifying anything
+      strokeStartSnapshot = new Uint8Array(cellType);
+      currentStrokeModified = false;
+      drawLineOnGrid(gx, gy, gx, gy);
+    }
   });
 
   canvas.addEventListener('pointermove', (e) => {
-    if (!draggedSource) return;
-    const rect = canvas.getBoundingClientRect();
-    const rx = (e.clientX - rect.left) / rect.width;
-    const ry = (e.clientY - rect.top) / rect.height;
-    draggedSource.x = Math.max(5, Math.min(NX - 5, Math.round(rx * NX)));
-    draggedSource.y = Math.max(5, Math.min(NY - 5, Math.round(ry * NY)));
+    if (!isInteracting) return;
+    const { gx, gy } = getGridCoords(e);
+
+    if (activeTool === 'move' && draggedSource) {
+      draggedSource.x = gx;
+      draggedSource.y = gy;
+    } else if (activeTool === 'draw') {
+      drawLineOnGrid(lastX, lastY, gx, gy);
+      lastX = gx; lastY = gy;
+    }
   });
 
-  window.addEventListener('pointerup', () => { draggedSource = null; });
+  function finishInteraction() {
+    if (!isInteracting) return;
+    if (activeTool === 'draw' && currentStrokeModified && strokeStartSnapshot) {
+      // Only commit 1 clean undo step if the stroke actually added wall cells!
+      if (!arraysEqual(strokeStartSnapshot, cellType)) {
+        undoStack.push(strokeStartSnapshot);
+        if (undoStack.length > 40) undoStack.shift();
+        redoStack = [];
+        updateHistoryButtons();
+      }
+    }
+    isInteracting = false;
+    draggedSource = null;
+    strokeStartSnapshot = null;
+    currentStrokeModified = false;
+  }
 
-  // Initialize
-  rebuildWalls();
+  window.addEventListener('pointerup', finishInteraction);
+  window.addEventListener('pointercancel', finishInteraction);
+
   renderSourceControls();
   render();
 </script>
